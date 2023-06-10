@@ -1,20 +1,15 @@
-import Image from 'next/image'
-import { Inter } from 'next/font/google'
+import { getServerSession } from "next-auth";
 
-import { getServerSession } from 'next-auth';
+import { authOptions } from "./auth";
+import EventList from "./eventList";
 
-const inter = Inter({ subsets: ['latin'] })
-
-export default function Home() {
+export default async function Home() {
   const session = await getServerSession(authOptions);
-  console.log(session);
   return (
-    <main
-      className={`flex min-h-screen flex-col items-center justify-between p-24 ${inter.className}`}
-    >
-      <div className='w-full'>
-        Welcome to Dormsoup!
+    <main className={`flex min-h-screen flex-col items-center justify-between`}>
+      <div className="w-full">
+        {session === null ? "Welcome to Dormsoup! Sign in to view all the contents" : <EventList />}
       </div>
     </main>
-  )
+  );
 }

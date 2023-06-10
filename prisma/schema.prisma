@@ -1,0 +1,68 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum DataSource {
+  DORMSPAM
+}
+
+model Event {
+  id          Int        @id @default(autoincrement())
+  source      DataSource
+  // For dormspam, this is the email that the event was scraped from.
+  fromEmail   Email?     @relation(fields: [fromEmailId], references: [messageId])
+  fromEmailId String?    @unique
+
+  title     String
+  organizer String
+  date      DateTime
+  location  String
+}
+
+model Email {
+  // The account used to scrape the email, i.e., macy404@mit.edu
+  scrapedBy String
+  // The uid of this email in the account's mailbox.
+  uid       Int
+
+  messageId   String  @id
+  inReplyTo   Email?  @relation("InReplyTo", fields: [inReplyToId], references: [messageId])
+  inReplyToId String?
+  replies     Email[] @relation("InReplyTo")
+
+  receivedAt  DateTime
+  sender      EmailSender @relation(fields: [senderEmail], references: [email])
+  senderEmail String
+  subject     String
+  body        String
+
+  // The name of the model-prompt used to process this event. E.g. "GPT3.5-prompt-0514"
+  // In this way when we get better models we can reprocess the same events with the new model.
+  modelName String?
+
+  event Event?
+}
+
+// Also record emails we looked at but ignored. This prevents us from looking at them again.
+// Stores less information for privacy reasons.
+model IgnoredEmail {
+  scrapedBy  String
+  uid        Int
+  receivedAt DateTime
+
+  @@unique([scrapedBy, uid])
+}
+
+model EmailSender {
+  email  String  @id
+  name   String?
+  emails Email[]
+}
