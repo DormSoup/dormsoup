@@ -1,30 +1,21 @@
-import { DataSource, PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart, faCalendar, faUser } from "@fortawesome/free-regular-svg-icons";
-import { Parser } from "html-to-react";
 
-import ContentPreview from "./contentPreview";
-
-import root from "react-shadow"
+import ContentPreview from "./ContentPreview";
 
 export default async function EventList() {
   const prisma = new PrismaClient();
   await prisma.$connect();
   const events = await prisma.event.findMany({
-    include: {
-      fromEmail: true
-    },
-    orderBy: {
-      date: "desc"
-    }
+    include: { fromEmail: true },
+    orderBy: { date: "desc" }
   });
-  
+
   try {
     return (
       <div className="flex flex-col gap-4">
-        <p>There are {events.length} events. </p>
-
         {events.map((event) => (
           <div
             key={`${event.id}`}
@@ -37,7 +28,7 @@ export default async function EventList() {
               <div className="flex-none p-2 text-right">{event.date.toDateString()}</div>
             </div>
 
-            <div className="px-4 pb-2 text-lg font-bold">{event.title}</div>
+            <div className="px-2 pb-2 text-lg font-bold">{event.title}</div>
             <ContentPreview html={event.fromEmail?.body} />
 
             <div className="flex flex-row border-t border-gray-300">

@@ -1,5 +1,4 @@
 import NextAuth from "next-auth/next";
-<<<<<<< HEAD
 import { authOptions } from "@/app/auth";
 
 const handler = NextAuth({
@@ -13,12 +12,3 @@ const handler = NextAuth({
   }
 });
 export { handler as GET, handler as POST };
-=======
-import { authOptions } from "@/lib/auth";
-
-const handler = NextAuth(authOptions);
-export {
-  handler as GET,
-  handler as POST,
-}
->>>>>>> 93262a8 (Changes)

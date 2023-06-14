@@ -15,7 +15,7 @@ export default function NavBar() {
   };
 
   return (
-    <div className="fixed w-full flex h-fit flex-row items-center gap-1 bg-white px-4 py-2 text-black border-b-2 border-gray-300">
+    <div className="fixed w-full flex h-fit flex-row items-center gap-1 bg-white px-4 py-2 top-0 text-black border-b-2 border-gray-300">
       <Link className="flex-none text-3xl" href="/">
         Dormsoup
       </Link>
