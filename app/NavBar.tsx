@@ -17,7 +17,7 @@ export default function NavBar() {
   return (
     <div className="fixed w-full flex h-fit flex-row items-center gap-1 bg-white px-4 py-2 top-0 text-black border-b-2 border-gray-300">
       <Link className="flex-none text-3xl" href="/">
-        Dormsoup
+        DormSoup
       </Link>
       <div className="grow relative mx-4">
         <input className="w-full rounded-xl border-2 border-gray-300 bg-gray-50 pl-6 pr-4" placeholder="Search here"></input>

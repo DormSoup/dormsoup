@@ -26,7 +26,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={`${plexSans.variable} font-sans bg-gray-200`}>
         <NextAuthProvider>
           <NavBar />
-          <div className="mx-auto max-w-3xl pt-8 px-4">{children}</div>
+          <div className="mx-auto max-w-3xl pt-[4.5rem] px-4">{children}</div>
         </NextAuthProvider>
       </body>
     </html>
