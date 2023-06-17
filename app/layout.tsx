@@ -26,6 +26,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={`${plexSans.variable} font-sans bg-gray-200`}>
         <NextAuthProvider>
           <NavBar />
+          <div id="modal-root"></div>
           <div className="mx-auto max-w-3xl pt-[4.5rem] px-4">{children}</div>
         </NextAuthProvider>
       </body>

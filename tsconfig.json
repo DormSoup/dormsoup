@@ -35,7 +35,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts"
-  ],
+, "app/EventDetail.js"  ],
   "exclude": [
     "node_modules"
   ]
