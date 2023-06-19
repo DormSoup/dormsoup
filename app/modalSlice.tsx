@@ -1,19 +1,28 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { Event } from "@prisma/client";
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+
+type SerializableEvent = Omit<Event, "date"> & { date: string };
+
+export type ModalState = {
+  event: SerializableEvent | undefined;
+};
+
+const initialState: ModalState = {
+  event: undefined
+};
 
 export const modalSlice = createSlice({
   name: "modal",
-  initialState: {
-    isOpen: false
-  },
+  initialState,
   reducers: {
-    openModal: (state) => {
-      state.isOpen = true;
+    setCurrentEvent: (state, action: PayloadAction<SerializableEvent>) => {
+      state.event = action.payload;
     },
-    closeModal: (state) => {
-      state.isOpen = false;
+    clearCurrentEvent: (state) => {
+      state.event = undefined;
     }
   }
 });
 
-export const { openModal, closeModal } = modalSlice.actions;
+export const { setCurrentEvent, clearCurrentEvent } = modalSlice.actions;
 export default modalSlice.reducer;

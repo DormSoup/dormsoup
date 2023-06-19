@@ -1,13 +1,14 @@
 "use client";
 
-import { PropsWithChildren } from "react";
 import { SessionProvider } from "next-auth/react";
+import { PropsWithChildren } from "react";
 import { Provider } from "react-redux";
-import { store1 } from "./store";
+
+import { store } from "./store";
 
 export const NextAuthProvider = ({ children }: PropsWithChildren) => {
   return (
-    <Provider store={store1}>
+    <Provider store={store}>
       <SessionProvider>{children}</SessionProvider>
     </Provider>
   );

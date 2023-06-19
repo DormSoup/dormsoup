@@ -11,8 +11,8 @@ export const authOptions: AuthOptions = {
 
       authorization: { params: { scope: "openid email profile" } },
       // Next Auth claims that it can decode the user info from the ID token, but probably because
-      // MIT's OIDC is not that compliant, this doesn't work, and for the actual user info (with 
-      // email and name) we need to go to the userinfo endpoint. That said, we can't set idToken to 
+      // MIT's OIDC is not that compliant, this doesn't work, and for the actual user info (with
+      // email and name) we need to go to the userinfo endpoint. That said, we can't set idToken to
       // be false, because then Next Auth will somehow complain.
       idToken: true,
       // The workaround is to set idToken to true, and then override the request function for
@@ -30,13 +30,13 @@ export const authOptions: AuthOptions = {
         return {
           id: profile.sub,
           name: profile.name,
-          email: profile.email,
+          email: profile.email
         };
       },
 
       httpOptions: {
-        timeout: 60000,
+        timeout: 60000
       }
     } as OAuthConfig<any>
-  ],
+  ]
 };
