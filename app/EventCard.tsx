@@ -28,7 +28,7 @@ export default function EventCard({ event }: Props) {
 
   return (
     <div
-      className="flex h-[12rem] w-[13rem] cursor-pointer flex-col rounded-md border-2 border-gray-300 bg-white hover:border-gray-600"
+      className="flex h-[12rem] cursor-pointer flex-col rounded-md border-2 border-gray-300 bg-white hover:border-gray-600"
       onClick={() => dispatch(setCurrentEvent({ ...event, date: event.date.toISOString() }))}
     >
       <div className="line-clamp-3 px-2 pt-2 text-lg font-extrabold">{event.title}</div>

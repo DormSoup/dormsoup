@@ -12,6 +12,9 @@ module.exports = {
       fontFamily: {
         sans: ['var(--plex-sans-font)', ...fontFamily.sans],
         serif: ['var(--plex-serif-font)', ...fontFamily.serif],
+      },
+      maxHeight: {
+        "shorter-screen": "calc(100vh - 4rem)",
       }
     },
   },
