@@ -72,9 +72,8 @@ export default function EventDetail() {
             <div className="flex flex-row">
               <div className="grow text-lg font-extrabold">{event?.title}</div>
               <a
-                href="#"
                 onClick={handleCloseClick}
-                className="block h-6 w-6 flex-none rounded-full text-center hover:bg-logo-red hover:text-white"
+                className="block h-6 w-6 flex-none rounded-full text-center hover:bg-logo-red hover:text-white hover:cursor-pointer"
               >
                 <FontAwesomeIcon icon={faXmark} />
               </a>
