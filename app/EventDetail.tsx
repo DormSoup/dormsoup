@@ -1,6 +1,7 @@
 "use client";
 
-import { faXmark } from "@fortawesome/free-solid-svg-icons";
+import { faCalendar, faClock, faHeart, faUser } from "@fortawesome/free-regular-svg-icons";
+import { faLocation, faLocationDot, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Transition } from "@headlessui/react";
 
@@ -8,17 +9,29 @@ import { URLSearchParams } from "next/dist/compiled/@edge-runtime/primitives/url
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
+import GrayOutIfUnknown from "./GrayOutUnknown";
 import { Response as GetEventDetailResponse } from "./api/event-detail/route";
-import { clearCurrentEvent } from "./modalSlice";
-import { RootState, useAppDispatch } from "./store";
+import { clearCurrentEvent } from "./redux/eventDetailSlice";
+import { RootState, useAppDispatch } from "./redux/store";
 
-const EventDetail = () => {
-  const event = useSelector((state: RootState) => state.modal.event);
+import DateTimeFormatOptions = Intl.DateTimeFormatOptions;
+
+const DATE_OPTIONS: DateTimeFormatOptions = {
+  weekday: "short",
+  month: "short",
+  day: "numeric",
+  hour: "numeric", // "7"
+  minute: "2-digit", // "00"
+  hour12: true, // "PM"
+  timeZone: "UTC"
+};
+
+export default function EventDetail() {
+  const event = useSelector((state: RootState) => state.eventDetail.event);
   const dispatch = useAppDispatch();
   const [eventDetail, setEventDetail] = useState<GetEventDetailResponse | undefined>(undefined);
 
   const handleCloseClick = (event: React.MouseEvent<Element, MouseEvent>) => {
-    event.preventDefault();
     dispatch(clearCurrentEvent());
   };
 
@@ -33,10 +46,10 @@ const EventDetail = () => {
   const modalContent = (
     <Transition
       show={event !== undefined}
-      enter="transition-opacity duration-75"
+      enter="transition-all duration-75"
       enterFrom="opacity-0"
       enterTo="opacity-100"
-      leave="transition-opacity duration-150"
+      leave="transition-all duration-150"
       leaveFrom="opacity-100"
       leaveTo="opacity-0"
     >
@@ -48,30 +61,46 @@ const EventDetail = () => {
         onClick={handleCloseClick}
       >
         <div
-          className="relative m-auto flex max-h-shorter-screen min-h-min w-full max-w-2xl flex-col rounded-md bg-white p-2 shadow-lg"
-          onClick={(e) => {}}
+          className={
+            "relative m-auto flex max-h-shorter-screen min-h-min w-full max-w-2xl flex-col rounded-md bg-white shadow-lg"
+          }
+          onClick={(event) => {
+            event.stopPropagation();
+          }}
         >
-          <div className="flex-none">
+          <div className="flex-none p-2">
             <div className="flex flex-row">
               <div className="grow text-lg font-extrabold">{event?.title}</div>
               <a
                 href="#"
                 onClick={handleCloseClick}
-                className="block h-6 w-6 flex-none rounded-full text-center hover:bg-red-500 hover:text-white"
+                className="block h-6 w-6 flex-none rounded-full text-center hover:bg-logo-red hover:text-white"
               >
                 <FontAwesomeIcon icon={faXmark} />
               </a>
+            </div>
+          </div>
+          <div className="flex flex-none flex-row gap-2 px-2">
+            <div>
+              <FontAwesomeIcon icon={faClock} />
+              {"  "}
+              {new Date(event?.date!!).toLocaleDateString("en-US", DATE_OPTIONS)}
+            </div>
+            <div>
+              <FontAwesomeIcon icon={faLocationDot} />
+              {"  "}
+              <GrayOutIfUnknown inline={true} content={event?.location ?? ""} />
             </div>
           </div>
           {eventDetail === undefined ? (
             <div className="flex-none">Loading...</div>
           ) : (
             <>
-              <div className="flex-none text-xs text-gray-500">
+              <div className="flex-none p-2 text-xs text-gray-500">
                 <table className="w-full table-fixed">
                   <colgroup>
                     <col className="w-32"></col>
-                    <col></col>
+                    <col className="truncate"></col>
                   </colgroup>
                   <tbody>
                     <tr>
@@ -82,7 +111,10 @@ const EventDetail = () => {
                       <td>From: </td>
                       <td>
                         {eventDetail?.fromEmail?.sender.name} (
-                        <a href={"mailto:" + eventDetail?.fromEmail?.sender.email}>
+                        <a
+                          className="hover:text-sky-500"
+                          href={"mailto:" + eventDetail?.fromEmail?.sender.email}
+                        >
                           {eventDetail?.fromEmail?.sender.email}
                         </a>
                         )
@@ -96,6 +128,7 @@ const EventDetail = () => {
                 </table>
               </div>
               <iframe
+                className="p-1"
                 srcDoc={eventDetail?.fromEmail?.body}
                 onLoad={(event) => {
                   const iframe = event.target as HTMLIFrameElement;
@@ -106,6 +139,14 @@ const EventDetail = () => {
               ></iframe>
             </>
           )}
+          <div className="flex h-10 flex-none flex-row border-t-2 border-gray-300 text-center align-middle">
+            <div className="w-1/2 rounded-bl-md border-r-[1px] border-gray-300 py-2 hover:bg-gray-300 hover:cursor-pointer">
+              <FontAwesomeIcon icon={faHeart} /> Like
+            </div>
+            <div className="w-1/2 rounded-br-md border-l-[1px] border-gray-300 py-2 hover:bg-gray-300 hover:cursor-pointer">
+              <FontAwesomeIcon icon={faCalendar} /> Add to Calendar
+            </div>
+          </div>
         </div>
       </div>
     </Transition>
@@ -113,5 +154,3 @@ const EventDetail = () => {
 
   return modalContent;
 };
-
-export default EventDetail;

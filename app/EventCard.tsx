@@ -5,8 +5,11 @@ import { faLocationDot } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Event } from "@prisma/client";
 
-import { setCurrentEvent } from "./modalSlice";
-import { useAppDispatch } from "./store";
+import { useEffect, useRef } from "react";
+
+import GrayOutIfUnknown from "./GrayOutUnknown";
+import { setCurrentEvent } from "./redux/eventDetailSlice";
+import { useAppDispatch } from "./redux/store";
 
 import DateTimeFormatOptions = Intl.DateTimeFormatOptions;
 
@@ -14,10 +17,11 @@ const DATE_OPTIONS: DateTimeFormatOptions = {
   weekday: "short",
   month: "short",
   day: "numeric",
+  hour: "numeric", // "7"
+  minute: "2-digit", // "00"
+  hour12: true, // "PM"
   timeZone: "UTC"
 };
-const LLM_UNKNOWN_VALUE = "unknown";
-const DISPLAY_UNKNOWN_VALUE = "Unknown";
 
 type Props = {
   event: Event;
@@ -25,6 +29,12 @@ type Props = {
 
 export default function EventCard({ event }: Props) {
   const dispatch = useAppDispatch();
+  const dateRef = useRef<HTMLTableDataCellElement>(null);
+
+  useEffect(() => {
+    if (dateRef.current !== null)
+      dateRef.current.innerText = event.date.toLocaleDateString(undefined, DATE_OPTIONS);
+  }, [event]);
 
   return (
     <div
@@ -43,27 +53,19 @@ export default function EventCard({ event }: Props) {
           <tbody>
             <tr>
               <td className="text-center"><FontAwesomeIcon icon={faClock} /></td>
-              <td>{event.date.toLocaleDateString("en-US", DATE_OPTIONS)}</td>
+              <td ref={dateRef}></td>
             </tr>
             <tr>
               <td className="text-center"><FontAwesomeIcon icon={faLocationDot} /></td>
-              <td><GrayedOutIfUnknown content={event.location} /></td>
+              <td><GrayOutIfUnknown inline={false} content={event.location} /></td>
             </tr>
             <tr>
               <td className="text-center"><FontAwesomeIcon icon={faUser} /></td>
-              <td><GrayedOutIfUnknown content={event.organizer} /></td>
+              <td><GrayOutIfUnknown inline={false} content={event.organizer} /></td>
             </tr>
           </tbody>
         </table>
       </div>
     </div>
-  );
-}
-
-function GrayedOutIfUnknown({ content }: { content: string }) {
-  return content.trim() === LLM_UNKNOWN_VALUE ? (
-    <div className=" text-gray-500"> {DISPLAY_UNKNOWN_VALUE} </div>
-  ) : (
-    <div className="truncate"> {content} </div>
   );
 }

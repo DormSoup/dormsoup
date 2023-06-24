@@ -3,16 +3,16 @@ import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
 type SerializableEvent = Omit<Event, "date"> & { date: string };
 
-export type ModalState = {
+export type EventDetailState = {
   event: SerializableEvent | undefined;
 };
 
-const initialState: ModalState = {
+const initialState: EventDetailState = {
   event: undefined
 };
 
-export const modalSlice = createSlice({
-  name: "modal",
+export const eventDetailSlice = createSlice({
+  name: "eventDetail",
   initialState,
   reducers: {
     setCurrentEvent: (state, action: PayloadAction<SerializableEvent>) => {
@@ -24,5 +24,5 @@ export const modalSlice = createSlice({
   }
 });
 
-export const { setCurrentEvent, clearCurrentEvent } = modalSlice.actions;
-export default modalSlice.reducer;
+export const { setCurrentEvent, clearCurrentEvent } = eventDetailSlice.actions;
+export default eventDetailSlice.reducer;

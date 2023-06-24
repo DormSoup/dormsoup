@@ -4,11 +4,11 @@ import { configureStore } from "@reduxjs/toolkit";
 
 import { useDispatch } from "react-redux";
 
-import modalReducer from "./modalSlice";
+import eventDetailReducer from "./eventDetailSlice";
 
 export const store = configureStore({
   reducer: {
-    modal: modalReducer
+    eventDetail: eventDetailReducer
   },
   devTools: process.env.NODE_ENV !== "production"
 });

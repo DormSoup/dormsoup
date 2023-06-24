@@ -1,4 +1,6 @@
 const { fontFamily } = require('tailwindcss/defaultTheme');
+const colors = require('tailwindcss/colors')
+
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -8,6 +10,16 @@ module.exports = {
     './app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
+    colors: {
+      "logo-red": "rgb(255, 0, 97)",
+      black: colors.black,
+      white: colors.white,
+      gray: colors.gray,
+      black: colors.black,
+      red: colors.red,
+      green: colors.green,
+      slate: colors.slate,
+    },
     extend: {
       fontFamily: {
         sans: ['var(--plex-sans-font)', ...fontFamily.sans],
