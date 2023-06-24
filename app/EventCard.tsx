@@ -43,7 +43,7 @@ export default function EventCard({ event }: Props) {
     >
       <div className="line-clamp-3 px-2 pt-2 text-lg font-extrabold">{event.title}</div>
       <div className="grow" />
-      <div className="px-1">
+      <div className="px-1 text-sm">
         <table className="w-full table-fixed">
           <colgroup>
             <col className="w-5"></col>

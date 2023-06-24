@@ -4,34 +4,44 @@ import { Switch } from "@headlessui/react";
 import { Event } from "@prisma/client";
 
 import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 
 import EventCard from "./EventCard";
 import { Response as GetEventsResponse } from "./api/events/route";
+import { RootState } from "./redux/store";
 
 export default function EventList() {
-  const [dateToEvents, setDateToEvents] = useState(new Map<string, Event[]>());
+  const [events, setEvents] = useState<Event[]>([]);
   const [displayPastEvents, setDisplayPastEvents] = useState(false);
+
+  const keyword = useSelector((state: RootState) => state.search.keyword);
 
   useEffect(() => {
     const params = displayPastEvents
       ? new URLSearchParams({ order: "desc", until: new Date().toISOString() })
       : new URLSearchParams({ order: "asc", since: new Date().toISOString() });
-    setDateToEvents(new Map<string, Event[]>());
+    setEvents([]);
     fetch("/api/events?" + params)
       .then((response) => response.json())
       .then((events: GetEventsResponse) => {
-        const result = new Map<string, Event[]>();
-        for (const event of events) {
-          event.date = new Date(event.date);
-          const formatted = event.date.toISOString().split("T")[0];
-          const otherEvents = result.get(formatted);
-          if (otherEvents === undefined) result.set(formatted, [event]);
-          else otherEvents.push(event);
-        }
-        setDateToEvents(result);
+        events.forEach((event) => (event.date = new Date(event.date)));
+        setEvents(events);
       });
   }, [displayPastEvents]);
 
+  const dateToEvents = new Map<string, Event[]>();
+  const filteredEvents = events.filter((event) => {
+    if (keyword === "") return true;
+    return [event.title, event.location, event.organizer].some((content) =>
+      content.toLowerCase().includes(keyword)
+    );
+  });
+  for (const event of filteredEvents) {
+    const formatted = event.date.toISOString().split("T")[0];
+    const otherEvents = dateToEvents.get(formatted);
+    if (otherEvents === undefined) dateToEvents.set(formatted, [event]);
+    else otherEvents.push(event);
+  }
   let uniqueDates = [...dateToEvents.keys()];
   uniqueDates.sort();
   if (displayPastEvents) uniqueDates = uniqueDates.reverse();
@@ -56,7 +66,7 @@ export default function EventList() {
         </Switch>
         <span className="ml-2 h-full align-text-top">Show past events</span>
       </div>
-      {dateToEvents.size === 0 ? (
+      {events.length === 0 ? (
         <div className="my-2 text-xl font-bold">Loading...</div>
       ) : (
         uniqueDates.map((date) => (

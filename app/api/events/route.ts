@@ -20,6 +20,7 @@ export type Response = Awaited<ReturnType<typeof getAllEvents>>;
 
 export async function GET(request: Request) {
   const params = new URL(request.url).searchParams;
+  console.log("/events: ", params);
   const since = new Date(params.get("since") ?? new Date(1900, 1, 1));
   const until = new Date(params.get("until") ?? new Date(2100, 1, 1));
   const order = params.get("order") ?? "asc";

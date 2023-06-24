@@ -31,6 +31,7 @@ export type Response = Awaited<ReturnType<typeof getEventDetail>>;
 
 export async function GET(request: Request) {
   const params = new URL(request.url).searchParams;
-  const id = parseInt(params.get("id") || "0");
+  console.log("/event-detail: ", params);
+  const id = parseInt(params.get("id") ?? "0");
   return NextResponse.json(await getEventDetail(id));
 }
