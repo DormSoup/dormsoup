@@ -37,6 +37,35 @@ export const authOptions: AuthOptions = {
       httpOptions: {
         timeout: 60000
       }
+    } as OAuthConfig<any>,
+    {
+      id: "shimmer",
+      name: "MIT Shimmer",
+      type: "oauth",
+      wellKnown: "https://shimmer.csail.mit.edu/.well-known/openid-configuration",
+
+      authorization: { params: { scope: "openid email profile" } },
+      idToken: true,
+      userinfo: {
+        async request(context) {
+          return await context.client.userinfo(context.tokens.access_token!!);
+        }
+      },
+
+      clientId: process.env.SHIMMER_CLIENT_ID,
+      clientSecret: process.env.SHIMMER_CLIENT_SECRET,
+
+      profile(profile) {
+        return {
+          id: profile.sub,
+          name: profile.name,
+          email: profile.email
+        };
+      },
+
+      httpOptions: {
+        timeout: 60000
+      }
     } as OAuthConfig<any>
   ]
 };

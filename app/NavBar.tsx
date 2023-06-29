@@ -31,7 +31,7 @@ export default function NavBar() {
           <Image src="/logo.svg" alt="DormSoup Logo" fill style={{ objectFit: "contain" }} />
         </div>
       </Link>
-      <div className="relative mx-4 grow transition focus-within:fixed focus-within:w-[calc(100vw-3rem)] focus-within:mx-auto">
+      <div className="relative mx-4 grow transition max-sm:focus-within:fixed max-sm:focus-within:w-[calc(100vw-3rem)] max-sm:focus-within:mx-auto">
         <input
           className="w-full rounded-xl border-2 border-gray-300 bg-gray-50 pl-6 pr-4"
           placeholder="Search here"
