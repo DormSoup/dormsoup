@@ -45,7 +45,12 @@ export default function EventList() {
   let uniqueDates = [...dateToEvents.keys()];
   uniqueDates.sort();
   if (displayPastEvents) uniqueDates = uniqueDates.reverse();
-  const options: Intl.DateTimeFormatOptions = { weekday: "short", month: "short", day: "numeric" };
+  const options: Intl.DateTimeFormatOptions = {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+    timeZone: "America/New_York"
+  };
 
   return (
     <div>
@@ -72,7 +77,7 @@ export default function EventList() {
         uniqueDates.map((date) => (
           <div key={date} className="flex w-full flex-col">
             <div className="my-2 flex-none border-b-2 border-logo-red text-xl font-bold">
-              {new Date(date).toLocaleDateString("en-US", options)}
+              {new Date(date + "T00:00:00-04:00").toLocaleDateString("en-US", options)}
             </div>
             <div className="grid grid-cols-2 gap-4 lg:grid-cols-3">
               {dateToEvents.get(date)?.map((event) => (

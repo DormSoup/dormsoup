@@ -19,12 +19,26 @@ model Event {
   source      DataSource
   // For dormspam, this is the email that the event was scraped from.
   fromEmail   Email?     @relation(fields: [fromEmailId], references: [messageId])
-  fromEmailId String?    @unique
+  fromEmailId String
+  text        String
 
   title     String
   organizer String
   date      DateTime
   location  String
+
+  tags            Tag[]
+  tagsProcessedBy String?
+}
+
+model Tag {
+  id       Int    @id @default(autoincrement())
+  name     String
+  category String
+  icon     String
+  color    String
+
+  events Event[]
 }
 
 model Email {
@@ -44,11 +58,13 @@ model Email {
   subject     String
   body        String
 
+  processedBody String?
+
   // The name of the model-prompt used to process this event. E.g. "GPT3.5-prompt-0514"
   // In this way when we get better models we can reprocess the same events with the new model.
   modelName String?
 
-  event Event?
+  event Event[]
 }
 
 // Also record emails we looked at but ignored. This prevents us from looking at them again.

@@ -2,6 +2,7 @@
 
 .env
 sync.sh
+prisma/migrations
 
 .vscode
 # dependencies
