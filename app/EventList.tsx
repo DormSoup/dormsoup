@@ -7,11 +7,15 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
 import EventCard from "./EventCard";
+import { GetEventTextSearchResponse } from "./api/event-text-search/route";
 import { GetEventsResponse } from "./api/events/route";
 import { RootState } from "./redux/store";
 
 export default function EventList() {
-  const [events, setEvents] = useState<Event[]>([]);
+  const [events, setEvents] = useState<Omit<Event, "text">[]>([]);
+  const [eventIdsWithMatchingTexts, setEventIdsWithMatchingTexts] = useState<Set<number>>(
+    new Set()
+  );
   const [displayPastEvents, setDisplayPastEvents] = useState(false);
 
   const keyword = useSelector((state: RootState) => state.search.keyword);
@@ -29,9 +33,22 @@ export default function EventList() {
       });
   }, [displayPastEvents]);
 
-  const dateToEvents = new Map<string, Event[]>();
+  useEffect(() => {
+    const prevKeyword = keyword;
+    setEventIdsWithMatchingTexts(new Set());
+    if (keyword === "") return;
+    fetch("/api/event-text-search?" + new URLSearchParams({ keyword }))
+      .then((response) => response.json())
+      .then((events: GetEventTextSearchResponse) => {
+        if (prevKeyword === keyword)
+          setEventIdsWithMatchingTexts(new Set([...events.map((event) => event.id)]));
+      });
+  }, [keyword]);
+
+  const dateToEvents = new Map<string, Omit<Event, "text">[]>();
   const filteredEvents = events.filter((event) => {
     if (keyword === "") return true;
+    if (eventIdsWithMatchingTexts.has(event.id)) return true;
     return [event.title, event.location, event.organizer].some((content) =>
       content.toLowerCase().includes(keyword)
     );
