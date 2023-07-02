@@ -1,5 +1,7 @@
+import { authOptions } from "@/app/auth";
 import { PrismaClient } from "@prisma/client";
 
+import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
 async function getAllEvents(since: Date, until: Date, order: "asc" | "desc") {
@@ -16,9 +18,12 @@ async function getAllEvents(since: Date, until: Date, order: "asc" | "desc") {
   }
 }
 
-export type Response = Awaited<ReturnType<typeof getAllEvents>>;
+export type GetEventsResponse = Awaited<ReturnType<typeof getAllEvents>>;
 
 export async function GET(request: Request) {
+  const session = await getServerSession(authOptions);
+  if (!session) return NextResponse.json("access denied", { status: 403 });
+
   const params = new URL(request.url).searchParams;
   console.log("/events: ", params);
   const since = new Date(params.get("since") ?? new Date(1900, 1, 1));

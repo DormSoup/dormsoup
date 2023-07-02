@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
 import EventCard from "./EventCard";
-import { Response as GetEventsResponse } from "./api/events/route";
+import { GetEventsResponse } from "./api/events/route";
 import { RootState } from "./redux/store";
 
 export default function EventList() {
