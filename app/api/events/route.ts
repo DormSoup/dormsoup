@@ -1,24 +1,33 @@
-import { PrismaClient } from "@prisma/client";
+import { authOptions } from "@/app/auth";
 
+import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
-async function getAllEvents(since: Date, until: Date, order: "asc" | "desc") {
-  const prisma = new PrismaClient();
-  await prisma.$connect();
+import { prisma } from "../db";
 
-  try {
-    return await prisma.event.findMany({
-      where: { date: { gte: since, lte: until } },
-      orderBy: { date: order }
-    });
-  } finally {
-    await prisma.$disconnect();
-  }
+async function getAllEvents(since: Date, until: Date, order: "asc" | "desc") {
+  return await prisma.event.findMany({
+    where: { date: { gte: since, lte: until } },
+    orderBy: { date: order },
+    select: {
+      id: true,
+      source: true,
+      fromEmailId: true,
+      title: true,
+      organizer: true,
+      date: true,
+      location: true,
+      tagsProcessedBy: true
+    }
+  });
 }
 
-export type Response = Awaited<ReturnType<typeof getAllEvents>>;
+export type GetEventsResponse = Awaited<ReturnType<typeof getAllEvents>>;
 
 export async function GET(request: Request) {
+  const session = await getServerSession(authOptions);
+  if (!session) return NextResponse.json("access denied", { status: 403 });
+
   const params = new URL(request.url).searchParams;
   console.log("/events: ", params);
   const since = new Date(params.get("since") ?? new Date(1900, 1, 1));

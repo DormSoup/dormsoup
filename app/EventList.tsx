@@ -7,11 +7,15 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
 import EventCard from "./EventCard";
-import { Response as GetEventsResponse } from "./api/events/route";
+import { GetEventTextSearchResponse } from "./api/event-text-search/route";
+import { GetEventsResponse } from "./api/events/route";
 import { RootState } from "./redux/store";
 
 export default function EventList() {
-  const [events, setEvents] = useState<Event[]>([]);
+  const [events, setEvents] = useState<Omit<Event, "text">[]>([]);
+  const [eventIdsWithMatchingTexts, setEventIdsWithMatchingTexts] = useState<Set<number>>(
+    new Set()
+  );
   const [displayPastEvents, setDisplayPastEvents] = useState(false);
 
   const keyword = useSelector((state: RootState) => state.search.keyword);
@@ -29,9 +33,22 @@ export default function EventList() {
       });
   }, [displayPastEvents]);
 
-  const dateToEvents = new Map<string, Event[]>();
+  useEffect(() => {
+    const prevKeyword = keyword;
+    setEventIdsWithMatchingTexts(new Set());
+    if (keyword === "") return;
+    fetch("/api/event-text-search?" + new URLSearchParams({ keyword }))
+      .then((response) => response.json())
+      .then((events: GetEventTextSearchResponse) => {
+        if (prevKeyword === keyword)
+          setEventIdsWithMatchingTexts(new Set([...events.map((event) => event.id)]));
+      });
+  }, [keyword]);
+
+  const dateToEvents = new Map<string, Omit<Event, "text">[]>();
   const filteredEvents = events.filter((event) => {
     if (keyword === "") return true;
+    if (eventIdsWithMatchingTexts.has(event.id)) return true;
     return [event.title, event.location, event.organizer].some((content) =>
       content.toLowerCase().includes(keyword)
     );
@@ -45,7 +62,12 @@ export default function EventList() {
   let uniqueDates = [...dateToEvents.keys()];
   uniqueDates.sort();
   if (displayPastEvents) uniqueDates = uniqueDates.reverse();
-  const options: Intl.DateTimeFormatOptions = { weekday: "short", month: "short", day: "numeric" };
+  const options: Intl.DateTimeFormatOptions = {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+    timeZone: "America/New_York"
+  };
 
   return (
     <div>
@@ -72,7 +94,7 @@ export default function EventList() {
         uniqueDates.map((date) => (
           <div key={date} className="flex w-full flex-col">
             <div className="my-2 flex-none border-b-2 border-logo-red text-xl font-bold">
-              {new Date(date).toLocaleDateString("en-US", options)}
+              {new Date(date + "T00:00:00-04:00").toLocaleDateString("en-US", options)}
             </div>
             <div className="grid grid-cols-2 gap-4 lg:grid-cols-3">
               {dateToEvents.get(date)?.map((event) => (

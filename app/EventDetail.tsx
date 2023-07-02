@@ -10,7 +10,7 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
 import GrayOutIfUnknown from "./GrayOutUnknown";
-import { Response as GetEventDetailResponse } from "./api/event-detail/route";
+import { GetEventDetailResponse } from "./api/event-detail/route";
 import { clearCurrentEvent } from "./redux/eventDetailSlice";
 import { RootState, useAppDispatch } from "./redux/store";
 
@@ -133,7 +133,7 @@ export default function EventDetail() {
                   const iframe = event.target as HTMLIFrameElement;
                   if (iframe.contentWindow?.document.body.scrollHeight !== undefined)
                     iframe.style.height =
-                      iframe.contentWindow.document.body.scrollHeight + 20 + "px";
+                      iframe.contentWindow.document.body.scrollHeight + 30 + "px";
                 }}
               ></iframe>
             </>

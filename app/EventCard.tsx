@@ -24,7 +24,7 @@ const DATE_OPTIONS: DateTimeFormatOptions = {
 };
 
 type Props = {
-  event: Event;
+  event: Omit<Event, "text">;
 };
 
 export default function EventCard({ event }: Props) {
