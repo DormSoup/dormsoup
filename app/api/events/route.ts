@@ -17,7 +17,10 @@ async function getAllEvents(since: Date, until: Date, order: "asc" | "desc") {
       organizer: true,
       date: true,
       location: true,
-      tagsProcessedBy: true
+      tagsProcessedBy: true,
+      tags: {
+        select: { name: true }
+      }
     }
   });
 }

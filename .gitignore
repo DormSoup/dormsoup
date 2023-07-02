@@ -20,6 +20,8 @@ prisma/migrations
 # production
 /build
 
+/public/fonts
+
 # misc
 .DS_Store
 *.pem

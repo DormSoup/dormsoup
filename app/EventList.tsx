@@ -11,8 +11,10 @@ import { GetEventTextSearchResponse } from "./api/event-text-search/route";
 import { GetEventsResponse } from "./api/events/route";
 import { RootState } from "./redux/store";
 
+export type EventWithTags = Omit<Event, "text"> & { tags: { name: string }[] };
+
 export default function EventList() {
-  const [events, setEvents] = useState<Omit<Event, "text">[]>([]);
+  const [events, setEvents] = useState<EventWithTags[]>([]);
   const [eventIdsWithMatchingTexts, setEventIdsWithMatchingTexts] = useState<Set<number>>(
     new Set()
   );
@@ -45,7 +47,7 @@ export default function EventList() {
       });
   }, [keyword]);
 
-  const dateToEvents = new Map<string, Omit<Event, "text">[]>();
+  const dateToEvents = new Map<string, EventWithTags[]>();
   const filteredEvents = events.filter((event) => {
     if (keyword === "") return true;
     if (eventIdsWithMatchingTexts.has(event.id)) return true;

@@ -7,6 +7,8 @@ import { Event } from "@prisma/client";
 
 import { useEffect, useRef } from "react";
 
+import { EventWithTags } from "./EventList";
+import TagsBar from "./EventTagsBar";
 import GrayOutIfUnknown from "./GrayOutUnknown";
 import { setCurrentEvent } from "./redux/eventDetailSlice";
 import { useAppDispatch } from "./redux/store";
@@ -24,7 +26,7 @@ const DATE_OPTIONS: DateTimeFormatOptions = {
 };
 
 type Props = {
-  event: Omit<Event, "text">;
+  event: EventWithTags;
 };
 
 export default function EventCard({ event }: Props) {
@@ -38,9 +40,10 @@ export default function EventCard({ event }: Props) {
 
   return (
     <div
-      className="flex h-[12rem] cursor-pointer flex-col rounded-md border-2 border-gray-300 bg-white hover:border-gray-600"
+      className="relative flex h-[12rem] cursor-pointer flex-col rounded-md border-2 border-gray-300 bg-white hover:border-gray-600"
       onClick={() => dispatch(setCurrentEvent({ ...event, date: event.date.toISOString() }))}
     >
+      <TagsBar tags={event.tags.map((tag) => tag.name)} />
       <div className="line-clamp-3 px-2 pt-2 text-lg font-extrabold">{event.title}</div>
       <div className="grow" />
       <div className="px-1 text-sm">
