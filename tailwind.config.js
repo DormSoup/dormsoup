@@ -27,7 +27,7 @@ module.exports = {
         serif: ['var(--plex-serif-font)', ...fontFamily.serif],
       },
       maxHeight: {
-        "shorter-screen": "calc(100vh - 4rem)",
+        "shorter-screen": "calc(100% - 4rem)",
       }
     },
   },
