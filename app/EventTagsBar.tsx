@@ -44,10 +44,11 @@ const displayConfigs: { [tagName: string]: TagDisplayConfig } = {
   Food: { color: "#E03616", icon: "\u{f818}" }
 };
 
-// const mapFromTagToColorAndIcon = (tag: string) => {
-//   if (tag === "theater") return { color: "#824C71", icon: faMasksTheater };
-//   return { color: "#824C71", icon: faMasksTheater };
-// };
+function getTagPriority(tag: string) {
+  if (tag === "Free Food" || tag === "Food") return 2;
+  if (tag === "Other" || displayConfigs[tag] === undefined) return 0;
+  return 1;
+}
 
 type TagProp = { tag: string };
 
@@ -56,11 +57,9 @@ const Tag = ({ tag }: TagProp) => {
   if (config === undefined) config = displayConfigs["Other"]!!; // TODO: handle this
 
   const { color, icon } = config;
-  const bookmarkStyle = `text-[${color}] hover:bg-[${color}] hover:text-white transition-all duration-300`;
   return (
     <div className={styles.tag} style={{ ["--theme-color" as any]: color }} title={tag}>
       <div className={styles.tagInner}>
-        {/* <FontAwesomeIcon className="z-20" icon={icon} /> */}
         <span>{icon}</span>
       </div>
     </div>
@@ -70,6 +69,11 @@ const Tag = ({ tag }: TagProp) => {
 type TagBarProp = { tags: string[] };
 
 const TagsBar = ({ tags }: TagBarProp) => {
+  tags.sort((a, b) => {
+    const diff = getTagPriority(a) - getTagPriority(b);
+    if (diff !== 0) return diff;
+    return a < b ? -1 : a === b ? 0 : 1;
+  });
   return (
     <div className="relative mb-2 flex flex-row justify-end gap-3 px-4">
       {tags.map((tag) => (
