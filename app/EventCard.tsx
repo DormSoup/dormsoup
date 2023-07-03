@@ -3,7 +3,6 @@
 import { faClock, faUser } from "@fortawesome/free-regular-svg-icons";
 import { faLocationDot } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Event } from "@prisma/client";
 
 import { useEffect, useRef } from "react";
 
@@ -60,7 +59,7 @@ export default function EventCard({ event }: Props) {
             </tr>
             <tr>
               <td className="text-center"><FontAwesomeIcon icon={faLocationDot} /></td>
-              <td><GrayOutIfUnknown inline={false} content={event.location} /></td>
+              <td><GrayOutIfUnknown inline={false} content={normalizeLocation(event.location)} /></td>
             </tr>
             <tr>
               <td className="text-center"><FontAwesomeIcon icon={faUser} /></td>
@@ -71,4 +70,14 @@ export default function EventCard({ event }: Props) {
       </div>
     </div>
   );
+}
+
+function normalizeLocation(location: string): string {
+  if (/^\s*https?:\/\//.test(location)) return location.trim();
+  const replaced = location
+    .trim()
+    .replace(/^(MIT\s+)?Room\s+/, "")
+    .replace(/\s*,\s*MIT$/, "");
+  if (replaced === "") return replaced;
+  return replaced.at(0)?.toUpperCase() + replaced.substring(1);
 }

@@ -8,7 +8,7 @@ type Props = {
 
 export default function GrayOutIfUnknown({ content, inline }: Props) {
   const inlineClass = inline ? " inline" : "";
-  return content.trim() === LLM_UNKNOWN_VALUE ? (
+  return content.trim().toLowerCase() === LLM_UNKNOWN_VALUE ? (
     <div className={" text-gray-500" + inlineClass}> {DISPLAY_UNKNOWN_VALUE} </div>
   ) : (
     <div className={"truncate" + inlineClass}> {content} </div>
