@@ -5,6 +5,7 @@ import { faLocation, faLocationDot, faXmark } from "@fortawesome/free-solid-svg-
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Transition } from "@headlessui/react";
 
+import IFrameResizer from "iframe-resizer-react";
 import { URLSearchParams } from "next/dist/compiled/@edge-runtime/primitives/url";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
@@ -73,7 +74,7 @@ export default function EventDetail() {
               <div className="grow text-lg font-extrabold">{event?.title}</div>
               <a
                 onClick={handleCloseClick}
-                className="block h-6 w-6 flex-none rounded-full text-center hover:bg-logo-red hover:text-white hover:cursor-pointer"
+                className="block h-6 w-6 flex-none rounded-full text-center hover:cursor-pointer hover:bg-logo-red hover:text-white"
               >
                 <FontAwesomeIcon icon={faXmark} />
               </a>
@@ -126,23 +127,25 @@ export default function EventDetail() {
                   </tbody>
                 </table>
               </div>
-              <iframe
+              <IFrameResizer
                 className="p-1"
-                srcDoc={eventDetail?.fromEmail?.body}
-                onLoad={(event) => {
-                  const iframe = event.target as HTMLIFrameElement;
-                  if (iframe.contentWindow?.document.body.scrollHeight !== undefined)
-                    iframe.style.height =
-                      iframe.contentWindow.document.body.scrollHeight + 30 + "px";
-                }}
-              ></iframe>
+                srcDoc={prepareEmailBody(eventDetail?.fromEmail?.body)}
+                checkOrigin={false}
+                scrolling={true}
+                // onLoad={(event) => {
+                //   const iframe = event.target as HTMLIFrameElement;
+                //   if (iframe.contentWindow?.document.body.scrollHeight !== undefined)
+                //     iframe.style.height =
+                //       iframe.contentWindow.document.body.scrollHeight + 30 + "px";
+                // }}
+              ></IFrameResizer>
             </>
           )}
           <div className="flex h-10 flex-none flex-row border-t-2 border-gray-300 text-center align-middle">
-            <div className="w-1/2 rounded-bl-md border-r-[1px] border-gray-300 py-2 hover:bg-gray-300 hover:cursor-pointer">
+            <div className="w-1/2 rounded-bl-md border-r-[1px] border-gray-300 py-2 hover:cursor-pointer hover:bg-gray-300">
               <FontAwesomeIcon icon={faHeart} /> Like
             </div>
-            <div className="w-1/2 rounded-br-md border-l-[1px] border-gray-300 py-2 hover:bg-gray-300 hover:cursor-pointer">
+            <div className="w-1/2 rounded-br-md border-l-[1px] border-gray-300 py-2 hover:cursor-pointer hover:bg-gray-300">
               <FontAwesomeIcon icon={faCalendar} /> Add to Calendar
             </div>
           </div>
@@ -152,4 +155,34 @@ export default function EventDetail() {
   );
 
   return modalContent;
-};
+}
+
+/**
+ * Inserts the iframe resizer script into the HTML body,
+ * and ensure that all links within the iframe will open a new tab.
+ * 
+ * @param body The email body HTML.
+ * @returns
+ */
+function prepareEmailBody(body: string | undefined): string | undefined {
+  if (body === undefined) return undefined;
+  const emailDocument = document.createElement("html");
+  emailDocument.innerHTML = body;
+  const scriptTag = document.createElement("script");
+  scriptTag.src =
+    "https://cdn.jsdelivr.net/npm/iframe-resizer@4.3.6/js/iframeResizer.contentWindow.min.js";
+  let hasHead = false;
+  for (let child of emailDocument.children) {
+    if (child.tagName === "HEAD") {
+      child.insertBefore(scriptTag, child.firstChild);
+      hasHead = true;
+      break;
+    }
+  }
+  if (!hasHead) emailDocument.insertBefore(scriptTag, emailDocument.firstChild);
+
+  for (let a of emailDocument.getElementsByTagName("a"))
+    a.setAttribute("target", "_blank");
+
+  return emailDocument.outerHTML;
+}
