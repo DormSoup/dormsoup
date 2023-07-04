@@ -96,7 +96,7 @@ export default function EventDetail() {
             <div className="flex-none">Loading...</div>
           ) : (
             <>
-              <div className="flex-none p-2 text-xs text-gray-500">
+              <div className="flex-none m-1 p-1 text-xs text-gray-500 border-b-2 border-gray-300">
                 <table className="w-full table-fixed">
                   <colgroup>
                     <col className="w-32"></col>
