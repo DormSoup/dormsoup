@@ -3,7 +3,10 @@ This is frontend repo for DormSoup. For privacy reasons, only authenticated MIT 
 
 ## Screenshots
 
-![image](https://github.com/mit-hakken/dormsoup/assets/60227494/dbe1db1e-c31f-4d12-bd78-ca8488a27019)
+<img width="1439" alt="image" src="https://github.com/DormSoup/dormsoup/assets/60227494/0f9620cb-68f5-4f15-bedd-d440e81f53b8">
+
+<img width="1435" alt="image" src="https://github.com/DormSoup/dormsoup/assets/60227494/d53006c5-229e-45f2-a044-a488f0764be2">
+
 
 
 <!-- This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
