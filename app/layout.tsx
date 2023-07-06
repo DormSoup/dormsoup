@@ -17,8 +17,8 @@ const plexSans = IBM_Plex_Sans({
 });
 
 export const metadata = {
-  title: "Dormsoup",
-  description: "Project Hakken beta testing..."
+  title: "DormSoup",
+  description: "Project DormSoup beta testing..."
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -28,7 +28,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <NextAuthProvider>
           <NavBar />
           <div className="mx-auto max-w-3xl px-4 pt-[4.5rem]">{children}</div>
-          <div className="mx-auto py-4 border-t-2 border-gray-300 mt-4 w-full bg-white text-center text-gray-800">
+          <div className="mx-auto mt-4 w-full border-t-2 border-gray-300 bg-white py-4 text-center text-gray-800">
             Made with ❤️ by MIT DormSoup Project.
           </div>
         </NextAuthProvider>

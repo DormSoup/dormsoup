@@ -15,7 +15,7 @@ export default function NavBar() {
   const { data: session, status } = useSession();
   const dispatch = useAppDispatch();
 
-  const accountButton = () => {
+  const onSignInClicked = () => {
     if (status === "unauthenticated") signIn("mit");
     else if (status === "authenticated") signOut();
   };
@@ -39,7 +39,7 @@ export default function NavBar() {
         ></input>
         <FontAwesomeIcon icon={faMagnifyingGlass} className="absolute left-2 top-2" size="sm" />
       </div>
-      <button className="text-md flex-none rounded-lg" onClick={accountButton}>
+      <button className="text-md flex-none rounded-lg" onClick={onSignInClicked}>
         {status === "unauthenticated" ? (
           "Sign in"
         ) : status === "authenticated" ? (

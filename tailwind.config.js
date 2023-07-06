@@ -19,7 +19,8 @@ module.exports = {
       red: colors.red,
       green: colors.green,
       slate: colors.slate,
-      test: "#B2DBBF", 
+      cyan: colors.cyan,
+      test: "#B2DBBF",
     },
     extend: {
       fontFamily: {
@@ -27,6 +28,9 @@ module.exports = {
         serif: ['var(--plex-serif-font)', ...fontFamily.serif],
       },
       maxHeight: {
+        "shorter-screen": "calc(100% - 4rem)",
+      },
+      minHeight: {
         "shorter-screen": "calc(100% - 4rem)",
       }
     },
