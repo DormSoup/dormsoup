@@ -6,10 +6,11 @@ import { Event } from "@prisma/client";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
+import { GetEventTextSearchResponse } from "../api/event-text-search/route";
+import { GetEventsResponse } from "../api/events/route";
+import { RootState } from "../redux/store";
+
 import EventCard from "./EventCard";
-import { GetEventTextSearchResponse } from "./api/event-text-search/route";
-import { GetEventsResponse } from "./api/events/route";
-import { RootState } from "./redux/store";
 
 export type EventWithTags = Omit<Event, "text"> & { tags: { name: string }[] };
 

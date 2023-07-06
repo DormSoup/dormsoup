@@ -10,10 +10,11 @@ import { URLSearchParams } from "next/dist/compiled/@edge-runtime/primitives/url
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
+import { GetEventDetailResponse } from "../api/event-detail/route";
+import { clearCurrentEvent } from "../redux/eventDetailSlice";
+import { RootState, useAppDispatch } from "../redux/store";
+
 import GrayOutIfUnknown from "./GrayOutUnknown";
-import { GetEventDetailResponse } from "./api/event-detail/route";
-import { clearCurrentEvent } from "./redux/eventDetailSlice";
-import { RootState, useAppDispatch } from "./redux/store";
 
 import DateTimeFormatOptions = Intl.DateTimeFormatOptions;
 
@@ -96,7 +97,7 @@ export default function EventDetail() {
             <div className="flex-none">Loading...</div>
           ) : (
             <>
-              <div className="flex-none m-1 p-1 text-xs text-gray-500 border-b-2 border-gray-300">
+              <div className="m-1 flex-none border-b-2 border-gray-300 p-1 text-xs text-gray-500">
                 <table className="w-full table-fixed">
                   <colgroup>
                     <col className="w-32"></col>
@@ -160,7 +161,7 @@ export default function EventDetail() {
 /**
  * Inserts the iframe resizer script into the HTML body,
  * and ensure that all links within the iframe will open a new tab.
- * 
+ *
  * @param body The email body HTML.
  * @returns
  */
@@ -181,8 +182,7 @@ function prepareEmailBody(body: string | undefined): string | undefined {
   }
   if (!hasHead) emailDocument.insertBefore(scriptTag, emailDocument.firstChild);
 
-  for (let a of emailDocument.getElementsByTagName("a"))
-    a.setAttribute("target", "_blank");
+  for (let a of emailDocument.getElementsByTagName("a")) a.setAttribute("target", "_blank");
 
   return emailDocument.outerHTML;
 }

@@ -2,9 +2,9 @@ import { getServerSession } from "next-auth";
 import { signIn, signOut } from "next-auth/react";
 import Link from "next/link";
 
-import EventDetail from "./EventDetail";
-import EventList from "./EventList";
 import { authOptions } from "./auth";
+import EventDetail from "./components/EventDetail";
+import EventList from "./components/EventList";
 
 const DormSoupName = () => (
   <>

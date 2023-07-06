@@ -8,8 +8,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { ChangeEvent } from "react";
 
-import { setSearchKeyword } from "./redux/searchSlice";
-import { useAppDispatch } from "./redux/store";
+import { setSearchKeyword } from "../redux/searchSlice";
+import { useAppDispatch } from "../redux/store";
 
 export default function NavBar() {
   const { data: session, status } = useSession();

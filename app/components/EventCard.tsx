@@ -6,11 +6,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { useEffect, useRef } from "react";
 
+import { setCurrentEvent } from "../redux/eventDetailSlice";
+import { useAppDispatch } from "../redux/store";
+
 import { EventWithTags } from "./EventList";
 import TagsBar from "./EventTagsBar";
 import GrayOutIfUnknown from "./GrayOutUnknown";
-import { setCurrentEvent } from "./redux/eventDetailSlice";
-import { useAppDispatch } from "./redux/store";
 
 import DateTimeFormatOptions = Intl.DateTimeFormatOptions;
 

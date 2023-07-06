@@ -3,7 +3,7 @@ import "@fortawesome/fontawesome-svg-core/styles.css";
 
 import { IBM_Plex_Sans } from "next/font/google";
 
-import NavBar from "./NavBar";
+import NavBar from "./components/NavBar";
 import "./globals.css";
 import { NextAuthProvider } from "./providers";
 
