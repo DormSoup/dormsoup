@@ -22,6 +22,7 @@ export default function EventList() {
   const [displayPastEvents, setDisplayPastEvents] = useState(false);
 
   const keyword = useSelector((state: RootState) => state.search.keyword);
+  const filters = useSelector((state: RootState) => state.search.filters);
 
   useEffect(() => {
     const params = displayPastEvents
@@ -50,6 +51,7 @@ export default function EventList() {
 
   const dateToEvents = new Map<string, EventWithTags[]>();
   const filteredEvents = events.filter((event) => {
+    if (filters.length > 0 && event.tags.every((tag) => !filters.includes(tag.name))) return false;
     if (keyword === "") return true;
     if (eventIdsWithMatchingTexts.has(event.id)) return true;
     return [event.title, event.location, event.organizer].some((content) =>

@@ -1,22 +1,28 @@
-.tag {
+.tagOuter {
   flex: none;
   width: 1.5rem;
   height: 2rem;
   text-align: center;
   clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 50% calc(100% - var(--cut)), 0% 100%);
   background-color: var(--theme-color);
-  color: var(--theme-color);
   transition-property: all;
   transition-duration: 300ms;
 
   --theme-color: blue;
   --outline-thickness: 8%;
   --cut: 0.25rem;
-  --inner-color: white;
-  font-family: "FontAwesome6Pro-Regular";
 }
 
-.tag:hover {
+.tagInactivated,
+.tagActivated:hover {
+  color: var(--theme-color);
+  font-family: "FontAwesome6Pro-Regular";
+
+  --inner-color: white;
+}
+
+.tagActivated,
+.tagInactivated:hover {
   color: white;
   font-family: "FontAwesome6Pro-Solid";
 

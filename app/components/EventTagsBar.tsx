@@ -1,26 +1,16 @@
+"use client";
+
+import { MouseEventHandler, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+
+import { toggleSearchFilter } from "../redux/searchSlice";
+import { RootState } from "../redux/store";
+
 import styles from "./EventTagsBar.module.css";
 
 type TagDisplayConfig = { color: string; icon: string };
 
-/*
-Rally	FA:person-sign	#A61C3C
-Showcase	FA:podium & gallery-thumbnails	#F7B801
-Other 	FA: question	#A97C73
-EECS	FA: microchip	#FF8811
-AI	FA: brain-circuit	#3C91E6
-Math	FA: sigma	#342E37
-Biology	FA: dna	#1C5D99
-Quant/finance	FA:dollar-sign	#00A676
-East asia	FA:chopsticks	#FFA62B
-FSILG	FA:party-horn / igloo	#F76F8E
-Religon	FA:hands-praying	#6A6262
-HASS	FA:building-columns	#615055
-Dance	dancing human	#F25F5C
-Entrepreneurship	FA:handshake	#0B5563
-Free food	FA:pizza slice	#E03616
- */
-
-const displayConfigs: { [tagName: string]: TagDisplayConfig } = {
+const eventTagDisplayConfigs: { [tagName: string]: TagDisplayConfig } = {
   Theater: { color: "#824C71", icon: "\u{f630}" },
   Talk: { color: "#242F40", icon: "\u{f8cb}" },
   "Study Break": { color: "#6F4E37", icon: "\u{f0f4}" },
@@ -52,19 +42,35 @@ const displayConfigs: { [tagName: string]: TagDisplayConfig } = {
 
 function getTagPriority(tag: string) {
   if (["Free Food", "Food", "Boba"].includes(tag)) return 2;
-  if (tag === "Other" || displayConfigs[tag] === undefined) return 0;
+  if (tag === "Other" || eventTagDisplayConfigs[tag] === undefined) return 0;
   return 1;
 }
 
 type TagProp = { tag: string };
 
 const Tag = ({ tag }: TagProp) => {
-  let config = displayConfigs[tag];
-  if (config === undefined) config = displayConfigs["Other"]!!; // TODO: handle this
+  const dispatch = useDispatch();
+  const filters = useSelector((state: RootState) => state.search.filters);
+  const inverted = filters.includes(tag);
+
+  const onClick: MouseEventHandler<HTMLDivElement> = (event) => {
+    dispatch(toggleSearchFilter(tag));
+    event.stopPropagation();
+  };
+
+  let config = eventTagDisplayConfigs[tag];
+  if (config === undefined) config = eventTagDisplayConfigs["Other"]!!; // TODO: handle this
 
   const { color, icon } = config;
   return (
-    <div className={styles.tag} style={{ ["--theme-color" as any]: color }} title={tag}>
+    <div
+      className={`${styles.tagOuter} ${
+        inverted ? styles.tagActivated : styles.tagInactivated
+      } cursor-pointer`}
+      onClick={onClick}
+      style={{ ["--theme-color" as any]: color }}
+      title={tag}
+    >
       <div className={styles.tagInner}>
         <span>{icon}</span>
       </div>
@@ -89,14 +95,21 @@ const TagsBar = ({ tags }: TagBarProp) => {
   );
 };
 
+export const FilterTagsBar = () => {
+  const allTags = Object.keys(eventTagDisplayConfigs);
+  allTags.sort((a, b) => {
+    const diff = getTagPriority(a) - getTagPriority(b);
+    if (diff !== 0) return diff;
+    return a < b ? -1 : a === b ? 0 : 1;
+  });
+
+  return (
+    <div className="grid w-full grid-flow-col grid-rows-1 justify-center gap-3 max-lg:grid-rows-2 max-md:grid-rows-3">
+      {allTags.map((tag) => (
+        <Tag key={tag} tag={tag} />
+      ))}
+    </div>
+  );
+};
+
 export default TagsBar;
-
-/**
- * while true; do
-    fswatch -1 ./
-    rsync -auvz --delete \
-        --exclude='/.git' --filter="dir-merge,- .gitignore" \
-        ./ DormSoup:/home/ubuntu/dormsoup
-done
-
- */
