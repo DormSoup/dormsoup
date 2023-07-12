@@ -133,12 +133,6 @@ export default function EventDetail() {
                 srcDoc={prepareEmailBody(eventDetail?.fromEmail?.body)}
                 checkOrigin={false}
                 scrolling={true}
-                // onLoad={(event) => {
-                //   const iframe = event.target as HTMLIFrameElement;
-                //   if (iframe.contentWindow?.document.body.scrollHeight !== undefined)
-                //     iframe.style.height =
-                //       iframe.contentWindow.document.body.scrollHeight + 30 + "px";
-                // }}
               ></IFrameResizer>
             </>
           )}

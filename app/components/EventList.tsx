@@ -1,69 +1,23 @@
 "use client";
 
 import { Switch } from "@headlessui/react";
-import { Event } from "@prisma/client";
 
-import { useEffect, useState } from "react";
+import Image from "next/image";
+import { useEffect } from "react";
 import { useSelector } from "react-redux";
 
-import { GetEventTextSearchResponse } from "../api/event-text-search/route";
-import { GetEventsResponse } from "../api/events/route";
-import { RootState } from "../redux/store";
+import { setDisplayPastEvents } from "../redux/searchSlice";
+import { RootState, useAppDispatch } from "../redux/store";
 
 import EventCard from "./EventCard";
 
-export type EventWithTags = Omit<Event, "text"> & { tags: { name: string }[] };
-
 export default function EventList() {
-  const [events, setEvents] = useState<EventWithTags[]>([]);
-  const [eventIdsWithMatchingTexts, setEventIdsWithMatchingTexts] = useState<Set<number>>(
-    new Set()
-  );
-  const [displayPastEvents, setDisplayPastEvents] = useState(false);
-
-  const keyword = useSelector((state: RootState) => state.search.keyword);
-  const filters = useSelector((state: RootState) => state.search.filters);
-
+  const displayPastEvents = useSelector((state: RootState) => state.search.displayPastEvents);
+  const dateToEvents = useSelector((state: RootState) => state.search.dateToEvents);
+  const dispatch = useAppDispatch();
   useEffect(() => {
-    const params = displayPastEvents
-      ? new URLSearchParams({ order: "desc", until: new Date().toISOString() })
-      : new URLSearchParams({ order: "asc", since: new Date().toISOString() });
-    setEvents([]);
-    fetch("/api/events?" + params)
-      .then((response) => response.json())
-      .then((events: GetEventsResponse) => {
-        events.forEach((event) => (event.date = new Date(event.date)));
-        setEvents(events);
-      });
-  }, [displayPastEvents]);
-
-  useEffect(() => {
-    const prevKeyword = keyword;
-    setEventIdsWithMatchingTexts(new Set());
-    if (keyword === "") return;
-    fetch("/api/event-text-search?" + new URLSearchParams({ keyword }))
-      .then((response) => response.json())
-      .then((events: GetEventTextSearchResponse) => {
-        if (prevKeyword === keyword)
-          setEventIdsWithMatchingTexts(new Set([...events.map((event) => event.id)]));
-      });
-  }, [keyword]);
-
-  const dateToEvents = new Map<string, EventWithTags[]>();
-  const filteredEvents = events.filter((event) => {
-    if (filters.length > 0 && event.tags.every((tag) => !filters.includes(tag.name))) return false;
-    if (keyword === "") return true;
-    if (eventIdsWithMatchingTexts.has(event.id)) return true;
-    return [event.title, event.location, event.organizer].some((content) =>
-      content.toLowerCase().includes(keyword)
-    );
-  });
-  for (const event of filteredEvents) {
-    const formatted = event.date.toISOString().split("T")[0];
-    const otherEvents = dateToEvents.get(formatted);
-    if (otherEvents === undefined) dateToEvents.set(formatted, [event]);
-    else otherEvents.push(event);
-  }
+    dispatch(setDisplayPastEvents(displayPastEvents));
+  }, []);
   let uniqueDates = [...dateToEvents.keys()];
   uniqueDates.sort();
   if (displayPastEvents) uniqueDates = uniqueDates.reverse();
@@ -79,7 +33,7 @@ export default function EventList() {
       <div className="flex flex-row items-center">
         <Switch
           checked={displayPastEvents}
-          onChange={setDisplayPastEvents}
+          onChange={() => dispatch(setDisplayPastEvents(!displayPastEvents))}
           className={`${
             displayPastEvents ? "bg-logo-red" : "bg-gray-300"
           } relative box-content inline-flex h-6 w-11 items-center rounded-full`}
@@ -93,8 +47,11 @@ export default function EventList() {
         </Switch>
         <span className="ml-2 h-full align-text-top">Show past events</span>
       </div>
-      {events.length === 0 ? (
-        <div className="my-2 text-xl font-bold">Loading...</div>
+      {uniqueDates.length === 0 ? (
+        <>
+          <Image src="/loading.gif" alt="Loading animation" width={100} height={100} className="mx-auto w-80"></Image>
+          <div className="mt-[-4rem] text-5xl text-center font-bold">Loading...</div>
+        </>
       ) : (
         uniqueDates.map((date) => (
           <div key={date} className="flex w-full flex-col">

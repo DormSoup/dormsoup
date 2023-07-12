@@ -1,7 +1,5 @@
-import { Event } from "@prisma/client";
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-
-type SerializableEvent = Omit<Event, "date" | "text"> & { date: string };
+import { SerializableEvent } from "../EventType";
 
 export type EventDetailState = {
   event: SerializableEvent | undefined;

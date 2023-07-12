@@ -9,11 +9,11 @@ import { useEffect, useRef } from "react";
 import { setCurrentEvent } from "../redux/eventDetailSlice";
 import { useAppDispatch } from "../redux/store";
 
-import { EventWithTags } from "./EventList";
 import TagsBar from "./EventTagsBar";
 import GrayOutIfUnknown from "./GrayOutUnknown";
 
 import DateTimeFormatOptions = Intl.DateTimeFormatOptions;
+import { SerializableEventWithTags } from "../EventType";
 
 const DATE_OPTIONS: DateTimeFormatOptions = {
   weekday: "short",
@@ -26,7 +26,7 @@ const DATE_OPTIONS: DateTimeFormatOptions = {
 };
 
 type Props = {
-  event: EventWithTags;
+  event: SerializableEventWithTags;
 };
 
 export default function EventCard({ event }: Props) {
@@ -35,15 +35,15 @@ export default function EventCard({ event }: Props) {
 
   useEffect(() => {
     if (dateRef.current !== null)
-      dateRef.current.innerText = event.date.toLocaleDateString(undefined, DATE_OPTIONS);
+      dateRef.current.innerText = new Date(event.date).toLocaleDateString(undefined, DATE_OPTIONS);
   }, [event]);
 
   return (
     <div
       className="relative flex h-[12rem] cursor-pointer flex-col rounded-md border-2 border-gray-300 bg-white hover:border-gray-600"
-      onClick={() => dispatch(setCurrentEvent({ ...event, date: event.date.toISOString() }))}
+      onClick={() => dispatch(setCurrentEvent({ ...event, date: new Date(event.date).toISOString() }))}
     >
-      <TagsBar tags={event.tags.map((tag) => tag.name)} />
+      <TagsBar tags={event.tags.map((tag) => tag)} />
       <div className="line-clamp-3 px-2 pt-2 text-lg font-extrabold">{event.title}</div>
       <div className="grow" />
       <div className="px-1 text-sm">
