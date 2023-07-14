@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
-import { authOptions } from "../../auth";
+import { getAppServerSession } from "../../auth";
 import { prisma } from "../db";
 
 async function getEventDetail(id: number) {
@@ -24,7 +24,7 @@ async function getEventDetail(id: number) {
 export type GetEventDetailResponse = Awaited<ReturnType<typeof getEventDetail>>;
 
 export async function GET(request: Request) {
-  const session = await getServerSession(authOptions);
+  const session = await getAppServerSession();
   if (!session) return NextResponse.json("access denied", { status: 403 });
 
   const params = new URL(request.url).searchParams;

@@ -2,7 +2,7 @@ import { getServerSession } from "next-auth";
 import { signIn, signOut } from "next-auth/react";
 import Link from "next/link";
 
-import { authOptions } from "./auth";
+import { getAppServerSession } from "./auth";
 import EventDetail from "./components/EventDetail";
 import EventList from "./components/EventList";
 
@@ -14,7 +14,7 @@ const DormSoupName = () => (
 );
 
 export default async function Home() {
-  const session = await getServerSession(authOptions);
+  const session = getAppServerSession();
 
   return (
     <main className="flex min-h-screen flex-col items-center">

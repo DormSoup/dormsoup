@@ -1,5 +1,11 @@
-import { AuthOptions } from "next-auth";
+import { AuthOptions, getServerSession } from "next-auth";
 import { OAuthConfig } from "next-auth/providers/oauth";
+
+export function getAppServerSession() {
+  if (process.env.DORMSOUP_DEV)
+    return { user: { name: "Test User", email: "dormsoup-dev@mit.edu" } };
+  return getServerSession(authOptions);
+}
 
 export const authOptions: AuthOptions = {
   providers: [
