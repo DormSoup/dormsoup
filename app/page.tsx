@@ -24,7 +24,7 @@ export default async function Home() {
             <p>
               Welcome to <DormSoupName />, a campus-wide event catalog platform backed by large
               language models! <DormSoupName /> extracts events from dormspams, tags them, and
-              display them cleanly in a uniform format, thus saving everyone's trouble of going
+              display them cleanly in a uniform format, thus saving everyone&aposs trouble of going
               through hundreds of emails to search for interesting events.
             </p>
             <p>
@@ -43,7 +43,7 @@ export default async function Home() {
             <p>
               Unfortunately, the OIDC server has been unstable recently. Hence if nothing happened
               after clicking Sign In, this means our server has been struggling to communicate with
-              the OIDC server and you'll have to try again some time later in the day :(. We are
+              the OIDC server and you&aposll have to try again some time later in the day :(. We are
               planning on migrating to Touchstone some day.
             </p>
           </div>

@@ -17,7 +17,7 @@ export default function EventList() {
   const dispatch = useAppDispatch();
   useEffect(() => {
     dispatch(setDisplayPastEvents(displayPastEvents));
-  }, []);
+  }, [displayPastEvents, dispatch]);
   let uniqueDates = [...dateToEvents.keys()];
   uniqueDates.sort();
   if (displayPastEvents) uniqueDates = uniqueDates.reverse();
@@ -49,8 +49,14 @@ export default function EventList() {
       </div>
       {uniqueDates.length === 0 ? (
         <>
-          <Image src="/loading.gif" alt="Loading animation" width={100} height={100} className="mx-auto w-80"></Image>
-          <div className="mt-[-4rem] text-5xl text-center font-bold">Loading...</div>
+          <Image
+            src="/loading.gif"
+            alt="Loading animation"
+            width={100}
+            height={100}
+            className="mx-auto w-80"
+          ></Image>
+          <div className="mt-[-4rem] text-center text-5xl font-bold">Loading...</div>
         </>
       ) : (
         uniqueDates.map((date) => (

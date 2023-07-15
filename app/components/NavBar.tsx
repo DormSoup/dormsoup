@@ -47,8 +47,8 @@ export default function NavBar() {
             "Sign in"
           ) : status === "authenticated" ? (
             <div className="flex flex-col items-end">
-              <span className="text-sm">{session.user?.name}</span>
-              <span className="text-xs">{session.user?.email}</span>
+              <span className="text-sm">{session?.user?.name}</span>
+              <span className="text-xs">{session?.user?.email}</span>
             </div>
           ) : (
             "Loading..."
