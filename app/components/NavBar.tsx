@@ -14,7 +14,7 @@ import { useAppDispatch } from "../redux/store";
 import { FilterTagsBar } from "./EventTagsBar";
 
 export default function NavBar() {
-  const { data: session, status } = useSession();
+  let { data: session, status } = useSession();
   const dispatch = useAppDispatch();
 
   const onSignInClicked = () => {
@@ -55,7 +55,7 @@ export default function NavBar() {
           )}
         </button>
       </div>
-      {status === "authenticated" ? (
+      {status === "authenticated" || true ? (
         <div className="fixed top-14 z-30 min-w-full">
           <FilterTagsBar />
         </div>

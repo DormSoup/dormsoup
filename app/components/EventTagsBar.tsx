@@ -10,7 +10,7 @@ import styles from "./EventTagsBar.module.css";
 
 type TagDisplayConfig = { color: string; icon: string };
 
-// TODO: Add Sale, Party, Fiance=Quant,
+// TODO: Add Fiance=Quant logic
 
 const eventTagDisplayConfigs: { [tagName: string]: TagDisplayConfig } = {
   Theater: { color: "#824C71", icon: "\u{f630}" },
@@ -18,6 +18,7 @@ const eventTagDisplayConfigs: { [tagName: string]: TagDisplayConfig } = {
   "Study Break": { color: "#6F4E37", icon: "\u{f0f4}" },
   "Movie Screening": { color: "#4A2545", icon: "\u{f8a9}" },
   Game: { color: "#FF6663", icon: "\u{e5a2}" },
+  Party: { color: "#F76F8E", icon: "\u{e31b}" },
   // TODO: use actual rainbow flags.
   Queer: { color: "#745296", icon: "\u{f75b}" },
   // Workshop: { color: "#5B3000", icon: "\u{f7d9}" },
@@ -30,6 +31,7 @@ const eventTagDisplayConfigs: { [tagName: string]: TagDisplayConfig } = {
   Biology: { color: "#1C5D99", icon: "\u{f471}" },
   Concert: { color: "#C2E812", icon: "\u{f001}" },
   // Concert: { color: "#F78154", icon: "\u{f8db}" },
+  Sale: { color: "#00A676", icon: "\u{f54e}" },
   "Quant/Finance": { color: "#00A676", icon: "\u{0024}" },
   "East Asian": { color: "#FFA62B", icon: "\u{e3f7}" },
   // FSILG: { color: "#F76F8E", icon: "\u{f7ae}" },
