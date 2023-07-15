@@ -5,9 +5,10 @@ import { faLocation, faLocationDot, faXmark } from "@fortawesome/free-solid-svg-
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Transition } from "@headlessui/react";
 
+import { atcb_action } from "add-to-calendar-button";
 import IFrameResizer from "iframe-resizer-react";
 import { URLSearchParams } from "next/dist/compiled/@edge-runtime/primitives/url";
-import React, { useEffect, useState } from "react";
+import React, { MouseEventHandler, useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 
 import { GetEventDetailResponse } from "../api/event-detail/route";
@@ -44,6 +45,33 @@ export default function EventDetail() {
       .then((response) => response.json())
       .then((response: GetEventDetailResponse) => setEventDetail(response));
   }, [event]);
+
+  const onAddToCalendarClicked: MouseEventHandler<HTMLDivElement> = (clickEvent) => {
+    if (event === undefined) return;
+    const dateString = (date: Date) => date.toISOString().split("T")[0];
+    const timeString = (date: Date) =>
+      date
+        .toISOString()
+        .split("T")[1]
+        .replace(/:\d{2}\.\d{3}Z$/i, "");
+    const date = new Date(event.date);
+    const endDate = new Date(date);
+    endDate.setMinutes(date.getMinutes() + event.duration);
+    const config: Parameters<typeof atcb_action>[0] = {
+      name: event.title,
+      startDate: dateString(date),
+      options: ["Microsoft365", "Google", "Apple"],
+      location: event.location,
+      organizer: `${eventDetail?.fromEmail?.sender.name}|${eventDetail?.fromEmail?.sender.email}`,
+      timeZone: "America/New_York",
+      listStyle: "dropdown"
+    };
+    if (!date.toISOString().includes("00:00:00.000Z")) {
+      config.startTime = timeString(date);
+      config.endTime = timeString(endDate);
+    }
+    atcb_action(config, clickEvent.target as any as HTMLElement);
+  };
 
   const modalContent = (
     <Transition
@@ -137,10 +165,14 @@ export default function EventDetail() {
             </>
           )}
           <div className="flex h-10 flex-none flex-row border-t-2 border-gray-300 text-center align-middle">
-            <div className="w-1/2 rounded-bl-md border-r-[1px] border-gray-300 py-2 hover:cursor-pointer hover:bg-gray-300">
-              <FontAwesomeIcon icon={faHeart} /> Like
+            <div className="w-1/2 rounded-bl-md border-r-[1px] border-gray-300 py-2 hover:cursor-pointer hover:bg-gray-300 hover:text-logo-red">
+              <FontAwesomeIcon icon={faHeart} className="" /> Like
             </div>
-            <div className="w-1/2 rounded-br-md border-l-[1px] border-gray-300 py-2 hover:cursor-pointer hover:bg-gray-300">
+            <div
+              className="w-1/2 rounded-br-md border-l-[1px] border-gray-300 py-2 hover:cursor-pointer hover:bg-gray-300 hover:text-logo-red"
+              onClick={onAddToCalendarClicked}
+            >
+              {/* {addToCalendarButton === undefined ? <></> : addToCalendarButton} */}
               <FontAwesomeIcon icon={faCalendar} /> Add to Calendar
             </div>
           </div>

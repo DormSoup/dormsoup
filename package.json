@@ -19,6 +19,8 @@
     "@types/node": "18.15.13",
     "@types/react": "^18.2.8",
     "@types/react-dom": "18.0.11",
+    "add-to-calendar-button": "^2.2.10",
+    "add-to-calendar-button-react": "^2.2.8",
     "autoprefixer": "10.4.14",
     "eslint": "8.39.0",
     "eslint-config-next": "13.3.1",

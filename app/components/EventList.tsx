@@ -18,7 +18,7 @@ export default function EventList() {
   useEffect(() => {
     dispatch(setDisplayPastEvents(displayPastEvents));
   }, [displayPastEvents, dispatch]);
-  let uniqueDates = [...dateToEvents.keys()];
+  let uniqueDates = [...Object.keys(dateToEvents)];
   uniqueDates.sort();
   if (displayPastEvents) uniqueDates = uniqueDates.reverse();
   const options: Intl.DateTimeFormatOptions = {
@@ -65,7 +65,7 @@ export default function EventList() {
               {new Date(date + "T00:00:00-04:00").toLocaleDateString("en-US", options)}
             </div>
             <div className="grid grid-cols-2 gap-4 lg:grid-cols-3">
-              {dateToEvents.get(date)?.map((event) => (
+              {dateToEvents[date]?.map((event) => (
                 <EventCard event={event} key={event.id}></EventCard>
               ))}
             </div>

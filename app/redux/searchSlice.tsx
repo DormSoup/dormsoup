@@ -13,9 +13,9 @@ export type SearchState = {
   filters: string[];
 
   displayPastEvents: boolean;
-  eventIdsWithMatchingTexts: Set<number>;
+  eventIdsWithMatchingTexts: number[];
   events: SerializableEventWithTags[];
-  dateToEvents: Map<string, SerializableEventWithTags[]>;
+  dateToEvents: { [key: string]: SerializableEventWithTags[] };
 };
 
 const initialState: SearchState = {
@@ -23,25 +23,23 @@ const initialState: SearchState = {
   filters: [],
 
   displayPastEvents: false,
-  eventIdsWithMatchingTexts: new Set<number>(),
+  eventIdsWithMatchingTexts: [],
   events: [],
-  dateToEvents: new Map<string, SerializableEventWithTags[]>()
+  dateToEvents: {}
 };
 
 export const setSearchKeyword = createAsyncThunk(
   "search/setSearchKeyword",
   async (keyword: string, thunkAPI) => {
     thunkAPI.dispatch(setSearchKeywordInternal(keyword));
-    thunkAPI.dispatch(setEventIdsWithMatchingTexts(new Set()));
+    thunkAPI.dispatch(setEventIdsWithMatchingTexts([]));
     if (keyword === "") return;
     const events: GetEventTextSearchResponse = await (
       await fetch("/api/event-text-search?" + new URLSearchParams({ keyword }))
     ).json();
 
     if (keyword === (thunkAPI.getState() as RootState).search.keyword) {
-      thunkAPI.dispatch(
-        setEventIdsWithMatchingTexts(new Set([...events.map((event) => event.id)]))
-      );
+      thunkAPI.dispatch(setEventIdsWithMatchingTexts(events.map((event) => event.id)));
     }
   }
 );
@@ -68,20 +66,20 @@ export const setDisplayPastEvents = createAsyncThunk(
 );
 
 function updateDateToEvents(state: WritableDraft<SearchState>) {
-  const dateToEvents = new Map<string, SerializableEventWithTags[]>();
+  const dateToEvents: { [key: string]: SerializableEventWithTags[] } = {};
   const filteredEvents = state.events.filter((event) => {
     if (state.filters.length > 0 && event.tags.every((tag) => !state.filters.includes(tag)))
       return false;
     if (state.keyword === "") return true;
-    if (state.eventIdsWithMatchingTexts.has(event.id)) return true;
+    if (state.eventIdsWithMatchingTexts.includes(event.id)) return true;
     return [event.title, event.location, event.organizer].some((content) =>
       content.toLowerCase().includes(state.keyword)
     );
   });
   for (const event of filteredEvents) {
     const formatted = new Date(event.date).toISOString().split("T")[0];
-    const otherEvents = dateToEvents.get(formatted);
-    if (otherEvents === undefined) dateToEvents.set(formatted, [event]);
+    const otherEvents = dateToEvents[formatted];
+    if (otherEvents === undefined) dateToEvents[formatted] = [event];
     else otherEvents.push(event);
   }
   state.dateToEvents = dateToEvents;
@@ -98,7 +96,7 @@ export const searchSlice = createSlice({
       state.displayPastEvents = action.payload;
     },
 
-    setEventIdsWithMatchingTexts: (state, action: PayloadAction<Set<number>>) => {
+    setEventIdsWithMatchingTexts: (state, action: PayloadAction<number[]>) => {
       state.eventIdsWithMatchingTexts = action.payload;
       updateDateToEvents(state);
     },
