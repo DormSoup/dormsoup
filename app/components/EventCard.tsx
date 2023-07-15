@@ -1,19 +1,21 @@
 "use client";
 
-import { faClock, faUser } from "@fortawesome/free-regular-svg-icons";
+import { faClock, faHeart, faUser } from "@fortawesome/free-regular-svg-icons";
+import { faHeart as faHeartSolid } from "@fortawesome/free-solid-svg-icons";
 import { faLocationDot } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { useEffect, useRef } from "react";
 
+import { SerializableEventWithTags } from "../EventType";
 import { setCurrentEvent } from "../redux/eventDetailSlice";
+import { likeEvent } from "../redux/searchSlice";
 import { useAppDispatch } from "../redux/store";
 
 import TagsBar from "./EventTagsBar";
 import GrayOutIfUnknown from "./GrayOutUnknown";
 
 import DateTimeFormatOptions = Intl.DateTimeFormatOptions;
-import { SerializableEventWithTags } from "../EventType";
 
 const DATE_OPTIONS: DateTimeFormatOptions = {
   weekday: "short",
@@ -40,10 +42,24 @@ export default function EventCard({ event }: Props) {
 
   return (
     <div
-      className="relative flex h-[12rem] cursor-pointer flex-col rounded-md border-2 border-gray-300 bg-white hover:border-gray-600"
-      onClick={() => dispatch(setCurrentEvent({ ...event, date: new Date(event.date).toISOString() }))}
+      className="relative flex h-[12rem] cursor-pointer select-none flex-col rounded-md border-2 border-gray-300 bg-white hover:border-gray-600"
+      onClick={() =>
+        dispatch(setCurrentEvent({ ...event, date: new Date(event.date).toISOString() }))
+      }
     >
-      <TagsBar tags={event.tags.map((tag) => tag)} />
+      <div className="flex justify-between">
+        <div className="scale-125 pl-2 pt-1 text-red-500">
+          <FontAwesomeIcon
+            icon={event.liked ? faHeartSolid : faHeart}
+            onClick={(clickEvent) => {
+              dispatch(likeEvent(event.id));
+              clickEvent.stopPropagation();
+            }}
+          />
+          &nbsp; {event.likes}
+        </div>
+        <TagsBar tags={event.tags.map((tag) => tag)} />
+      </div>
       <div className="line-clamp-3 px-2 pt-2 text-lg font-extrabold">{event.title}</div>
       <div className="grow" />
       <div className="px-1 text-sm">

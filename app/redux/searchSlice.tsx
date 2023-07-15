@@ -5,7 +5,9 @@ import { WritableDraft } from "immer/dist/internal";
 import { SerializableEventWithTags } from "../EventType";
 import { GetEventTextSearchResponse } from "../api/event-text-search/route";
 import { GetEventsResponse } from "../api/events/route";
+import { LikeEventResponse } from "../api/like-event/route";
 
+import { setCurrentEvent } from "./eventDetailSlice";
 import { RootState } from "./store";
 
 export type SearchState = {
@@ -64,6 +66,30 @@ export const setDisplayPastEvents = createAsyncThunk(
     );
   }
 );
+
+export const likeEvent = createAsyncThunk("search/likeEvent", async (eventId: number, thunkAPI) => {
+  const state = thunkAPI.getState() as RootState;
+  thunkAPI.dispatch(
+    setEvents(
+      state.search.events.map((event) => {
+        if (event.id !== eventId) return event;
+        const newEvent = {
+          ...event,
+          liked: !event.liked,
+          likes: !event.liked ? event.likes + 1 : event.likes - 1
+        };
+        // if (state.eventDetail.event?.id === eventId) thunkAPI.dispatch(setCurrentEvent(newEvent));
+        return newEvent;
+      })
+    )
+  );
+  const response: LikeEventResponse = await (
+    await fetch("/api/like-event", {
+      method: "POST",
+      body: JSON.stringify({ id: eventId })
+    })
+  ).json();
+});
 
 function updateDateToEvents(state: WritableDraft<SearchState>) {
   const dateToEvents: { [key: string]: SerializableEventWithTags[] } = {};
