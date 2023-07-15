@@ -1,5 +1,5 @@
-import { getServerSession } from "next-auth";
-import { signIn, signOut } from "next-auth/react";
+export const dynamic = 'force-dynamic';
+
 import Link from "next/link";
 
 import { getAppServerSession } from "./auth";
