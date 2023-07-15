@@ -23,7 +23,7 @@ const eventTagDisplayConfigs: { [tagName: string]: TagDisplayConfig } = {
   // Workshop: { color: "#5B3000", icon: "\u{f7d9}" },
   Rally: { color: "#A61C3C", icon: "\u{f757}" },
   "Class Presentation": { color: "#F7B801", icon: "\u{e3aa}" },
-  // Other: { color: "#A97C73", icon: "\u{003f}" },
+  Undefined: { color: "#A97C73", icon: "\u{003f}" },
   EECS: { color: "#FF8811", icon: "\u{f2db}" },
   AI: { color: "#3C91E6", icon: "\u{e0c6}" },
   Math: { color: "#342E37", icon: "\u{f68b}" },
@@ -61,7 +61,7 @@ const Tag = ({ tag }: TagProp) => {
   };
 
   let config = eventTagDisplayConfigs[tag];
-  if (config === undefined) config = eventTagDisplayConfigs["Other"]!!; // TODO: handle this
+  if (config === undefined) config = eventTagDisplayConfigs["Undefined"]!!; // TODO: handle this
 
   const { color, icon } = config;
   return (
