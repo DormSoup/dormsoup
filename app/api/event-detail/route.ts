@@ -1,4 +1,3 @@
-import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
 import { getAppServerSession } from "../../auth";
@@ -24,7 +23,7 @@ async function getEventDetail(id: number) {
 export type GetEventDetailResponse = Awaited<ReturnType<typeof getEventDetail>>;
 
 export async function GET(request: Request) {
-  const session = await getAppServerSession();
+  const session = await getAppServerSession(request);
   if (!session) return NextResponse.json("access denied", { status: 403 });
 
   const params = new URL(request.url).searchParams;

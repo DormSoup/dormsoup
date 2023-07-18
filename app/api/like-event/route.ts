@@ -42,7 +42,7 @@ async function likeEvent(eventId: number, name: string, email: string) {
 export type LikeEventResponse = Awaited<ReturnType<typeof likeEvent>>;
 
 export async function POST(request: Request) {
-  const session = await getAppServerSession();
+  const session = await getAppServerSession(request);
   if (!session) return NextResponse.json("access denied", { status: 403 });
   const payload = await request.json();
   const id = parseInt(payload.id!!);

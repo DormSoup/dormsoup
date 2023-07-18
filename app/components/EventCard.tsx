@@ -42,7 +42,7 @@ export default function EventCard({ event }: Props) {
 
   return (
     <div
-      className="relative flex h-[12rem] cursor-pointer select-none flex-col rounded-md border-2 border-gray-300 bg-white hover:border-gray-600"
+      className="relative flex h-[12rem] cursor-pointer select-none flex-col rounded-md border-2 border-gray-300 bg-white shadow-lg transition-all duration-150 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:border-gray-600 hover:shadow-2xl"
       onClick={() =>
         dispatch(setCurrentEvent({ ...event, date: new Date(event.date).toISOString() }))
       }

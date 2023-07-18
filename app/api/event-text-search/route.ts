@@ -1,4 +1,3 @@
-import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
 import { getAppServerSession } from "../../auth";
@@ -14,7 +13,7 @@ async function getEventTextSearch(text: string) {
 export type GetEventTextSearchResponse = Awaited<ReturnType<typeof getEventTextSearch>>;
 
 export async function GET(request: Request) {
-  const session = await getAppServerSession();
+  const session = await getAppServerSession(request);
   if (!session) return NextResponse.json("access denied", { status: 403 });
 
   const params = new URL(request.url).searchParams;

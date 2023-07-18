@@ -70,7 +70,7 @@ const Tag = ({ tag }: TagProp) => {
     <div
       className={`${styles.tagOuter} ${
         inverted ? styles.tagActivated : styles.tagInactivated
-      } cursor-pointer select-none`}
+      } cursor-pointer select-none hover:-translate-y-1`}
       onClick={onClick}
       style={{ ["--theme-color" as any]: color }}
       title={tag}

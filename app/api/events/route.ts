@@ -45,7 +45,7 @@ async function getAllEvents(since: Date, until: Date, order: "asc" | "desc", ema
 export type GetEventsResponse = Awaited<ReturnType<typeof getAllEvents>>;
 
 export async function GET(request: Request) {
-  const session = await getAppServerSession();
+  const session = await getAppServerSession(request);
   if (!session) return NextResponse.json("access denied", { status: 403 });
 
   const params = new URL(request.url).searchParams;

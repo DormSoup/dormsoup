@@ -3,23 +3,29 @@
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-import { signIn, signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
-import { ChangeEvent } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 
+import { Session } from "../api/auth/session/route";
+import { getAppClientSession } from "../authClient";
 import { setSearchKeyword } from "../redux/searchSlice";
 import { useAppDispatch } from "../redux/store";
 
 import { FilterTagsBar } from "./EventTagsBar";
 
 export default function NavBar() {
-  let { data: session, status } = useSession();
+  const [session, setSession] = useState<Session | undefined>(undefined);
   const dispatch = useAppDispatch();
 
+  useEffect(() => {
+    getAppClientSession().then(setSession);
+  }, []);
+
   const onSignInClicked = () => {
-    if (status === "unauthenticated") signIn("mit");
-    else if (status === "authenticated") signOut();
+    if (session === undefined) return;
+    if (session === null) window.location.href = "/api/auth/sign-in";
+    else window.location.href = "/api/auth/sign-out";
   };
 
   const onSearch = (event: ChangeEvent<HTMLInputElement>) => {
@@ -43,19 +49,19 @@ export default function NavBar() {
           <FontAwesomeIcon icon={faMagnifyingGlass} className="absolute left-2 top-2" size="sm" />
         </div>
         <button className="text-md flex-none rounded-lg" onClick={onSignInClicked}>
-          {status === "unauthenticated" ? (
+          {session === null ? (
             "Sign in"
-          ) : status === "authenticated" ? (
+          ) : session === undefined ? (
+            "Loading..."
+          ) : (
             <div className="flex flex-col items-end">
               <span className="text-sm">{session?.user?.name}</span>
               <span className="text-xs">{session?.user?.email}</span>
             </div>
-          ) : (
-            "Loading..."
           )}
         </button>
       </div>
-      {status === "authenticated" || true ? (
+      {true ? (
         <div className="fixed top-14 z-30 min-w-full">
           <FilterTagsBar />
         </div>

@@ -1,10 +1,11 @@
-export const dynamic = 'force-dynamic';
-
+import { headers } from "next/headers";
 import Link from "next/link";
 
 import { getAppServerSession } from "./auth";
 import EventDetail from "./components/EventDetail";
 import EventList from "./components/EventList";
+
+export const dynamic = "force-dynamic";
 
 const DormSoupName = () => (
   <>
@@ -33,18 +34,7 @@ export default async function Home() {
                 please first verify your identity as an MIT student by clicking{" "}
                 <span className=" text-logo-red">Sign In</span>{" "}
               </span>{" "}
-              on the upper right corner of the page. You will be taken to{" "}
-              <Link className="text-cyan-600 underline" href="https://oidc.mit.edu">
-                MIT OIDC
-              </Link>
-              , an official MIT service for authentication. OIDC will only release to us your name
-              and email after your explicit approval.
-            </p>
-            <p>
-              Unfortunately, the OIDC server has been unstable recently. Hence if nothing happened
-              after clicking Sign In, this means our server has been struggling to communicate with
-              the OIDC server and you&aposll have to try again some time later in the day :(. We are
-              planning on migrating to Touchstone some day.
+              on the upper right corner of the page and authenticate using Touchstone.
             </p>
           </div>
         ) : (
