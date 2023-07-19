@@ -8,9 +8,23 @@
   transition-property: all;
   transition-duration: 300ms;
 
-  --theme-color: blue;
   --outline-thickness: 8%;
   --cut: 0.25rem;
+}
+
+.tagOuterCapsule {
+  flex: none;
+  width: 9.5rem;
+  height: 1.8rem;
+  text-align: left;
+
+  transition-property: all;
+  transition-duration: 300ms;
+  filter: drop-shadow(0 4px 3px rgb(0 0 0 / 0.07)) drop-shadow(0 2px 2px rgb(0 0 0 / 0.06));
+}
+
+.tagOuterCapsule:hover {
+  filter: drop-shadow(0 20px 13px rgb(0 0 0 / 0.03)) drop-shadow(0 8px 5px rgb(0 0 0 / 0.08));
 }
 
 .tagInactivated,
@@ -19,6 +33,10 @@
   font-family: "FontAwesome6Pro-Regular";
 
   --inner-color: white;
+  --width-regular: 100%;
+  --width-solid: 0px;
+  --opacity-regular: 100%;
+  --opacity-solid: 0;
 }
 
 .tagActivated,
@@ -27,6 +45,22 @@
   font-family: "FontAwesome6Pro-Solid";
 
   --inner-color: var(--theme-color);
+  --width-regular: 0px;
+  --width-solid: 100%;
+  --opacity-regular: 0;
+  --opacity-solid: 100%;
+}
+
+.svgRegular {
+  display: inline;
+  width: calc(min(var(--width-regular), 2rem));
+  opacity: var(--opacity-regular);
+}
+
+.svgSolid {
+  display: inline;
+  width: calc(min(var(--width-solid), 2rem));
+  opacity: var(--opacity-solid);
 }
 
 .tagInner {
@@ -42,16 +76,14 @@
   );
 }
 
-@font-face {
-  font-family: "FontAwesome6Pro-Solid";
-  src: url("/fonts/fa-solid-900.woff2") format("woff2");
-  font-weight: 900;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: "FontAwesome6Pro-Regular";
-  src: url("/fonts/fa-regular-400.woff2") format("woff2");
-  font-weight: 400;
-  font-style: normal;
+.tagInnerCapsule {
+  width: 100%;
+  height: 100%;
+  padding-left: 0.5rem;
+  vertical-align: middle;
+  background-color: var(--inner-color);
+  border-radius: 500px;
+  border-width: 2px;
+  border-color: var(--theme-color);
+  align-items: center;
 }

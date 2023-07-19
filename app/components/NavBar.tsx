@@ -46,7 +46,9 @@ export default function NavBar() {
             placeholder="Search here"
             onChange={onSearch}
           ></input>
-          <FontAwesomeIcon icon={faMagnifyingGlass} className="absolute left-2 top-2" size="sm" />
+          <span className="absolute left-2 top-[0.125rem] -scale-x-100 font-fa-regular">
+            {"\u{f2e5}"}
+          </span>
         </div>
         <button className="text-md flex-none rounded-lg" onClick={onSignInClicked}>
           {session === null ? (
@@ -61,13 +63,6 @@ export default function NavBar() {
           )}
         </button>
       </div>
-      {true ? (
-        <div className="fixed top-14 z-30 min-w-full">
-          <FilterTagsBar />
-        </div>
-      ) : (
-        <></>
-      )}
     </>
   );
 }

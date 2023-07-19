@@ -26,6 +26,8 @@ module.exports = {
       fontFamily: {
         sans: ['var(--plex-sans-font)', ...fontFamily.sans],
         serif: ['var(--plex-serif-font)', ...fontFamily.serif],
+        "fa-regular": ["FontAwesome6Pro-Regular"],
+        "fa-solid": ["FontAwesome6Pro-Solid"]
       },
       maxHeight: {
         "shorter-screen": "calc(100% - 4rem)",

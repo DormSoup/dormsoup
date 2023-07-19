@@ -4,6 +4,7 @@ import Link from "next/link";
 import { getAppServerSession } from "./auth";
 import EventDetail from "./components/EventDetail";
 import EventList from "./components/EventList";
+import { TagsPanel } from "./components/EventTagsBar";
 
 export const dynamic = "force-dynamic";
 
@@ -19,6 +20,7 @@ export default async function Home() {
 
   return (
     <main className="flex min-h-screen flex-col items-center">
+      <TagsPanel />
       <div className="w-full">
         {session === null ? (
           <div className="mt-8 space-y-2 rounded-xl bg-white p-6 shadow-2xl">
@@ -38,7 +40,9 @@ export default async function Home() {
             </p>
           </div>
         ) : (
-          <EventList />
+          <>
+            <EventList />
+          </>
         )}
       </div>
       <EventDetail />
