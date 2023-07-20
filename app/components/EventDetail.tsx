@@ -9,7 +9,7 @@ import { Transition } from "@headlessui/react";
 import { atcb_action } from "add-to-calendar-button";
 import IFrameResizer from "iframe-resizer-react";
 import { URLSearchParams } from "next/dist/compiled/@edge-runtime/primitives/url";
-import React, { MouseEventHandler, useEffect, useRef, useState } from "react";
+import React, { MouseEventHandler, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
 import { SerializableEvent } from "../EventType";
@@ -18,19 +18,8 @@ import { clearCurrentEvent } from "../redux/eventDetailSlice";
 import { likeEvent } from "../redux/searchSlice";
 import { RootState, useAppDispatch } from "../redux/store";
 
+import EventDate from "./EventDate";
 import GrayOutIfUnknown from "./GrayOutUnknown";
-
-import DateTimeFormatOptions = Intl.DateTimeFormatOptions;
-
-const DATE_OPTIONS: DateTimeFormatOptions = {
-  weekday: "short",
-  month: "short",
-  day: "numeric",
-  hour: "numeric", // "7"
-  minute: "2-digit", // "00"
-  hour12: true, // "PM"
-  timeZone: "UTC"
-};
 
 export default function EventDetail() {
   const event = useSelector((state: RootState) => state.eventDetail.event);
@@ -87,7 +76,7 @@ export default function EventDetail() {
             <div>
               <FontAwesomeIcon icon={faClock} />
               {"  "}
-              {new Date(event?.date!!).toLocaleDateString("en-US", DATE_OPTIONS)}
+              <EventDate date={event?.date!!} />
             </div>
             <div>
               <FontAwesomeIcon icon={faLocationDot} />

@@ -5,27 +5,14 @@ import { faHeart as faHeartSolid } from "@fortawesome/free-solid-svg-icons";
 import { faLocationDot } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-import { useEffect, useRef } from "react";
-
 import { SerializableEventWithTags } from "../EventType";
 import { setCurrentEvent } from "../redux/eventDetailSlice";
 import { likeEvent } from "../redux/searchSlice";
 import { useAppDispatch } from "../redux/store";
 
+import EventDate from "./EventDate";
 import TagsBar from "./EventTagsBar";
 import GrayOutIfUnknown from "./GrayOutUnknown";
-
-import DateTimeFormatOptions = Intl.DateTimeFormatOptions;
-
-const DATE_OPTIONS: DateTimeFormatOptions = {
-  weekday: "short",
-  month: "short",
-  day: "numeric",
-  hour: "numeric", // "7"
-  minute: "2-digit", // "00"
-  hour12: true, // "PM"
-  timeZone: "UTC"
-};
 
 type Props = {
   event: SerializableEventWithTags;
@@ -33,13 +20,6 @@ type Props = {
 
 export default function EventCard({ event }: Props) {
   const dispatch = useAppDispatch();
-  const dateRef = useRef<HTMLTableDataCellElement>(null);
-
-  useEffect(() => {
-    if (dateRef.current !== null)
-      dateRef.current.innerText = new Date(event.date).toLocaleDateString(undefined, DATE_OPTIONS);
-  }, [event]);
-
   return (
     <div
       className="relative flex h-[12rem] cursor-pointer select-none flex-col rounded-md border-2 border-gray-300 bg-white shadow-lg transition-all duration-150 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:border-gray-600 hover:shadow-2xl"
@@ -72,7 +52,7 @@ export default function EventCard({ event }: Props) {
           <tbody>
             <tr>
               <td className="text-center"><FontAwesomeIcon icon={faClock} /></td>
-              <td ref={dateRef}></td>
+              <td><EventDate date={event.date}/></td>
             </tr>
             <tr>
               <td className="text-center"><FontAwesomeIcon icon={faLocationDot} /></td>

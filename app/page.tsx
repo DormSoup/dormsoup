@@ -19,8 +19,8 @@ export default async function Home() {
   const session = getAppServerSession();
 
   return (
-    <main className="flex min-h-screen flex-col items-center">
-      <TagsPanel />
+    <main className="flex flex-col items-center">
+      {/* <TagsPanel /> */}
       <div className="w-full">
         {session === null ? (
           <div className="mt-8 space-y-2 rounded-xl bg-white p-6 shadow-2xl">
@@ -40,9 +40,12 @@ export default async function Home() {
             </p>
           </div>
         ) : (
-          <>
+          <div className="mx-auto flex flex-row gap-8 items-start">
+            <div className="hidden max-w-sm pl-auto md:block">
+              <TagsPanel />
+            </div>
             <EventList />
-          </>
+          </div>
         )}
       </div>
       <EventDetail />

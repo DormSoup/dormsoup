@@ -29,7 +29,7 @@ export default function EventList() {
   };
 
   return (
-    <div>
+    <div className="max-w-3xl">
       <div className="flex flex-row items-center">
         <Switch
           checked={displayPastEvents}

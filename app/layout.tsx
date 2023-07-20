@@ -24,11 +24,11 @@ export const metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={`${plexSans.variable} bg-gray-200 font-sans`}>
+      <body className={`${plexSans.variable} bg-gray-200 font-sans relative min-h-screen`}>
         <NextAuthProvider>
           <NavBar />
-          <div className="mx-auto max-w-3xl px-4 pt-[5rem]">{children}</div>
-          <div className="mx-auto mt-4 w-full border-t-2 border-gray-300 bg-white py-4 text-center text-gray-800">
+          <div className="mx-auto px-4 pt-[5rem] pb-[5rem]">{children}</div>
+          <div className="absolute bottom-0 mx-auto mt-4 w-full border-t-2 border-gray-300 bg-white py-4 text-center text-gray-800">
             Made with ❤️ by MIT DormSoup Project.{"       "}
             <a href="https://accessibility.mit.edu/" className="pl-4 underline">
               Accessibility

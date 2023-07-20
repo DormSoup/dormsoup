@@ -2,11 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
-ds-fa-regular: {
+ds-fa-regular {
   font-family: "FontAwesome6Pro-Regular";
 }
 
-ds-fa-solid: {
+ds-fa-solid {
   font-family: "FontAwesome6Pro-Solid";
 }
 

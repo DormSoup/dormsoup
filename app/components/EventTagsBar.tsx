@@ -153,7 +153,7 @@ export const TagsPanel = () => {
       .map((tag) => <Tag key={tag} tag={tag} shape="capsule" />);
 
   return (
-    <div className="flex-col rounded-xl bg-white p-4 shadow-xl">
+    <div className="flex-col rounded-xl bg-white p-4 shadow-xl hidden md:block">
       <div className="flex justify-between">
         <div className="text-2xl">
           {" "}
