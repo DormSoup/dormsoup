@@ -5,7 +5,7 @@ import { IBM_Plex_Sans } from "next/font/google";
 
 import NavBar from "./components/NavBar";
 import "./globals.css";
-import { NextAuthProvider } from "./providers";
+import { DormSoupProvider } from "./providers";
 
 config.autoAddCss = false;
 
@@ -21,11 +21,17 @@ export const metadata = {
   description: "Project DormSoup beta testing..."
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+  modal
+}: {
+  children: React.ReactNode;
+  modal?: React.ReactNode;
+}) {
   return (
     <html lang="en">
       <body className={`${plexSans.variable} bg-gray-200 font-sans`}>
-        <NextAuthProvider>
+        <DormSoupProvider>
           <NavBar />
           <div className="mx-auto max-w-3xl px-4 pt-[5rem]">{children}</div>
           <div className="mx-auto mt-4 w-full border-t-2 border-gray-300 bg-white py-4 text-center text-gray-800">
@@ -34,7 +40,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               Accessibility
             </a>
           </div>
-        </NextAuthProvider>
+          {modal}
+        </DormSoupProvider>
       </body>
     </html>
   );

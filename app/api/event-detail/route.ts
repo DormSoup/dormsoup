@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { getAppServerSession } from "../../auth";
 import { prisma } from "../db";
 
-async function getEventDetail(id: number) {
+export async function getEventDetail(id: number) {
   return await prisma.event.findUnique({
     where: { id },
     include: {

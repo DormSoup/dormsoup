@@ -5,6 +5,7 @@ import { faHeart as faHeartSolid } from "@fortawesome/free-solid-svg-icons";
 import { faLocationDot } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
+import Link from "next/link";
 import { useEffect, useRef } from "react";
 
 import { SerializableEventWithTags } from "../EventType";
@@ -41,11 +42,9 @@ export default function EventCard({ event }: Props) {
   }, [event]);
 
   return (
-    <div
+    <Link
       className="relative flex h-[12rem] cursor-pointer select-none flex-col rounded-md border-2 border-gray-300 bg-white shadow-lg transition-all duration-150 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:border-gray-600 hover:shadow-2xl"
-      onClick={() =>
-        dispatch(setCurrentEvent({ ...event, date: new Date(event.date).toISOString() }))
-      }
+      href={`/event-detail/${event.id}`}
     >
       <div className="flex justify-between">
         <div className="scale-125 pl-2 pt-1 text-red-500">
@@ -85,7 +84,7 @@ export default function EventCard({ event }: Props) {
           </tbody>
         </table>
       </div>
-    </div>
+    </Link>
   );
 }
 
