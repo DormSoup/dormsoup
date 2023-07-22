@@ -153,7 +153,7 @@ export const FilterPanel = () => {
       .map((tag) => <Tag key={tag} tag={tag} shape="capsule" />);
 
   return (
-    <div className="hidden flex-col rounded-xl bg-white p-4 shadow-xl md:block">
+    <div className="flex flex-col">
       <div className="flex justify-between">
         <div className="text-2xl">
           {" "}

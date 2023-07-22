@@ -40,8 +40,8 @@ export default async function Home() {
             </p>
           </div>
         ) : (
-          <div className="mx-auto flex flex-row items-start gap-8">
-            <div className="pl-auto hidden max-w-sm lg:block">
+          <div className="mx-auto flex flex-row justify-center gap-4 lg:items-start lg:justify-start">
+            <div className="hidden rounded-xl bg-white p-4 shadow-xl lg:block">
               <FilterPanel />
             </div>
             <CompactEventList />

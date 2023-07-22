@@ -18,24 +18,18 @@ export default function Modal() {
   const modal = useSelector((state: RootState) => state.modal.modal);
   const dispatch = useAppDispatch();
   const show = modal !== undefined;
+  const fullWidth = show && modal.type === "event-detail";
 
   const children =
     modal === undefined ? null : modal.type === "event-detail" ? (
       <EventDetail event={modal.event} />
     ) : (
-      <FilterPanel />
+      <div className="px-4 pb-4">
+        <FilterPanel />
+      </div>
     );
 
-  const title =
-    modal?.type !== "event-detail" ? null : (
-      <span>
-        <span> {modal.event.title} </span>
-        <span>
-          {" "}
-          <Likes event={modal.event} />
-        </span>
-      </span>
-    );
+  const title = modal?.type !== "event-detail" ? null : modal.event.title;
 
   return (
     <Transition
@@ -49,14 +43,15 @@ export default function Modal() {
     >
       <div
         className={
-          "fixed bottom-0 left-0 right-0 top-0 z-50 flex bg-slate-950/50 transition duration-150 ease-in-out " +
+          "fixed bottom-0 left-0 right-0 top-0 z-50 flex flex-col items-center bg-slate-950/50 transition duration-150 ease-in-out " +
           (!show ? "pointer-events-none" : "pointer-events-auto")
         }
         onClick={() => dispatch(clearModal())}
       >
         <div
           className={
-            "relative m-auto flex max-h-shorter-screen min-h-min w-full max-w-2xl flex-col rounded-md bg-white shadow-lg"
+            "relative m-auto flex max-h-shorter-screen max-w-2xl flex-col rounded-md bg-white shadow-lg " +
+            (fullWidth ? "w-full" : "")
           }
           onClick={(event) => event.stopPropagation()}
         >

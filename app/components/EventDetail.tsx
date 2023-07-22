@@ -1,14 +1,14 @@
 "use client";
 
-import { faCalendar, faClock, faHeart, faUser } from "@fortawesome/free-regular-svg-icons";
+import { faCalendar, faClock, faHeart } from "@fortawesome/free-regular-svg-icons";
 import { faHeart as faHeartSolid } from "@fortawesome/free-solid-svg-icons";
-import { faLocation, faLocationDot, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { faLocationDot } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Transition } from "@headlessui/react";
 
 import { atcb_action } from "add-to-calendar-button";
 import IFrameResizer from "iframe-resizer-react";
 import { URLSearchParams } from "next/dist/compiled/@edge-runtime/primitives/url";
+import Image from "next/image";
 import React, { MouseEventHandler, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
@@ -32,7 +32,7 @@ export default function EventDetail({ event }: { event: SerializableEvent }) {
   }, [event]);
 
   return (
-    <div className="flex w-full grow flex-col">
+    <>
       <div className="flex flex-none flex-row gap-2 px-2">
         <div>
           <FontAwesomeIcon icon={faClock} />
@@ -46,7 +46,16 @@ export default function EventDetail({ event }: { event: SerializableEvent }) {
         </div>
       </div>
       {eventDetail === undefined || eventDetail === null ? (
-        <div className="flex-none">Loading...</div>
+        <div className="flex-none">
+          <Image
+            src="/loading.gif"
+            alt="Loading animation"
+            width={100}
+            height={100}
+            className="mx-auto w-80"
+          ></Image>
+          <div className="mt-[-4rem] text-center text-5xl font-bold mb-8">Loading...</div>
+        </div>
       ) : (
         <>
           <div className="m-1 flex-none border-b-2 border-gray-300 p-1 text-xs text-gray-500">
@@ -80,16 +89,16 @@ export default function EventDetail({ event }: { event: SerializableEvent }) {
               </tbody>
             </table>
           </div>
-          <BottomBar event={event} eventDetail={eventDetail}></BottomBar>
           <IFrameResizer
-            className="w-full grow basis-0"
+            className="min-h-0 w-full shrink"
             srcDoc={prepareEmailBody(eventDetail.fromEmail?.body)}
             checkOrigin={false}
             scrolling={true}
           ></IFrameResizer>
+          <BottomBar event={event} eventDetail={eventDetail}></BottomBar>
         </>
       )}
-    </div>
+    </>
   );
 }
 
