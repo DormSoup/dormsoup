@@ -3,6 +3,9 @@ import "@fortawesome/fontawesome-svg-core/styles.css";
 
 import { IBM_Plex_Sans } from "next/font/google";
 
+import BottomBar from "./components/BottomBar";
+import FilterButton from "./components/FilterButton";
+import Modal from "./components/Modal";
 import NavBar from "./components/NavBar";
 import "./globals.css";
 import { NextAuthProvider } from "./providers";
@@ -24,16 +27,13 @@ export const metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={`${plexSans.variable} bg-gray-200 font-sans relative min-h-screen`}>
+      <body className={`${plexSans.variable} relative min-h-screen bg-gray-200 font-sans`}>
         <NextAuthProvider>
           <NavBar />
-          <div className="mx-auto px-4 pt-[5rem] pb-[5rem]">{children}</div>
-          <div className="absolute bottom-0 mx-auto mt-4 w-full border-t-2 border-gray-300 bg-white py-4 text-center text-gray-800">
-            Made with ❤️ by MIT DormSoup Project.{"       "}
-            <a href="https://accessibility.mit.edu/" className="pl-4 underline">
-              Accessibility
-            </a>
-          </div>
+          <FilterButton />
+          <Modal />
+          <div className="mx-auto px-4 pb-[5rem] pt-[5rem]">{children}</div>
+          <BottomBar />
         </NextAuthProvider>
       </body>
     </html>

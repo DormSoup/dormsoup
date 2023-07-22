@@ -14,20 +14,15 @@ import { useSelector } from "react-redux";
 
 import { SerializableEvent } from "../EventType";
 import { GetEventDetailResponse } from "../api/event-detail/route";
-import { clearCurrentEvent } from "../redux/eventDetailSlice";
 import { likeEvent } from "../redux/searchSlice";
 import { RootState, useAppDispatch } from "../redux/store";
 
 import EventDate from "./EventDate";
 import GrayOutIfUnknown from "./GrayOutUnknown";
 
-export default function EventDetail() {
-  const event = useSelector((state: RootState) => state.eventDetail.event);
+export default function EventDetail({ event }: { event: SerializableEvent }) {
   const dispatch = useAppDispatch();
   const [eventDetail, setEventDetail] = useState<GetEventDetailResponse | undefined>(undefined);
-  const handleCloseClick = (event: React.MouseEvent<Element, MouseEvent>) => {
-    dispatch(clearCurrentEvent());
-  };
   useEffect(() => {
     setEventDetail(undefined);
     if (event === undefined) return;
@@ -36,104 +31,66 @@ export default function EventDetail() {
       .then((response: GetEventDetailResponse) => setEventDetail(response));
   }, [event]);
 
-  const modalContent = (
-    <Transition
-      show={event !== undefined}
-      enter="transition-all duration-75"
-      enterFrom="opacity-0"
-      enterTo="opacity-100"
-      leave="transition-all duration-150"
-      leaveFrom="opacity-100"
-      leaveTo="opacity-0"
-    >
-      <div
-        className={
-          "fixed bottom-0 left-0 right-0 top-0 z-50 flex bg-slate-950/50 transition duration-150 ease-in-out " +
-          (event === undefined ? "pointer-events-none" : "pointer-events-auto")
-        }
-        onClick={handleCloseClick}
-      >
-        <div
-          className={
-            "relative m-auto flex max-h-shorter-screen min-h-min w-full max-w-2xl flex-col rounded-md bg-white shadow-lg"
-          }
-          onClick={(event) => {
-            event.stopPropagation();
-          }}
-        >
-          <div className="flex-none p-2">
-            <div className="flex flex-row">
-              <div className="grow text-lg font-extrabold">{event?.title}</div>
-              <a
-                onClick={handleCloseClick}
-                className="block h-6 w-6 flex-none rounded-full text-center hover:cursor-pointer hover:bg-logo-red hover:text-white"
-              >
-                <FontAwesomeIcon icon={faXmark} />
-              </a>
-            </div>
-          </div>
-          <div className="flex flex-none flex-row gap-2 px-2">
-            <div>
-              <FontAwesomeIcon icon={faClock} />
-              {"  "}
-              <EventDate date={event?.date!!} />
-            </div>
-            <div>
-              <FontAwesomeIcon icon={faLocationDot} />
-              {"  "}
-              <GrayOutIfUnknown inline={true} content={event?.location ?? ""} />
-            </div>
-          </div>
-          {eventDetail === undefined ? (
-            <div className="flex-none">Loading...</div>
-          ) : (
-            <>
-              <div className="m-1 flex-none border-b-2 border-gray-300 p-1 text-xs text-gray-500">
-                <table className="w-full table-fixed">
-                  <colgroup>
-                    <col className="w-32"></col>
-                    <col className="truncate"></col>
-                  </colgroup>
-                  <tbody>
-                    <tr>
-                      <td>Original subject: </td>
-                      <td>{eventDetail?.fromEmail?.subject}</td>
-                    </tr>
-                    <tr>
-                      <td>From: </td>
-                      <td>
-                        {eventDetail?.fromEmail?.sender.name} (
-                        <a
-                          className="hover:text-sky-500"
-                          href={"mailto:" + eventDetail?.fromEmail?.sender.email}
-                        >
-                          {eventDetail?.fromEmail?.sender.email}
-                        </a>
-                        )
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>Processed by: </td>
-                      <td>{eventDetail?.fromEmail?.modelName}</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-              <IFrameResizer
-                className="p-1"
-                srcDoc={prepareEmailBody(eventDetail?.fromEmail?.body)}
-                checkOrigin={false}
-                scrolling={true}
-              ></IFrameResizer>
-            </>
-          )}
-          <BottomBar event={event} eventDetail={eventDetail}></BottomBar>
+  return (
+    <div className="flex w-full grow flex-col">
+      <div className="flex flex-none flex-row gap-2 px-2">
+        <div>
+          <FontAwesomeIcon icon={faClock} />
+          {"  "}
+          <EventDate date={event.date} />
+        </div>
+        <div>
+          <FontAwesomeIcon icon={faLocationDot} />
+          {"  "}
+          <GrayOutIfUnknown inline={true} content={eventDetail?.location ?? ""} />
         </div>
       </div>
-    </Transition>
+      {eventDetail === undefined || eventDetail === null ? (
+        <div className="flex-none">Loading...</div>
+      ) : (
+        <>
+          <div className="m-1 flex-none border-b-2 border-gray-300 p-1 text-xs text-gray-500">
+            <table className="w-full table-fixed">
+              <colgroup>
+                <col className="w-32"></col>
+                <col className="truncate"></col>
+              </colgroup>
+              <tbody>
+                <tr>
+                  <td>Original subject: </td>
+                  <td>{eventDetail.fromEmail?.subject}</td>
+                </tr>
+                <tr>
+                  <td>From: </td>
+                  <td>
+                    {eventDetail.fromEmail?.sender.name} (
+                    <a
+                      className="hover:text-sky-500"
+                      href={"mailto:" + eventDetail?.fromEmail?.sender.email}
+                    >
+                      {eventDetail.fromEmail?.sender.email}
+                    </a>
+                    )
+                  </td>
+                </tr>
+                <tr>
+                  <td>Processed by: </td>
+                  <td>{eventDetail.fromEmail?.modelName}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <BottomBar event={event} eventDetail={eventDetail}></BottomBar>
+          <IFrameResizer
+            className="w-full grow basis-0"
+            srcDoc={prepareEmailBody(eventDetail.fromEmail?.body)}
+            checkOrigin={false}
+            scrolling={true}
+          ></IFrameResizer>
+        </>
+      )}
+    </div>
   );
-
-  return modalContent;
 }
 
 const BottomBar = ({

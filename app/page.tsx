@@ -3,9 +3,8 @@ import Link from "next/link";
 
 import { getAppServerSession } from "./auth";
 import CompactEventList from "./components/CompactEventList";
-import EventDetail from "./components/EventDetail";
 import EventList from "./components/EventList";
-import { TagsPanel } from "./components/EventTagsBar";
+import { FilterPanel } from "./components/EventTagsBar";
 
 export const dynamic = "force-dynamic";
 
@@ -43,13 +42,12 @@ export default async function Home() {
         ) : (
           <div className="mx-auto flex flex-row items-start gap-8">
             <div className="pl-auto hidden max-w-sm lg:block">
-              <TagsPanel />
+              <FilterPanel />
             </div>
             <CompactEventList />
           </div>
         )}
       </div>
-      <EventDetail />
     </main>
   );
 }

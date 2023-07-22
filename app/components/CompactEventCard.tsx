@@ -5,7 +5,7 @@ import { faLocation, faLocationDot } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { SerializableEventWithTags } from "../EventType";
-import { setCurrentEvent } from "../redux/eventDetailSlice";
+import { setEventDetailModal } from "../redux/modalSlice";
 import { useAppDispatch } from "../redux/store";
 
 import EventDate from "./EventDate";
@@ -22,9 +22,7 @@ export default function CompactEventCard({ event }: Props) {
   return (
     <div
       className="relative flex cursor-pointer select-none items-center rounded-md border-2 border-gray-300 bg-white shadow-lg transition-all duration-150 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:border-gray-600 hover:shadow-2xl"
-      onClick={() =>
-        dispatch(setCurrentEvent({ ...event, date: new Date(event.date).toISOString() }))
-      }
+      onClick={() => dispatch(setEventDetailModal(event))}
     >
       <Likes event={event} />
       <div className="flex grow justify-between px-2">

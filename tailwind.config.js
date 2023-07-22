@@ -12,6 +12,7 @@ module.exports = {
   theme: {
     colors: {
       "logo-red": "rgb(255, 0, 97)",
+      "logo-yellow": "#ffc525",
       black: colors.black,
       white: colors.white,
       gray: colors.gray,

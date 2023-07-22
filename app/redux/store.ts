@@ -4,14 +4,14 @@ import { configureStore } from "@reduxjs/toolkit";
 
 import { useDispatch } from "react-redux";
 
-import eventDetailReducer from "./eventDetailSlice";
+import modalReducer from "./modalSlice";
 import searchReducer from "./searchSlice";
 
 export const store = configureStore({
   reducer: {
-    eventDetail: eventDetailReducer,
+    modal: modalReducer,
     search: searchReducer
-  },
+  }
 });
 
 export type RootState = ReturnType<typeof store.getState>;

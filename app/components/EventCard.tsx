@@ -6,7 +6,7 @@ import { faLocationDot } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { SerializableEventWithTags } from "../EventType";
-import { setCurrentEvent } from "../redux/eventDetailSlice";
+import { setEventDetailModal } from "../redux/modalSlice";
 import { likeEvent } from "../redux/searchSlice";
 import { useAppDispatch } from "../redux/store";
 
@@ -24,9 +24,7 @@ export default function EventCard({ event }: Props) {
   return (
     <div
       className="relative flex h-[12rem] cursor-pointer select-none flex-col rounded-md border-2 border-gray-300 bg-white shadow-lg transition-all duration-150 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:border-gray-600 hover:shadow-2xl"
-      onClick={() =>
-        dispatch(setCurrentEvent({ ...event, date: new Date(event.date).toISOString() }))
-      }
+      onClick={() => dispatch(setEventDetailModal(event))}
     >
       <div className="flex justify-between">
         <Likes event={event} />

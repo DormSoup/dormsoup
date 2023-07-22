@@ -7,7 +7,6 @@ import { GetEventTextSearchResponse } from "../api/event-text-search/route";
 import { GetEventsResponse } from "../api/events/route";
 import { LikeEventResponse } from "../api/like-event/route";
 
-import { setCurrentEvent } from "./eventDetailSlice";
 import { RootState } from "./store";
 
 export type SearchState = {
@@ -123,7 +122,6 @@ export const searchSlice = createSlice({
     setSearchKeywordInternal: (state, action: PayloadAction<string>) => {
       state.keyword = action.payload;
       if (action.payload === "") updateDateToEvents(state);
-      else state.noEvents = false; // And wait for the async thunk to finish
     },
     setDisplayPastEventsInternal: (state, action: PayloadAction<boolean>) => {
       state.displayPastEvents = action.payload;
