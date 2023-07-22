@@ -2,6 +2,7 @@ import { headers } from "next/headers";
 import Link from "next/link";
 
 import { getAppServerSession } from "./auth";
+import CompactEventList from "./components/CompactEventList";
 import EventDetail from "./components/EventDetail";
 import EventList from "./components/EventList";
 import { TagsPanel } from "./components/EventTagsBar";
@@ -23,7 +24,7 @@ export default async function Home() {
       {/* <TagsPanel /> */}
       <div className="w-full">
         {session === null ? (
-          <div className="mt-8 space-y-2 rounded-xl bg-white p-6 shadow-2xl">
+          <div className="mx-auto mt-8 max-w-3xl space-y-2 rounded-xl bg-white p-6 shadow-2xl">
             <p>
               Welcome to <DormSoupName />, a campus-wide event catalog platform backed by large
               language models! <DormSoupName /> extracts events from dormspams, tags them, and
@@ -40,11 +41,11 @@ export default async function Home() {
             </p>
           </div>
         ) : (
-          <div className="mx-auto flex flex-row gap-8 items-start">
-            <div className="hidden max-w-sm pl-auto md:block">
+          <div className="mx-auto flex flex-row items-start gap-8">
+            <div className="pl-auto hidden max-w-sm lg:block">
               <TagsPanel />
             </div>
-            <EventList />
+            <CompactEventList />
           </div>
         )}
       </div>

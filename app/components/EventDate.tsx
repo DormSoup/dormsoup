@@ -7,8 +7,11 @@ const DATE_OPTIONS: Intl.DateTimeFormatOptions = {
   hour12: true, // "PM"
   timeZone: "UTC"
 };
+("12:00 AM");
 
 export default function EventDate({ date }: { date: string }) {
-  const formatted = new Date(date).toLocaleString("en-US", DATE_OPTIONS).replaceAll(", 12:00 AM", "");
-  return <>{formatted}</> 
+  const formatted = new Date(date)
+    .toLocaleString("en-US", DATE_OPTIONS)
+    .replaceAll(/,\s+12:00\s+AM/giu, "");
+  return <>{formatted}</>;
 }

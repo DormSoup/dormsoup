@@ -15,6 +15,7 @@ export type SearchState = {
   filters: string[];
 
   displayPastEvents: boolean;
+  noEvents: boolean;
   eventIdsWithMatchingTexts: number[];
   events: SerializableEventWithTags[];
   dateToEvents: { [key: string]: SerializableEventWithTags[] };
@@ -26,6 +27,7 @@ const initialState: SearchState = {
 
   displayPastEvents: false,
   eventIdsWithMatchingTexts: [],
+  noEvents: false,
   events: [],
   dateToEvents: {}
 };
@@ -33,8 +35,8 @@ const initialState: SearchState = {
 export const setSearchKeyword = createAsyncThunk(
   "search/setSearchKeyword",
   async (keyword: string, thunkAPI) => {
-    thunkAPI.dispatch(setSearchKeywordInternal(keyword));
     thunkAPI.dispatch(setEventIdsWithMatchingTexts([]));
+    thunkAPI.dispatch(setSearchKeywordInternal(keyword));
     if (keyword === "") return;
     const events: GetEventTextSearchResponse = await (
       await fetch("/api/event-text-search?" + new URLSearchParams({ keyword }))
@@ -52,8 +54,8 @@ export const setDisplayPastEvents = createAsyncThunk(
     const params = displayPastEvents
       ? new URLSearchParams({ order: "desc", until: new Date().toISOString() })
       : new URLSearchParams({ order: "asc", since: new Date().toISOString() });
-    thunkAPI.dispatch(setDisplayPastEventsInternal(displayPastEvents));
     thunkAPI.dispatch(setEvents([]));
+    thunkAPI.dispatch(setDisplayPastEventsInternal(displayPastEvents));
     const events: GetEventsResponse = await (await fetch("/api/events?" + params)).json();
     thunkAPI.dispatch(
       setEvents(
@@ -94,7 +96,9 @@ export const likeEvent = createAsyncThunk("search/likeEvent", async (eventId: nu
 function updateDateToEvents(state: WritableDraft<SearchState>) {
   const dateToEvents: { [key: string]: SerializableEventWithTags[] } = {};
   const filteredEvents = state.events.filter((event) => {
-    if (state.filters.length > 0 && event.tags.every((tag) => !state.filters.includes(tag)))
+    if (state.filters.includes("Liked") && !event.liked) return false;
+    const filtersExceptLike = state.filters.filter((filter) => filter !== "Liked");
+    if (filtersExceptLike.length > 0 && event.tags.every((tag) => !filtersExceptLike.includes(tag)))
       return false;
     if (state.keyword === "") return true;
     if (state.eventIdsWithMatchingTexts.includes(event.id)) return true;
@@ -102,6 +106,7 @@ function updateDateToEvents(state: WritableDraft<SearchState>) {
       content.toLowerCase().includes(state.keyword)
     );
   });
+  state.noEvents = filteredEvents.length === 0;
   for (const event of filteredEvents) {
     const formatted = new Date(event.date).toISOString().split("T")[0];
     const otherEvents = dateToEvents[formatted];
@@ -117,11 +122,13 @@ export const searchSlice = createSlice({
   reducers: {
     setSearchKeywordInternal: (state, action: PayloadAction<string>) => {
       state.keyword = action.payload;
+      if (action.payload === "") updateDateToEvents(state);
+      else state.noEvents = false; // And wait for the async thunk to finish
     },
     setDisplayPastEventsInternal: (state, action: PayloadAction<boolean>) => {
       state.displayPastEvents = action.payload;
+      state.noEvents = false;
     },
-
     setEventIdsWithMatchingTexts: (state, action: PayloadAction<number[]>) => {
       state.eventIdsWithMatchingTexts = action.payload;
       updateDateToEvents(state);

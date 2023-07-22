@@ -2,15 +2,15 @@ const LLM_UNKNOWN_VALUE = "unknown";
 const DISPLAY_UNKNOWN_VALUE = "Unknown";
 
 type Props = {
-  inline: boolean,
-  content: string
+  inline: boolean;
+  content: string;
 };
 
 export default function GrayOutIfUnknown({ content, inline }: Props) {
-  const inlineClass = inline ? " inline" : "";
+  const inlineClass = inline ? " inline line-clamp-1 overflow-hidden" : "";
   return content.trim().toLowerCase() === LLM_UNKNOWN_VALUE ? (
-    <div className={" text-gray-500" + inlineClass}> {DISPLAY_UNKNOWN_VALUE} </div>
+    <span className={" text-gray-500" + inlineClass}> {DISPLAY_UNKNOWN_VALUE} </span>
   ) : (
-    <div className={"truncate" + inlineClass}> {content} </div>
+    <span className={"truncate" + inlineClass}> {content} </span>
   );
 }

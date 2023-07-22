@@ -13,6 +13,7 @@ import { useAppDispatch } from "../redux/store";
 import EventDate from "./EventDate";
 import TagsBar from "./EventTagsBar";
 import GrayOutIfUnknown from "./GrayOutUnknown";
+import Likes from "./Likes";
 
 type Props = {
   event: SerializableEventWithTags;
@@ -28,16 +29,7 @@ export default function EventCard({ event }: Props) {
       }
     >
       <div className="flex justify-between">
-        <div className="scale-125 pl-2 pt-1 text-red-500">
-          <FontAwesomeIcon
-            icon={event.liked ? faHeartSolid : faHeart}
-            onClick={(clickEvent) => {
-              dispatch(likeEvent(event.id));
-              clickEvent.stopPropagation();
-            }}
-          />
-          &nbsp; {event.likes}
-        </div>
+        <Likes event={event} />
         <TagsBar tags={event.tags.map((tag) => tag)} />
       </div>
       <div className="line-clamp-3 px-2 pt-2 text-lg font-extrabold">{event.title}</div>
