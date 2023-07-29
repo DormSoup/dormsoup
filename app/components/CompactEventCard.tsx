@@ -9,7 +9,7 @@ import { setEventDetailModal } from "../redux/modalSlice";
 import { useAppDispatch } from "../redux/store";
 
 import EventDate from "./EventDate";
-import TagsBar from "./EventTagsBar";
+import TagsBar, { Tag, sortTags } from "./EventTagsBar";
 import GrayOutIfUnknown from "./GrayOutUnknown";
 import Likes from "./Likes";
 
@@ -25,31 +25,31 @@ export default function CompactEventCard({ event }: Props) {
       onClick={() => dispatch(setEventDetailModal(event))}
     >
       <Likes event={event} />
-      <div className="flex grow justify-between px-2">
-        <div className="flex flex-col px-1">
-          <div className="line-clamp-1 w-full overflow-hidden pt-0.5 text-lg font-extrabold">
-            {event.title}
-          </div>
-          <div className="pb-0.5 text-xs">
-            <span className="inline-block min-w-[9rem]">
-              <span>
-                <FontAwesomeIcon icon={faClock} />
-              </span>
-              <span className="inline-block w-1" />
-              <span>
-                <EventDate date={event.date} />
-              </span>
+      <div className="flex-1 px-2 w-0">
+        <div className="line-clamp-1 w-full overflow-hidden pt-0.5 text-lg font-extrabold">
+          {event.title}
+        </div>
+        <div className="whitespace-nowrap pb-0.5 text-xs truncate">
+          <span className="inline-block min-w-[9rem]">
+            <span>
+              <FontAwesomeIcon icon={faClock} />
             </span>
             <span className="inline-block w-1" />
             <span>
-              <FontAwesomeIcon icon={faLocationDot} />
+              <EventDate date={event.date} />
             </span>
-            <span>
-              <GrayOutIfUnknown inline={true} content={normalizeLocation(event.location)} />
-            </span>
-          </div>
+          </span>
+          <span className="inline-block w-1" />
+          <span>
+            <FontAwesomeIcon icon={faLocationDot} />
+          </span>
+          <span className="truncate">
+            <GrayOutIfUnknown inline={true} content={normalizeLocation(event.location)} />
+          </span>
         </div>
-        <TagsBar tags={event.tags.map((tag) => tag)} />
+      </div>
+      <div className="flex-none self-start">
+        <TagsBar tags={event.tags.slice(0)} />
       </div>
     </div>
   );

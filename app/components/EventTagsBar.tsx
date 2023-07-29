@@ -56,10 +56,11 @@ function getTagPriority(tag: string) {
 
 type TagProp = { tag: string; shape: "bookmark" | "capsule" };
 
-const Tag = ({ tag, shape }: TagProp) => {
+export const Tag = ({ tag, shape }: TagProp) => {
   const dispatch = useDispatch();
   const filters = useSelector((state: RootState) => state.search.filters);
   const inverted = filters.includes(tag);
+  const [justInverted, setJustInverted] = useState(false);
 
   const classOuter = shape === "bookmark" ? styles.tagOuter : styles.tagOuterCapsule;
   const classInner = shape === "bookmark" ? styles.tagInner : styles.tagInnerCapsule;
@@ -73,6 +74,7 @@ const Tag = ({ tag, shape }: TagProp) => {
   const onClick: MouseEventHandler<HTMLDivElement> = (event) => {
     dispatch(toggleSearchFilter(tag));
     if (tag === "Free Food") dispatch(toggleSearchFilter("Food"));
+    setJustInverted(true);
     event.stopPropagation();
   };
 
@@ -88,9 +90,10 @@ const Tag = ({ tag, shape }: TagProp) => {
   return (
     <div
       className={`${classOuter} ${
-        inverted ? styles.tagActivated : styles.tagInactivated
+        inverted !== justInverted ? styles.tagActivated : styles.tagInactivated
       } cursor-pointer select-none hover:-translate-y-0.5`}
       onClick={onClick}
+      onMouseLeave={() => setJustInverted(false)}
       style={{ ["--theme-color" as any]: color }}
       title={tag}
     >
@@ -110,14 +113,17 @@ const Tag = ({ tag, shape }: TagProp) => {
   );
 };
 
-type TagBarProp = { tags: string[] };
-
-const TagsBar = ({ tags }: TagBarProp) => {
+export function sortTags(tags: string[]) {
   tags.sort((a, b) => {
     const diff = getTagPriority(a) - getTagPriority(b);
     if (diff !== 0) return diff;
     return a < b ? -1 : a === b ? 0 : 1;
   });
+  return tags;
+}
+
+const TagsBar = ({ tags }: { tags: string[] }) => {
+  tags = sortTags(tags);
   return (
     <div className="relative flex flex-row justify-end gap-3 px-4">
       {tags.map((tag) => (
