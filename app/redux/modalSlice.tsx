@@ -11,6 +11,10 @@ export type EventDetailState = {
       }
     | {
         type: "filter-panel";
+      }
+    | {
+        type: "edit-event";
+        event: SerializableEvent;
       };
 };
 
@@ -29,11 +33,18 @@ export const modalSlice = createSlice({
     setFilterPanelModal: (state) => {
       state.modal = { type: "filter-panel" };
     },
+    setEditEventModal: (state, action: PayloadAction<SerializableEvent>) => {
+      state.modal = {
+        type: "edit-event",
+        event: action.payload
+      };
+    },
     clearModal: (state) => {
       state.modal = undefined;
     }
   }
 });
 
-export const { setEventDetailModal, setFilterPanelModal, clearModal } = modalSlice.actions;
+export const { setEventDetailModal, setFilterPanelModal, setEditEventModal, clearModal } =
+  modalSlice.actions;
 export default modalSlice.reducer;

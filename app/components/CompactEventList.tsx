@@ -1,7 +1,5 @@
 "use client";
 
-import { Switch } from "@headlessui/react";
-
 import Image from "next/image";
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
@@ -10,6 +8,7 @@ import { setDisplayPastEvents } from "../redux/searchSlice";
 import { RootState, useAppDispatch } from "../redux/store";
 
 import CompactEventCard from "./CompactEventCard";
+import Switch from "./Switch";
 
 export default function CompactEventList() {
   const displayPastEvents = useSelector((state: RootState) => state.search.displayPastEvents);
@@ -30,22 +29,13 @@ export default function CompactEventList() {
   };
 
   return (
-    <div className="max-w-3xl w-full">
+    <div className="w-full max-w-3xl">
       <div className="flex flex-row items-center">
         <Switch
           checked={displayPastEvents}
           onChange={() => dispatch(setDisplayPastEvents(!displayPastEvents))}
-          className={`${
-            displayPastEvents ? "bg-logo-red" : "bg-gray-300"
-          } relative box-content inline-flex h-6 w-11 items-center rounded-full`}
-        >
-          <span className="sr-only">Show past events</span>
-          <span
-            className={`${
-              displayPastEvents ? "translate-x-6" : "translate-x-1"
-            } inline-block h-4 w-4 transform rounded-full bg-white transition`}
-          />
-        </Switch>
+          text="Show Past Events"
+        />
         <span className="ml-2 h-full align-text-top">Show past events</span>
       </div>
       {uniqueDates.length === 0 ? (
@@ -71,7 +61,7 @@ export default function CompactEventList() {
             </div>
             <div className="flex-rows gap-4">
               {dateToEvents[date]?.map((event) => (
-                <CompactEventCard event={event} key={event.id}></CompactEventCard>
+                <CompactEventCard event={event} key={event.id} editable={true}></CompactEventCard>
               ))}
             </div>
           </div>

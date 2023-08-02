@@ -11,7 +11,7 @@ import { useAppDispatch } from "../redux/store";
 export default function Likes({ event }: { event: SerializableEvent }) {
   const dispatch = useAppDispatch();
   return (
-    <div className="scale-110 whitespace-nowrap pl-2 pt-1 text-red-500">
+    <div className="scale-110 whitespace-nowrap pl-2 pt-1 text-red-500 transition-all duration-150 hover:scale-125">
       <FontAwesomeIcon
         icon={event.liked ? faHeartSolid : faHeart}
         onClick={(clickEvent) => {

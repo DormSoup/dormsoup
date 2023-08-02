@@ -1,11 +1,11 @@
 "use client";
 
 import { faClock, faHeart, faUser } from "@fortawesome/free-regular-svg-icons";
-import { faLocation, faLocationDot } from "@fortawesome/free-solid-svg-icons";
+import { faLocation, faLocationDot, faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { SerializableEventWithTags } from "../EventType";
-import { setEventDetailModal } from "../redux/modalSlice";
+import { setEditEventModal, setEventDetailModal } from "../redux/modalSlice";
 import { useAppDispatch } from "../redux/store";
 
 import EventDate from "./EventDate";
@@ -15,9 +15,10 @@ import Likes from "./Likes";
 
 type Props = {
   event: SerializableEventWithTags;
+  editable: boolean;
 };
 
-export default function CompactEventCard({ event }: Props) {
+export default function CompactEventCard({ event, editable }: Props) {
   const dispatch = useAppDispatch();
   return (
     <div
@@ -25,11 +26,22 @@ export default function CompactEventCard({ event }: Props) {
       onClick={() => dispatch(setEventDetailModal(event))}
     >
       <Likes event={event} />
-      <div className="flex-1 px-2 w-0">
+      <div className="w-0 flex-1 px-2">
         <div className="line-clamp-1 w-full overflow-hidden pt-0.5 text-lg font-extrabold">
+          {editable && (
+            <span
+              className="mr-2 inline-block transition-all duration-150 hover:-translate-y-0.5 hover:text-logo-red hover:shadow-lg"
+              onClick={(clickEvent) => {
+                dispatch(setEditEventModal(event));
+                clickEvent.stopPropagation();
+              }}
+            >
+              <FontAwesomeIcon icon={faPenToSquare} />
+            </span>
+          )}
           {event.title}
         </div>
-        <div className="whitespace-nowrap pb-0.5 text-xs truncate">
+        <div className="truncate whitespace-nowrap pb-0.5 text-xs">
           <span className="inline-block min-w-[9rem]">
             <span>
               <FontAwesomeIcon icon={faClock} />

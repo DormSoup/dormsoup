@@ -10,6 +10,7 @@ import { useSelector } from "react-redux";
 import { clearModal } from "../redux/modalSlice";
 import { RootState, useAppDispatch } from "../redux/store";
 
+import EditEventModal from "./EditEventModal";
 import EventDetail from "./EventDetail";
 import { FilterPanel } from "./EventTagsBar";
 import Likes from "./Likes";
@@ -23,13 +24,20 @@ export default function Modal() {
   const children =
     modal === undefined ? null : modal.type === "event-detail" ? (
       <EventDetail event={modal.event} />
+    ) : modal.type === "edit-event" ? (
+      <EditEventModal event={modal.event} />
     ) : (
       <div className="px-4 pb-4">
         <FilterPanel />
       </div>
     );
 
-  const title = modal?.type !== "event-detail" ? null : modal.event.title;
+  const title =
+    modal?.type === "event-detail"
+      ? modal.event.title
+      : modal?.type === "edit-event"
+      ? "Edit event"
+      : null;
 
   return (
     <Transition
