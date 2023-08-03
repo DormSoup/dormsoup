@@ -3,7 +3,7 @@
 import { faFilter } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-import { MouseEventHandler, useState } from "react";
+import { MouseEventHandler, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import { toggleSearchFilter } from "../redux/searchSlice";
@@ -54,12 +54,23 @@ function getTagPriority(tag: string) {
   return 1;
 }
 
-type TagProp = { tag: string; shape: "bookmark" | "capsule" };
+type TagProp = {
+  tag: string;
+  shape: "bookmark" | "capsule";
+  onClick?: (value: boolean) => void;
+  initialValue?: boolean;
+};
 
-export const Tag = ({ tag, shape }: TagProp) => {
+export const Tag = ({ tag, shape, onClick: handler, initialValue }: TagProp) => {
   const dispatch = useDispatch();
   const filters = useSelector((state: RootState) => state.search.filters);
-  const inverted = filters.includes(tag);
+  const [inverted, setInverted] = useState(handler ? initialValue : filters.includes(tag));
+  if (!handler) {
+    useEffect(() => {
+      setInverted(filters.includes(tag));
+    }, [filters]);
+  }
+
   const [justInverted, setJustInverted] = useState(false);
 
   const classOuter = shape === "bookmark" ? styles.tagOuter : styles.tagOuterCapsule;
@@ -72,8 +83,13 @@ export const Tag = ({ tag, shape }: TagProp) => {
   const isSvgIcon = icon.startsWith("/");
   const solidIcon = icon.replace(".svg", "-solid.svg");
   const onClick: MouseEventHandler<HTMLDivElement> = (event) => {
-    dispatch(toggleSearchFilter(tag));
-    if (tag === "Free Food") dispatch(toggleSearchFilter("Food"));
+    if (handler) {
+      handler(!inverted);
+      setInverted(!inverted);
+    } else {
+      dispatch(toggleSearchFilter(tag));
+      if (tag === "Free Food") dispatch(toggleSearchFilter("Food"));
+    }
     setJustInverted(true);
     event.stopPropagation();
   };
