@@ -3,7 +3,6 @@ import Link from "next/link";
 
 import { getAppServerSession } from "./auth";
 import CompactEventList from "./components/CompactEventList";
-import EventList from "./components/EventList";
 import { FilterPanel } from "./components/EventTagsBar";
 
 export const dynamic = "force-dynamic";
@@ -27,7 +26,7 @@ export default async function Home() {
             <p>
               Welcome to <DormSoupName />, a campus-wide event catalog platform backed by large
               language models! <DormSoupName /> extracts events from dormspams, tags them, and
-              display them cleanly in a uniform format, thus saving everyone&aposs trouble of going
+              display them cleanly in a uniform format, thus saving everyone&apos;s trouble of going
               through hundreds of emails to search for interesting events.
             </p>
             <p>
