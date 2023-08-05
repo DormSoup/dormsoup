@@ -65,11 +65,9 @@ export const Tag = ({ tag, shape, onClick: handler, initialValue }: TagProp) => 
   const dispatch = useDispatch();
   const filters = useSelector((state: RootState) => state.search.filters);
   const [inverted, setInverted] = useState(handler ? initialValue : filters.includes(tag));
-  if (!handler) {
-    useEffect(() => {
-      setInverted(filters.includes(tag));
-    }, [filters]);
-  }
+  useEffect(() => {
+    if (!handler) setInverted(filters.includes(tag));
+  }, [filters]);
 
   const [justInverted, setJustInverted] = useState(false);
 
