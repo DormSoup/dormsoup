@@ -1,6 +1,6 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
-import { SerializableEvent } from "../EventType";
+import { SerializableEvent, SerializableEventWithTags } from "../EventType";
 
 export type EventDetailState = {
   modal:
@@ -14,7 +14,7 @@ export type EventDetailState = {
       }
     | {
         type: "edit-event";
-        event: SerializableEvent;
+        event: SerializableEventWithTags;
       };
 };
 
@@ -33,7 +33,7 @@ export const modalSlice = createSlice({
     setFilterPanelModal: (state) => {
       state.modal = { type: "filter-panel" };
     },
-    setEditEventModal: (state, action: PayloadAction<SerializableEvent>) => {
+    setEditEventModal: (state, action: PayloadAction<SerializableEventWithTags>) => {
       state.modal = {
         type: "edit-event",
         event: action.payload

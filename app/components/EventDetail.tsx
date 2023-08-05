@@ -19,6 +19,7 @@ import { RootState, useAppDispatch } from "../redux/store";
 
 import EventDate from "./EventDate";
 import GrayOutIfUnknown from "./GrayOutUnknown";
+import { LikesHorizontal } from "./Likes";
 
 export default function EventDetail({ event }: { event: SerializableEvent }) {
   const dispatch = useAppDispatch();
@@ -54,7 +55,7 @@ export default function EventDetail({ event }: { event: SerializableEvent }) {
             height={100}
             className="mx-auto w-80"
           ></Image>
-          <div className="mt-[-4rem] text-center text-5xl font-bold mb-8">Loading...</div>
+          <div className="mb-8 mt-[-4rem] text-center text-5xl font-bold">Loading...</div>
         </div>
       ) : (
         <>

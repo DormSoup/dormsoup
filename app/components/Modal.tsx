@@ -42,10 +42,10 @@ export default function Modal() {
   return (
     <Transition
       show={show}
-      enter="transition-all duration-75"
+      enter="transition-all duration-300"
       enterFrom="opacity-0"
       enterTo="opacity-100"
-      leave="transition-all duration-150"
+      leave="transition-all duration-300"
       leaveFrom="opacity-100"
       leaveTo="opacity-0"
     >

@@ -11,12 +11,12 @@ async function getAllEventsRaw(since: Date, until: Date, order: "asc" | "desc") 
     select: {
       id: true,
       source: true,
-      fromEmailId: true,
       title: true,
       organizer: true,
       date: true,
       location: true,
       duration: true,
+      fromEmailId: true,
       tagsProcessedBy: true,
       tags: {
         select: { name: true }
