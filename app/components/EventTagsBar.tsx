@@ -38,7 +38,7 @@ const eventTagDisplayConfigs: { [tagName: string]: TagDisplayConfig } = {
   AI: { color: "#3C91E6", icon: "\u{e0c6}", type: "content" },
   Math: { color: "#99D5C9", icon: "\u{f68b}", type: "content" },
   Biology: { color: "#1C5D99", icon: "\u{f471}", type: "content" },
-  "Quant/Finance": { color: "#00A676", icon: "\u{0024}", type: "content" },
+  Finance: { color: "#00A676", icon: "\u{0024}", type: "content" },
   "East Asian": { color: "#FFA62B", icon: "\u{e3f7}", type: "content" },
   Religion: { color: "#6A6262", icon: "\u{f684}", type: "content" },
   Entrepreneurship: { color: "#0B5563", icon: "\u{f2b5}", type: "content" },
