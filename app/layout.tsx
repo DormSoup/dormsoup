@@ -2,6 +2,7 @@ import { config } from "@fortawesome/fontawesome-svg-core";
 import "@fortawesome/fontawesome-svg-core/styles.css";
 
 import { IBM_Plex_Sans } from "next/font/google";
+import Script from "next/script";
 
 import BottomBar from "./components/BottomBar";
 import FilterButton from "./components/FilterButton";
@@ -27,6 +28,16 @@ export const metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
+      <Script src="https://www.googletagmanager.com/gtag/js?id=G-9EZM4J8FGP" />
+      <Script id="google-analytics">
+        {`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+ 
+          gtag('config', 'G-9EZM4J8FGP');
+        `}
+      </Script>
       <body className={`${plexSans.variable} relative min-h-screen bg-gray-200 font-sans`}>
         <NextAuthProvider>
           <NavBar />
