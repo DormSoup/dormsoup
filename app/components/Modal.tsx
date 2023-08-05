@@ -42,6 +42,7 @@ export default function Modal() {
   return (
     <Transition
       show={show}
+      className="fixed z-50"
       enter="transition-all duration-300"
       enterFrom="opacity-0"
       enterTo="opacity-100"
