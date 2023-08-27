@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
 
@@ -8,6 +7,8 @@ import { setDisplayPastEvents } from "../redux/searchSlice";
 import { RootState, useAppDispatch } from "../redux/store";
 
 import CompactEventCard from "./CompactEventCard";
+import Loading from "./Loading";
+import SubscribeButton from "./SubscribeButton";
 import Switch from "./Switch";
 
 export default function CompactEventList() {
@@ -30,28 +31,22 @@ export default function CompactEventList() {
 
   return (
     <div className="w-full max-w-3xl">
-      <div className="flex flex-row items-center">
-        <Switch
-          checked={displayPastEvents}
-          onChange={() => dispatch(setDisplayPastEvents(!displayPastEvents))}
-          text="Show Past Events"
-        />
-        <span className="ml-2 h-full align-text-top">Show past events</span>
+      <div className="flex flex-row items-center justify-between">
+        <div className="flex flex-row items-center">
+          <Switch
+            checked={displayPastEvents}
+            onChange={() => dispatch(setDisplayPastEvents(!displayPastEvents))}
+            text="Show Past Events"
+          />
+          <span className="ml-2 h-full align-text-top">Show past events</span>
+        </div>
+        <SubscribeButton />
       </div>
       {uniqueDates.length === 0 ? (
         noEvents ? (
           <div className="text-3xl text-slate-400"> No events found with current filters. </div>
         ) : (
-          <>
-            <Image
-              src="/loading.gif"
-              alt="Loading animation"
-              width={100}
-              height={100}
-              className="mx-auto w-80"
-            ></Image>
-            <div className="mt-[-4rem] text-center text-5xl font-bold">Loading...</div>
-          </>
+          <Loading />
         )
       ) : (
         uniqueDates.map((date) => (
