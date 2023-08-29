@@ -8,15 +8,7 @@ const LOADING_TIPS = [
   "On mobile view, click the yellow button on the bottom right open the filter panel"
 ];
 
-const Loading = () => {
-  // const [randomNumber, setRandomNumber] = useState(0);
-
-  // useEffect(() => {
-  //   // const rand = Math.floor(Math.random() * LOADING_TIPS.length);
-  //   const rand = new Date().getMinutes() % LOADING_TIPS.length;
-  //   setRandomNumber(rand);
-  // }, []);
-
+const Loading = ({ randomNumber }: { randomNumber: number }) => {
   return (
     <>
       <Image
@@ -27,7 +19,9 @@ const Loading = () => {
         className="mx-auto w-80"
       ></Image>
       <div className="mt-[-4rem] text-center text-5xl font-bold">Loading...</div>
-      <div className="mt-2 text-center"> Tip: {LOADING_TIPS[0]} </div>
+      <div className="mt-2 text-center">
+        Tip: {LOADING_TIPS[randomNumber % LOADING_TIPS.length]}
+      </div>
     </>
   );
 };

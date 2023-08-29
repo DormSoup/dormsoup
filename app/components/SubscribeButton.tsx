@@ -11,9 +11,7 @@ const SubscribeButton = () => {
 
   useEffect(() => {
     dispatch(getIsSubscribed());
-  }, []);
-
-  if (subscribed === undefined) return <div className="my-3"> &nbsp; </div>;
+  }, [dispatch]);
 
   return (
     <div className="flex flex-col">
@@ -31,9 +29,13 @@ const SubscribeButton = () => {
           );
         }}
       >
-        {!subscribed ? "Subscribe to" : "Unsubscribe from"} Daily DormScoop
+        {subscribed == undefined
+          ? "Loading Subscription Status..."
+          : !subscribed
+          ? "Subscribe to"
+          : "Unsubscribe from" + "Daily DormScoop"}
       </button>
-      <div className="text-sm"> Tomorrow's Events Delivered to You via Email </div>
+      <div className="text-sm"> Tomorrow&apos;s Events Delivered to You via Email </div>
     </div>
   );
 };

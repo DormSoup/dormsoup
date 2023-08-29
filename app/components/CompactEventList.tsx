@@ -46,7 +46,7 @@ export default function CompactEventList() {
         noEvents ? (
           <div className="text-3xl text-slate-400"> No events found with current filters. </div>
         ) : (
-          <Loading />
+          <Loading randomNumber={new Date().getMinutes()} />
         )
       ) : (
         uniqueDates.map((date) => (
