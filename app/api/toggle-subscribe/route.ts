@@ -50,7 +50,7 @@ async function getSubscribed(name: string, email: string) {
   return { subscribed: user.subscribed };
 }
 
-export type LikeEventResponse = Awaited<ReturnType<typeof toggleSubscribe>>;
+export type ToggleSubscribeResponse = Awaited<ReturnType<typeof toggleSubscribe>>;
 
 export async function POST(request: Request) {
   const session = await getAppServerSession(request);

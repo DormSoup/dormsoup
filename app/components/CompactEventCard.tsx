@@ -47,7 +47,7 @@ export default function CompactEventCard({ event }: Props) {
             </span>
             <span className="inline-block w-1" />
             <span>
-              <EventDate date={event.date} />
+              <EventDate date={event.date} includeDate={false} />
             </span>
           </span>
           <span className="inline-block w-1" />
