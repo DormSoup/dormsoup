@@ -31,7 +31,7 @@ export default function CompactEventList() {
 
   return (
     <div className="w-full max-w-3xl">
-      <div className="flex flex-row items-center justify-between">
+      <div className="flex flex-col items-center justify-between space-y-4 md:flex-row md:space-y-0">
         <div className="flex flex-row items-center">
           <Switch
             checked={displayPastEvents}

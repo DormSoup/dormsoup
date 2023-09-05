@@ -41,7 +41,7 @@ export default function CompactEventCard({ event }: Props) {
           {event.title}
         </div>
         <div className="truncate whitespace-nowrap pb-0.5 text-xs">
-          <span className="inline-block min-w-[9rem]">
+          <span className="inline-block min-w-[5rem]">
             <span>
               <FontAwesomeIcon icon={faClock} />
             </span>
