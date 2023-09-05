@@ -1,4 +1,4 @@
-import { getAppServerSession } from "@/app/auth";
+import { getAppServerSession, isAdmin } from "@/app/auth";
 
 import { NextResponse } from "next/server";
 
@@ -18,6 +18,9 @@ async function getAllEventsRaw(since: Date, until: Date, order: "asc" | "desc") 
       duration: true,
       fromEmailId: true,
       tagsProcessedBy: true,
+      fromEmail: {
+        select: { senderEmail: true }
+      },
       tags: {
         select: { name: true }
       },
@@ -29,15 +32,18 @@ async function getAllEventsRaw(since: Date, until: Date, order: "asc" | "desc") 
 }
 
 async function getAllEvents(since: Date, until: Date, order: "asc" | "desc", email: string) {
-  const events: (Omit<Awaited<ReturnType<typeof getAllEventsRaw>>[0], "liked"> & {
+  const events: (Omit<Awaited<ReturnType<typeof getAllEventsRaw>>[0], "liked" | "fromEmail"> & {
     liked: boolean;
     likes: number;
+    editable: boolean;
   })[] = (await getAllEventsRaw(since, until, order)).map((event) => {
-    return {
+    const { fromEmail: _, ...ret } = {
       ...event,
       liked: event.liked.some((user) => user.email === email),
-      likes: event.liked.length
+      likes: event.liked.length,
+      editable: event.fromEmail?.senderEmail === email || isAdmin(email)
     };
+    return ret;
   });
   return events;
 }

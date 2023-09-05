@@ -10,3 +10,8 @@ export function getAppServerSession(request: Request | undefined = undefined) {
   return { user: { name, email } };
 }
 
+export function isAdmin(user: string): boolean {
+  return (
+    user === "macy404@mit.edu" || user === "andiliu@mit.edu" || user === "dormsoup-dev@mit.edu"
+  );
+}
