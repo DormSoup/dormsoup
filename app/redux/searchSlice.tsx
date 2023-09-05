@@ -15,6 +15,7 @@ export type SearchState = {
 
   displayPastEvents: boolean;
   noEvents: boolean;
+  subscribed: boolean | undefined;
   eventIdsWithMatchingTexts: number[];
   events: SerializableEventWithTags[];
   dateToEvents: { [key: string]: SerializableEventWithTags[] };
@@ -27,6 +28,7 @@ const initialState: SearchState = {
   displayPastEvents: false,
   eventIdsWithMatchingTexts: [],
   noEvents: false,
+  subscribed: undefined,
   events: [],
   dateToEvents: {}
 };
@@ -92,6 +94,24 @@ export const likeEvent = createAsyncThunk("search/likeEvent", async (eventId: nu
   ).json();
 });
 
+export const toggleSubscribe = createAsyncThunk("search/toggleSubscribe", async (_, thunkAPI) => {
+  const response = await (
+    await fetch("/api/toggle-subscribe", {
+      method: "POST"
+    })
+  ).json();
+  thunkAPI.dispatch(setSubscribed(response.subscribed));
+});
+
+export const getIsSubscribed = createAsyncThunk("search/getIsSubscribed", async (_, thunkAPI) => {
+  const response = await (
+    await fetch("/api/toggle-subscribe", {
+      method: "GET"
+    })
+  ).json();
+  thunkAPI.dispatch(setSubscribed(response.subscribed));
+});
+
 function updateDateToEvents(state: WritableDraft<SearchState>) {
   const dateToEvents: { [key: string]: SerializableEventWithTags[] } = {};
   const filteredEvents = state.events.filter((event) => {
@@ -127,6 +147,9 @@ export const searchSlice = createSlice({
       state.displayPastEvents = action.payload;
       state.noEvents = false;
     },
+    setSubscribed: (state, action: PayloadAction<boolean>) => {
+      state.subscribed = action.payload;
+    },
     setEventIdsWithMatchingTexts: (state, action: PayloadAction<number[]>) => {
       state.eventIdsWithMatchingTexts = action.payload;
       updateDateToEvents(state);
@@ -146,7 +169,8 @@ export const searchSlice = createSlice({
 
 const { setSearchKeywordInternal, setDisplayPastEventsInternal } = searchSlice.actions;
 
-export const { setEventIdsWithMatchingTexts, toggleSearchFilter, setEvents } = searchSlice.actions;
+export const { setEventIdsWithMatchingTexts, toggleSearchFilter, setEvents, setSubscribed } =
+  searchSlice.actions;
 
 // export const { setSearchKeyword, toggleSearchFilter } = searchSlice.actions;
 export default searchSlice.reducer;

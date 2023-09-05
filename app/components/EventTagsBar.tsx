@@ -67,7 +67,7 @@ export const Tag = ({ tag, shape, onClick: handler, initialValue }: TagProp) => 
   const [inverted, setInverted] = useState(handler ? initialValue : filters.includes(tag));
   useEffect(() => {
     if (!handler) setInverted(filters.includes(tag));
-  }, [filters]);
+  }, [filters, handler, tag]);
 
   const [justInverted, setJustInverted] = useState(false);
 
@@ -96,8 +96,8 @@ export const Tag = ({ tag, shape, onClick: handler, initialValue }: TagProp) => 
     <span>{icon}</span>
   ) : (
     <span className="w-full">
-      <img className={styles.svgRegular} src={icon}></img>
-      <img className={styles.svgSolid} src={solidIcon}></img>
+      <img className={styles.svgRegular} src={icon} alt={tag}></img>
+      <img className={styles.svgSolid} src={solidIcon} alt={tag}></img>
     </span>
   );
 

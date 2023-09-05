@@ -20,6 +20,7 @@ import { RootState, useAppDispatch } from "../redux/store";
 import EventDate from "./EventDate";
 import GrayOutIfUnknown from "./GrayOutUnknown";
 import { LikesHorizontal } from "./Likes";
+import Loading from "./Loading";
 
 export default function EventDetail({ event }: { event: SerializableEvent }) {
   const dispatch = useAppDispatch();
@@ -47,16 +48,7 @@ export default function EventDetail({ event }: { event: SerializableEvent }) {
         </div>
       </div>
       {eventDetail === undefined || eventDetail === null ? (
-        <div className="flex-none">
-          <Image
-            src="/loading.gif"
-            alt="Loading animation"
-            width={100}
-            height={100}
-            className="mx-auto w-80"
-          ></Image>
-          <div className="mb-8 mt-[-4rem] text-center text-5xl font-bold">Loading...</div>
-        </div>
+        <Loading randomNumber={new Date().getMinutes()} />
       ) : (
         <>
           <div className="m-1 flex-none border-b-2 border-gray-300 p-1 text-xs text-gray-500">
