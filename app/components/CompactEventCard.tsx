@@ -15,10 +15,9 @@ import Likes from "./Likes";
 
 type Props = {
   event: SerializableEventWithTags;
-  editable: boolean;
 };
 
-export default function CompactEventCard({ event, editable }: Props) {
+export default function CompactEventCard({ event }: Props) {
   const dispatch = useAppDispatch();
   return (
     <div
@@ -28,7 +27,7 @@ export default function CompactEventCard({ event, editable }: Props) {
       <Likes event={event} />
       <div className="w-0 flex-1 px-2">
         <div className="line-clamp-1 w-full overflow-hidden pt-0.5 text-lg font-extrabold">
-          {editable && (
+          {event.editable && (
             <span
               className="mr-2 inline-block transition-all duration-150 hover:-translate-y-0.5 hover:text-logo-red hover:shadow-lg"
               onClick={(clickEvent) => {

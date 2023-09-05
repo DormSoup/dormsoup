@@ -56,7 +56,7 @@ export default function CompactEventList() {
             </div>
             <div className="flex-rows gap-4">
               {dateToEvents[date]?.map((event) => (
-                <CompactEventCard event={event} key={event.id} editable={false}></CompactEventCard>
+                <CompactEventCard event={event} key={event.id}></CompactEventCard>
               ))}
             </div>
           </div>

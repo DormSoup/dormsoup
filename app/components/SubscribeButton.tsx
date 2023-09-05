@@ -31,9 +31,7 @@ const SubscribeButton = () => {
       >
         {subscribed == undefined
           ? "Loading Subscription Status..."
-          : !subscribed
-          ? "Subscribe to"
-          : "Unsubscribe from" + "Daily DormScoop"}
+          : (!subscribed ? "Subscribe to" : "Unsubscribe from") + " Daily DormScoop"}
       </button>
       <div className="text-sm"> Tomorrow&apos;s Events Delivered to You via Email </div>
     </div>

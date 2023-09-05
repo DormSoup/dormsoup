@@ -2,10 +2,12 @@
 
 import { useEffect, useRef, useState } from "react";
 import { render } from "react-dom";
+import { useSelector } from "react-redux";
 
 import { SerializableEvent, SerializableEventWithTags } from "../EventType";
 import { clearModal } from "../redux/modalSlice";
-import { useAppDispatch } from "../redux/store";
+import { setDisplayPastEvents } from "../redux/searchSlice";
+import { RootState, useAppDispatch } from "../redux/store";
 
 import Switch from "./Switch";
 
@@ -25,20 +27,28 @@ const EditEventModal = ({ event }: { event: SerializableEventWithTags }) => {
     new Date(event.date).toISOString().includes("00:00:00.000Z")
   );
 
+  const past = useSelector((state: RootState) => state.search.displayPastEvents);
   const applyHandler = () => {
-    const response = fetch("/api/edit-event", {
-      method: "POST",
-      body: JSON.stringify({
-        id: event.id,
-        title,
-        date: isAllDayEvent ? date : `${date}T${time}:00.000Z`,
-        duration,
-        location
-        // tags
-      })
-    })
-      .then((res) => res.json())
-      .then(console.log);
+    (async () => {
+      const response = await fetch("/api/edit-event", {
+        method: "POST",
+        body: JSON.stringify({
+          id: event.id,
+          title,
+          date: isAllDayEvent ? date : `${date}T${time}:00.000Z`,
+          duration,
+          location
+          // tags
+        })
+      });
+      if (response.status === 403) {
+        alert("Permission denied");
+        return;
+      }
+      await response.json();
+      dispatch(setDisplayPastEvents(past));
+      dispatch(clearModal());
+    })();
   };
 
   useEffect(() => {
@@ -110,8 +120,10 @@ const EditEventModal = ({ event }: { event: SerializableEventWithTags }) => {
           className=" border-b"
           onChange={(e: any) => setLocation(e.target.value)}
         />
-        <div>Tags</div>
-        <div>Talk, Queer (icon)</div>
+        {/* <div>Tags</div>
+        <div>Talk, Queer (icon)</div> 
+        // Not editable for now
+        */}
       </div>
       <div className="flex justify-between">
         <button
