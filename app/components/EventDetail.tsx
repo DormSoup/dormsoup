@@ -38,7 +38,7 @@ export default function EventDetail({ event }: { event: SerializableEvent }) {
         <div>
           <FontAwesomeIcon icon={faClock} />
           {"  "}
-          <EventDate date={event.date} />
+          <EventDate date={event.date} includeDate={true} />
         </div>
         <div>
           <FontAwesomeIcon icon={faLocationDot} />
