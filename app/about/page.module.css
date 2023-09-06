@@ -1,0 +1,11 @@
+.aboutDiv h1 {
+    @apply font-bold text-3xl;
+}
+
+.aboutDiv h2 {
+    @apply font-semibold text-2xl;
+}
+
+.aboutDiv a {
+    @apply underline text-logo-red hover:text-logo-yellow 
+}
