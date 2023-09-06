@@ -23,9 +23,9 @@ export default function About() {
         <h1>Data Privacy</h1>
         <h2>What data does DormSoup collect from me?</h2>
         <p>
-          <DormSoupName /> uses MIT's Touchstone authentication system and gets your name and email
-          from there. That's it. We use these data to first ensure that only MIT students may view
-          the events. We also store these metadata in our database so that we can send you
+          <DormSoupName /> uses MIT&apos;s Touchstone authentication system and gets your name and
+          email from there. That&apos;s it. We use these data to first ensure that only MIT students
+          may view the events. We also store these metadata in our database so that we can send you
           notifications if you subscribe and keep track of the events you like. Finally,{" "}
           <DormSoupName /> compares your email against the sender of a dormspam to determine if you
           can edit that event manually.
@@ -33,21 +33,22 @@ export default function About() {
         <h2>Will DormSoup be able to see my inbox?</h2>
         <p>
           Absolutely not. <DormSoupName />
-          's backend scrapes spam emails from one particular inbox. That inbox is registered on
+          &apos;s backend scrapes spam emails from one particular inbox. That inbox is registered on
           common dormspam mailing lists and is owned by the <DormSoupName /> developers. We obtain
-          the permission to scrape that inbox from MIT's email server (which is based on Microsoft
-          Outlook) by explicitly authorizing our backend with OAuth2 every once in a while.
+          the permission to scrape that inbox from MIT&apos;s email server (which is based on
+          Microsoft Outlook) by explicitly authorizing our backend with OAuth2 every once in a
+          while.
         </p>
         <p>
-          If you don't trust us, at least you should trust Microsoft and their IT security. If you
-          didn't explicitly authorize <DormSoupName /> to access your inbox (which it won't ask in
-          the first place), we won't be able to see it.
+          If you don&apos;t trust us, at least you should trust Microsoft and their IT security. If
+          you didn&apos;t explicitly authorize <DormSoupName /> to access your inbox (which it
+          won&apos;t ask in the first place), we won&apos;t be able to see it.
         </p>
         <h2>Will OpenAI be able to see our dormspams?</h2>
         <p>
           No. While OpenAI does use input from ChatGPT to train their models, and <DormSoupName />{" "}
           (for the time being) does use GPT-3.5 and GPT-4 to parse dormspams. <DormSoupName />{" "}
-          evokes these models through OpenAI's API endpoints.{" "}
+          evokes these models through OpenAI&apos;s API endpoints.{" "}
           <a href="https://openai.com/enterprise-privacy">
             OpenAI promises not to use or retain data sent through business API endpoints.
           </a>
@@ -55,7 +56,7 @@ export default function About() {
         <p>
           We would also like to mention that we are keeping a close eye on the developement of open
           source large language models and will switch to self-hosted open source models as soon as
-          there's one that does the job.
+          there&apos;s one that does the job.
         </p>
         <h1>Contributing and Feedback</h1>
         <p>
@@ -70,8 +71,8 @@ export default function About() {
           appropriate repo or email us at <a href="mailto:dormsoup@mit.edu">dormsoup@mit.edu</a>.
         </p>
         <p className="text-xs">
-          (Please please please don't blame the code quality. Much of the early development was done
-          under intensive pair programming with adhoc design decisions made all over the place.
+          (Please please please don&apos;t blame the code quality. Much of the early development was
+          done under intensive pair programming with adhoc design decisions made all over the place.
           Apparently much can be done to improve the code quality. If you like to refactor the code,
           feel free to open an PR!:)
         </p>
