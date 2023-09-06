@@ -17,8 +17,8 @@ export default function EventDate({ date, includeDate }: { date: string; include
   // if we do not include date, split the string and return the last two words
   // so that for all-day events we get the dates and for non-all-day events we get the time
   if (!includeDate) {
-    const split = formatted.split(" ");
-    return <>{split[split.length - 2] + " " + split[split.length - 1]}</>;
+    const split = formatted.split(", ");
+    return <>{split[split.length - 1]}</>;
   }
   return <>{formatted}</>;
 }
