@@ -12,8 +12,6 @@ import { getAppClientSession } from "../authClient";
 import { setSearchKeyword } from "../redux/searchSlice";
 import { useAppDispatch } from "../redux/store";
 
-import { FilterTagsBar } from "./EventTagsBar";
-
 export default function NavBar() {
   const [session, setSession] = useState<Session | undefined>(undefined);
   const dispatch = useAppDispatch();

@@ -6,6 +6,7 @@ import { SerializableEventWithTags } from "../EventType";
 import { GetEventTextSearchResponse } from "../api/event-text-search/route";
 import { GetEventsResponse } from "../api/events/route";
 import { LikeEventResponse } from "../api/like-event/route";
+import { toDisplayName } from "../components/EventTagsBar";
 
 import { RootState } from "./store";
 
@@ -120,7 +121,10 @@ function updateDateToEvents(state: WritableDraft<SearchState>) {
   const filteredEvents = state.events.filter((event) => {
     if (state.filters.includes("Liked") && !event.liked) return false;
     const filtersExceptLike = state.filters.filter((filter) => filter !== "Liked");
-    if (filtersExceptLike.length > 0 && event.tags.every((tag) => !filtersExceptLike.includes(tag)))
+    if (
+      filtersExceptLike.length > 0 &&
+      toDisplayName(event.tags).every((tag) => !filtersExceptLike.includes(tag))
+    )
       return false;
     if (state.keyword === "") return true;
     if (state.eventIdsWithMatchingTexts.includes(event.id)) return true;

@@ -15,9 +15,8 @@ type TagDisplayConfig = {
   color: string;
   icon: string;
   type: "form" | "content" | "amenities" | "other";
+  aliases?: string[];
 };
-
-// TODO: Add Fiance=Quant logic
 
 const eventTagDisplayConfigs: { [tagName: string]: TagDisplayConfig } = {
   Theater: { color: "#824C71", icon: "\u{f630}", type: "form" },
@@ -41,10 +40,9 @@ const eventTagDisplayConfigs: { [tagName: string]: TagDisplayConfig } = {
   Finance: { color: "#00A676", icon: "\u{0024}", type: "content" },
   "East Asian": { color: "#FFA62B", icon: "\u{e3f7}", type: "content" },
   Religion: { color: "#6A6262", icon: "\u{f684}", type: "content" },
-  Entrepreneurship: { color: "#0B5563", icon: "\u{f2b5}", type: "content" },
-  "Free Food": { color: "#E03616", icon: "\u{f818}", type: "amenities" },
+  Career: { color: "#0B5563", icon: "\u{f2b5}", type: "content", aliases: ["Entrepreneurship"] },
   Boba: { color: "#ab86b6", icon: "/icons/boba.svg", type: "amenities" },
-  Food: { color: "#E03616", icon: "\u{f818}", type: "amenities" },
+  "Free Food": { color: "#E03616", icon: "\u{f818}", type: "amenities", aliases: ["Food"] },
   Liked: { color: "#ff0061", icon: "\u{f004}", type: "other" }
 };
 
@@ -86,7 +84,6 @@ export const Tag = ({ tag, shape, onClick: handler, initialValue }: TagProp) => 
       setInverted(!inverted);
     } else {
       dispatch(toggleSearchFilter(tag));
-      if (tag === "Free Food") dispatch(toggleSearchFilter("Food"));
     }
     setJustInverted(true);
     event.stopPropagation();
@@ -127,6 +124,22 @@ export const Tag = ({ tag, shape, onClick: handler, initialValue }: TagProp) => 
   );
 };
 
+export function toDisplayName(tags: string[]) {
+  return tags
+    .map((tag) => {
+      let displayName = "";
+      for (const prop of Object.keys(eventTagDisplayConfigs)) {
+        if (tag === prop || eventTagDisplayConfigs[prop].aliases?.includes(tag)) {
+          displayName = prop;
+          break;
+        }
+      }
+      return displayName;
+    })
+    .filter((displayName) => displayName.length > 0) // dedup
+    .filter((value, index, self) => self.indexOf(value) === index);
+}
+
 export function sortTags(tags: string[]) {
   tags.sort((a, b) => {
     const diff = getTagPriority(a) - getTagPriority(b);
@@ -137,27 +150,10 @@ export function sortTags(tags: string[]) {
 }
 
 const TagsBar = ({ tags }: { tags: string[] }) => {
-  tags = sortTags(tags);
+  tags = sortTags(toDisplayName(tags));
   return (
     <div className="relative flex flex-row justify-end gap-3 px-4">
       {tags.map((tag) => (
-        <Tag key={tag} tag={tag} shape="bookmark" />
-      ))}
-    </div>
-  );
-};
-
-export const FilterTagsBar = () => {
-  const allTags = Object.keys(eventTagDisplayConfigs).filter((tag) => tag !== "Food");
-  allTags.sort((a, b) => {
-    const diff = getTagPriority(a) - getTagPriority(b);
-    if (diff !== 0) return diff;
-    return a < b ? -1 : a === b ? 0 : 1;
-  });
-
-  return (
-    <div className="grid w-full grid-flow-col grid-rows-1 justify-center gap-3 max-lg:grid-rows-2 max-md:grid-rows-3">
-      {allTags.map((tag) => (
         <Tag key={tag} tag={tag} shape="bookmark" />
       ))}
     </div>
@@ -168,7 +164,6 @@ export const FilterPanel = () => {
   const tagsOfType = (type: string) =>
     Object.keys(eventTagDisplayConfigs)
       .filter((tag) => eventTagDisplayConfigs[tag].type === type)
-      .filter((tag) => tag !== "Food")
       .filter((tag) => tag !== "Math")
       .map((tag) => <Tag key={tag} tag={tag} shape="capsule" />);
 
