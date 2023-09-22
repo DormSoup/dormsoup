@@ -52,9 +52,12 @@ export const setSearchKeyword = createAsyncThunk(
 export const setDisplayPastEvents = createAsyncThunk(
   "search/setShowPastEvents",
   async (displayPastEvents: boolean, thunkAPI) => {
+    // minus 4 hours to account for time zone difference
+    const currentTime = new Date();
+    currentTime.setHours(currentTime.getHours() - 4);
     const params = displayPastEvents
-      ? new URLSearchParams({ order: "desc", until: new Date().toISOString() })
-      : new URLSearchParams({ order: "asc", since: new Date().toISOString() });
+      ? new URLSearchParams({ order: "desc", until: currentTime.toISOString() })
+      : new URLSearchParams({ order: "asc", since: currentTime.toISOString() });
     thunkAPI.dispatch(setEvents([]));
     thunkAPI.dispatch(setDisplayPastEventsInternal(displayPastEvents));
     const events: GetEventsResponse = await (await fetch("/api/events?" + params)).json();
