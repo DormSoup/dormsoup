@@ -78,10 +78,7 @@ export default function About() {
         </p>
         <h1>Acknowledgement</h1>
         <p>
-          We want to thank{" "}
-          <a href="https://sipb-projectdb.scripts.mit.edu/projectlist.py">
-            the SIPB DormDigest team
-          </a>{" "}
+          We want to thank <a href="https://dormdigest.xvm.mit.edu/">the SIPB DormDigest team</a>{" "}
           for early feedbacks. They offer a similar product but adopts a very different approach. Do
           check it out!
         </p>

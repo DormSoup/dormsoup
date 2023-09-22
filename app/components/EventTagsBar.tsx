@@ -172,7 +172,7 @@ export const FilterPanel = () => {
       <div className="flex justify-between">
         <div className="text-2xl">
           {" "}
-          <FontAwesomeIcon icon={faFilter} /> Filter
+          <FontAwesomeIcon icon={faFilter} /> Filters
         </div>
         <div className="">
           {" "}

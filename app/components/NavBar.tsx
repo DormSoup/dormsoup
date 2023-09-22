@@ -48,7 +48,15 @@ export default function NavBar() {
             {"\u{f2e5}"}
           </span>
         </div>
-        <button className="text-md flex-none rounded-lg" onClick={onSignInClicked}>
+        <div>
+          <a href="/about" className="mr-0 md:mr-4">
+            About
+          </a>
+          {/* <a href="mailto:dormsoup@mit.edu" className="ml-4 mr-0 md:mr-4">
+            Contact&nbsp;Us
+          </a> */}
+        </div>
+        <button className="text-md hidden flex-none rounded-lg md:block" onClick={onSignInClicked}>
           {session === null ? (
             "Sign in"
           ) : session === undefined ? (
