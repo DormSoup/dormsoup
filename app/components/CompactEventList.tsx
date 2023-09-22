@@ -33,7 +33,8 @@ export default function CompactEventList() {
   return (
     <div className="w-full max-w-3xl">
       <div className="mb-4 flex flex-row">
-        <div className="text-xl">Common filters:</div>
+        <div className="hidden text-xl md:block">Common filters:</div>
+        <div className="block text-xl md:hidden">Filters:</div>
         <div className="flex scale-90 flex-row space-x-2">
           <Tag key={"Free Food"} tag={"Free Food"} shape="capsule" />
           <Tag key={"Boba"} tag={"Boba"} shape="capsule" />
