@@ -59,6 +59,7 @@ export default function CompactEventList() {
           <Loading randomNumber={new Date().getMinutes()} />
         )
       ) : (
+        // NOTE: flex w-full flex-col is used to identify the region in subscription screenshots
         uniqueDates.map((date) => (
           <div key={date} className="flex w-full flex-col">
             <div className="mb-1 flex-none border-b-2 border-logo-red text-lg font-bold">
