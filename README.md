@@ -1,13 +1,59 @@
 # DormSoup
-This is frontend repo for DormSoup. For privacy reasons, only authenticated MIT students could visit the website.
 
-## Screenshots
+This is frontend repo for [DormSoup](dormsoup.mit.edu). For privacy reasons, only authenticated MIT students could visit the website.
+
+## Directory Structure
+
+The project structure should be:
+
+- DormSoup
+  - dormsoup
+    - (other files)
+    - .env (ask andiliu for the file)
+    - public/fonts (ask andiliu for the file)
+  - dormsoup-daemon
+
+## Setting up for developing locally
+
+After we put your keys in authorized_keys in the AWS, you put this in your local `.ssh/config`:
+
+```bash
+Host DormSoup
+  HostName ec2-18-214-179-129.compute-1.amazonaws.com
+  User ubuntu
+  SetEnv GIT_AUTHOR_NAME="YOUR_NAME_HERE" GIT_AUTHOR_EMAIL=YOUR_EMAIL_HERE
+  ForwardAgent yes
+```
+
+where `YOUR_NAME_HERE` and `YOUR_EMAIL_HERE` are the name and email you want to use.
+
+Then `cd` into `dormsoup` to run `npm install` to install the dependencies.
+
+## Developing locally
+
+First start the ssh connection to forward the local 5432 port to the DormSoup database:
+
+```bash
+ssh DormSoup -L 5432:dormsoup-mit-dev.cr0im3ybatbs.us-east-1.rds.amazonaws.com:5432
+```
+
+Then run `npm run dev` at the `DormSoup/dormsoup` root folder, go to `[localhost:3000](http://localhost:3000)` to checkout the website.
+
+## Common issues
+
+- If getting `public key denied` during `ssh`, check if you correctly capitalized `DormSoup`
+- If the website keeps loading after npm run dev, check the dev console for errors. It is possible that the connection to database is not setup correctly possibly due to incorrect `.env` files
+- If some icons are not correctly loading after `npm run dev`, you need to get the `public/fonts` files from andiliu
+
+## Developing practices
+
+- Open new branches and PR while developing
+
+<!-- ## Screenshots
 
 <img width="1439" alt="image" src="https://github.com/DormSoup/dormsoup/assets/60227494/0f9620cb-68f5-4f15-bedd-d440e81f53b8">
 
-<img width="1435" alt="image" src="https://github.com/DormSoup/dormsoup/assets/60227494/d53006c5-229e-45f2-a044-a488f0764be2">
-
-
+<img width="1435" alt="image" src="https://github.com/DormSoup/dormsoup/assets/60227494/d53006c5-229e-45f2-a044-a488f0764be2"> -->
 
 <!-- This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
