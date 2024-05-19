@@ -1,6 +1,6 @@
 # DormSoup
 
-This is frontend repo for [DormSoup](dormsoup.mit.edu). For privacy reasons, only authenticated MIT students could visit the website.
+This is frontend repo for [DormSoup](https://dormsoup.mit.edu). For privacy reasons, only authenticated MIT students could visit the website.
 
 ## Directory Structure
 
@@ -37,12 +37,12 @@ First start the ssh connection to forward the local 5432 port to the DormSoup da
 ssh DormSoup -L 5432:dormsoup-mit-dev.cr0im3ybatbs.us-east-1.rds.amazonaws.com:5432
 ```
 
-Then run `npm run dev` at the `DormSoup/dormsoup` root folder, go to `[localhost:3000](http://localhost:3000)` to checkout the website.
+Then run `npm run dev` at the `DormSoup/dormsoup` root folder, go to `http://localhost:3000` to checkout the website.
 
 ## Common issues
 
 - If getting `public key denied` during `ssh`, check if you correctly capitalized `DormSoup`
-- If the website keeps loading after npm run dev, check the dev console for errors. It is possible that the connection to database is not setup correctly possibly due to incorrect `.env` files
+- If the website keeps loading after `npm run dev`, check the dev console for errors. It is possible that the connection to database is not setup correctly possibly due to incorrect `.env` files
 - If some icons are not correctly loading after `npm run dev`, you need to get the `public/fonts` files from andiliu
 
 ## Developing practices
