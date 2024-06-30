@@ -15,9 +15,10 @@ import Likes from "./Likes";
 
 type Props = {
   event: SerializableEventWithTags;
+  bySentDate: boolean;
 };
 
-export default function CompactEventCard({ event }: Props) {
+export default function CompactEventCard({ event, bySentDate }: Props) {
   const dispatch = useAppDispatch();
   return (
     <div
@@ -47,7 +48,16 @@ export default function CompactEventCard({ event }: Props) {
             </span>
             <span className="inline-block w-1" />
             <span>
-              <EventDate date={event.date} includeDate={false} />
+              <EventDate
+                date={
+                  bySentDate
+                    ? event.recievedDate
+                      ? event.recievedDate.toString()
+                      : event.date
+                    : event.date
+                }
+                includeDate={false}
+              />
             </span>
           </span>
           <span className="inline-block w-1" />

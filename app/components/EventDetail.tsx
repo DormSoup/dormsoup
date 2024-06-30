@@ -63,6 +63,17 @@ export default function EventDetail({ event }: { event: SerializableEvent }) {
                   <td>{eventDetail.fromEmail?.subject}</td>
                 </tr>
                 <tr>
+                  <td>Recieved Date: </td>
+                  <td>
+                    {eventDetail.fromEmail?.receivedAt ? (
+                      <EventDate
+                        date={event.recievedDate ? event.recievedDate.toString() : event.date}
+                        includeDate={true}
+                      />
+                    ) : null}
+                  </td>
+                </tr>
+                <tr>
                   <td>From: </td>
                   <td>
                     {eventDetail.fromEmail?.sender.name} (

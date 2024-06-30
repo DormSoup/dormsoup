@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
-import { setDisplayPastEvents } from "../redux/searchSlice";
+import { setBySentDate, setDisplayPastEvents } from "../redux/searchSlice";
 import { RootState, useAppDispatch } from "../redux/store";
 
 import CompactEventCard from "./CompactEventCard";
@@ -16,6 +16,7 @@ export default function CompactEventList() {
   const displayPastEvents = useSelector((state: RootState) => state.search.displayPastEvents);
   const dateToEvents = useSelector((state: RootState) => state.search.dateToEvents);
   const noEvents = useSelector((state: RootState) => state.search.noEvents);
+  const bySentDate = useSelector((state: RootState) => state.search.bySentDate);
   const dispatch = useAppDispatch();
   useEffect(() => {
     dispatch(setDisplayPastEvents(displayPastEvents));
@@ -50,6 +51,14 @@ export default function CompactEventList() {
           />
           <span className="ml-2 h-full align-text-top">Show past events</span>
         </div>
+        <div className="flex flex-row items-center">
+          <Switch
+            checked={bySentDate}
+            onChange={() => dispatch(setBySentDate(!bySentDate))}
+            text="Show Sent Dates"
+          />
+          <span className="ml-2 h-full align-text-top">Show events by sent dates</span>
+        </div>
       </div>
       <div className="mt-4 text-center text-lg"> Click on events and tags to find more!</div>
       {uniqueDates.length === 0 ? (
@@ -67,7 +76,11 @@ export default function CompactEventList() {
             </div>
             <div className="flex-rows gap-4">
               {dateToEvents[date]?.map((event) => (
-                <CompactEventCard event={event} key={event.id}></CompactEventCard>
+                <CompactEventCard
+                  bySentDate={bySentDate}
+                  event={event}
+                  key={event.id}
+                ></CompactEventCard>
               ))}
             </div>
           </div>
