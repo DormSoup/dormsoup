@@ -13,7 +13,7 @@ import { RootState } from "./store";
 export type SearchState = {
   keyword: string;
   filters: string[];
-
+  bySentDate: boolean;
   displayPastEvents: boolean;
   noEvents: boolean;
   subscribed: boolean | undefined;
@@ -25,7 +25,7 @@ export type SearchState = {
 const initialState: SearchState = {
   keyword: "",
   filters: [],
-
+  bySentDate: false,
   displayPastEvents: false,
   eventIdsWithMatchingTexts: [],
   noEvents: false,
@@ -49,6 +49,13 @@ export const setSearchKeyword = createAsyncThunk(
     }
   }
 );
+
+export const setBySentDate = createAsyncThunk(
+  "search/setBySentDate",
+  async (bySentDate: boolean, thunkAPI) =>{
+    thunkAPI.dispatch(setBySentDateInternal(bySentDate));
+  }
+)
 
 export const setDisplayPastEvents = createAsyncThunk(
   "search/setShowPastEvents",
@@ -134,7 +141,9 @@ function updateDateToEvents(state: WritableDraft<SearchState>) {
   });
   state.noEvents = filteredEvents.length === 0;
   for (const event of filteredEvents) {
-    const formatted = new Date(event.date).toISOString().split("T")[0];
+    const formatted = new Date(state.bySentDate ? (event.recievedDate ? event.recievedDate: event.date) : event.date)
+      .toISOString()
+      .split("T")[0];
     const otherEvents = dateToEvents[formatted];
     if (otherEvents === undefined) dateToEvents[formatted] = [event];
     else otherEvents.push(event);
@@ -157,6 +166,10 @@ export const searchSlice = createSlice({
     setSubscribed: (state, action: PayloadAction<boolean>) => {
       state.subscribed = action.payload;
     },
+    setBySentDateInternal: (state, action: PayloadAction<boolean>) => {
+      state.bySentDate = action.payload;
+      updateDateToEvents(state);
+    },
     setEventIdsWithMatchingTexts: (state, action: PayloadAction<number[]>) => {
       state.eventIdsWithMatchingTexts = action.payload;
       updateDateToEvents(state);
@@ -174,7 +187,7 @@ export const searchSlice = createSlice({
   }
 });
 
-const { setSearchKeywordInternal, setDisplayPastEventsInternal } = searchSlice.actions;
+const { setSearchKeywordInternal, setDisplayPastEventsInternal, setBySentDateInternal } = searchSlice.actions;
 
 export const { setEventIdsWithMatchingTexts, toggleSearchFilter, setEvents, setSubscribed } =
   searchSlice.actions;

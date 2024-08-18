@@ -5,5 +5,6 @@ export type SerializableEvent = Omit<Event, "date" | "text"> & {
   liked: boolean;
   likes: number;
   editable: boolean;
+  recievedDate: Date | undefined;
 };
 export type SerializableEventWithTags = SerializableEvent & { tags: string[] };

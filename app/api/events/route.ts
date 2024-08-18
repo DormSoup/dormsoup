@@ -19,7 +19,7 @@ async function getAllEventsRaw(since: Date, until: Date, order: "asc" | "desc") 
       fromEmailId: true,
       tagsProcessedBy: true,
       fromEmail: {
-        select: { senderEmail: true }
+        select: { senderEmail: true, receivedAt: true }
       },
       tags: {
         select: { name: true }
@@ -36,9 +36,13 @@ async function getAllEvents(since: Date, until: Date, order: "asc" | "desc", ema
     liked: boolean;
     likes: number;
     editable: boolean;
+    recievedDate: Date | undefined;
   })[] = (await getAllEventsRaw(since, until, order)).map((event) => {
+    // time is in UTC, subtracting 4 for ETC time
+    event.fromEmail?.receivedAt.setHours(event.fromEmail?.receivedAt.getHours()-4)
     const { fromEmail: _, ...ret } = {
       ...event,
+      recievedDate: event.fromEmail?.receivedAt,
       liked: event.liked.some((user) => user.email === email),
       likes: event.liked.length,
       editable: event.fromEmail?.senderEmail === email || isAdmin(email)
