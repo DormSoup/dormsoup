@@ -72,7 +72,7 @@ export default function CompactEventList() {
         uniqueDates.map((date) => (
           <div key={date} className="flex w-full flex-col">
             <div className="mb-1 flex-none border-b-2 border-logo-red text-lg font-bold">
-              {new Date(date + "T00:00:00-04:00").toLocaleDateString("en-US", options)}
+              {new Date(date + "T00:00:00-05:00").toLocaleDateString("en-US", options)}
             </div>
             <div className="flex-rows gap-4">
               {dateToEvents[date]?.map((event) => (
