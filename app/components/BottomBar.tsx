@@ -2,7 +2,7 @@ const BottomBar = () => {
   return (
     <div>
       <div className="absolute bottom-0 mx-auto mt-4 w-full border-t-2 border-gray-300 bg-white py-4 text-center text-gray-800">
-        Made with ❤️ by MIT DormSoup Project.
+        Made with ❤️ by the SIPB DormSoup Project.
         <br className="block md:hidden" />
         <a href="/about" className="ml-4 underline">
           About

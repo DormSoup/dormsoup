@@ -20,6 +20,14 @@ export default function About() {
           cleanly in a uniform format, thus saving everyone&apos;s trouble of going through hundreds
           of emails to search for interesting events.
         </p>
+        <p>
+          DormSoup is maintained by SIPB, the
+          <a href="https://sipb.mit.edu" target="_blank">
+            {" "}
+            Student Information Processing Board
+          </a>
+          .
+        </p>
         <h1>Data Privacy</h1>
         <h2>What data does DormSoup collect from me?</h2>
         <p>
@@ -33,11 +41,8 @@ export default function About() {
         <h2>Will DormSoup be able to see my inbox?</h2>
         <p>
           Absolutely not. <DormSoupName />
-          &apos;s backend scrapes spam emails from one particular inbox. That inbox is registered on
-          common dormspam mailing lists and is owned by the <DormSoupName /> developers. We obtain
-          the permission to scrape that inbox from MIT&apos;s email server (which is based on
-          Microsoft Outlook) by explicitly authorizing our backend with OAuth2 every once in a
-          while.
+          &apos;s backend scrapes emails from one particular inbox owned by the <DormSoupName />{" "}
+          developers. Specifically, it is a locker in the MIT Athena File System (AFS).
         </p>
         <p>
           If you don&apos;t trust us, at least you should trust Microsoft and their IT security. If
@@ -54,9 +59,8 @@ export default function About() {
           </a>
         </p>
         <p>
-          We would also like to mention that we are keeping a close eye on the developement of open
-          source large language models and will switch to self-hosted open source models as soon as
-          there&apos;s one that does the job.
+          We would also like to mention that we in the process of switching to SIPB-hosted open
+          source LLM, planning to finish around October 2024.
         </p>
         <h1>Contributing and Feedback</h1>
         <p>
@@ -68,7 +72,8 @@ export default function About() {
         </p>
         <p>
           If you have any questions, comments, or suggestions, feel free to open an issue at the
-          appropriate repo or email us at <a href="mailto:dormsoup@mit.edu">dormsoup@mit.edu</a>.
+          appropriate repo or email us at{" "}
+          <a href="mailto:sipb-dormdigest@mit.edu">sipb-dormdigest@mit.edu</a>.
         </p>
         <p className="text-xs">
           (Please please please don&apos;t blame the code quality. Much of the early development was
@@ -79,8 +84,9 @@ export default function About() {
         <h1>Acknowledgement</h1>
         <p>
           We want to thank <a href="https://dormdigest.xvm.mit.edu/">the SIPB DormDigest team</a>{" "}
-          for early feedbacks. They offer a similar product but adopts a very different approach. Do
-          check it out!
+          for early feedbacks. They offered a similar product but adopted a very different approach.
+          Now we&apos;ve combined our strengths to create a single, improved product that can reach
+          even more users.
         </p>
         <p>We would also like to thank the generous support from IST staffs.</p>
         <p>Finally, great thanks to all the friends who participated in early beta testing!</p>
