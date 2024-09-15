@@ -15,12 +15,12 @@ The project structure should be:
 
 ## Setting up for developing locally
 
-After we put your keys in authorized_keys in the AWS, you put this in your local `.ssh/config`:
+After we put your keys in authorized_keys in the server, you put this in your local `.ssh/config`:
 
 ```bash
 Host DormSoup
-  HostName ec2-18-214-179-129.compute-1.amazonaws.com
-  User ubuntu
+  HostName dormsoup.mit.edu
+  User dormsoup
   SetEnv GIT_AUTHOR_NAME="YOUR_NAME_HERE" GIT_AUTHOR_EMAIL=YOUR_EMAIL_HERE
   ForwardAgent yes
 ```
@@ -34,10 +34,10 @@ Then `cd` into `dormsoup` to run `npm install` to install the dependencies.
 First start the ssh connection to forward the local 5432 port to the DormSoup database:
 
 ```bash
-ssh DormSoup -L 5432:dormsoup-mit-dev.cr0im3ybatbs.us-east-1.rds.amazonaws.com:5432
+ssh DormSoup -L 5432:localhost:5432
 ```
 
-Then run `npm run dev` at the `DormSoup/dormsoup` root folder, go to `http://localhost:3000` to checkout the website.
+Then (on a different tab) run `npm run dev` at the `DormSoup/dormsoup` root folder, go to `http://localhost:3000` to checkout the website.
 
 ## Common issues
 
