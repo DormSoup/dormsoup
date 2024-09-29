@@ -19,10 +19,11 @@ After we put your keys in authorized_keys in the server, you put this in your lo
 
 ```bash
 Host DormSoup
-  HostName dormsoup.mit.edu
+  HostName dormdigest.mit.edu
   User dormsoup
   SetEnv GIT_AUTHOR_NAME="YOUR_NAME_HERE" GIT_AUTHOR_EMAIL=YOUR_EMAIL_HERE
   ForwardAgent yes
+  IdentityFile ~/.ssh/id_rsa_dormsoup
 ```
 
 where `YOUR_NAME_HERE` and `YOUR_EMAIL_HERE` are the name and email you want to use.
@@ -43,6 +44,7 @@ Then (on a different tab) run `npm run dev` at the `DormSoup/dormsoup` root fold
 
 - If getting `public key denied` during `ssh`, check if you correctly capitalized `DormSoup`
 - If the website keeps loading after `npm run dev`, check the dev console for errors. It is possible that the connection to database is not setup correctly possibly due to incorrect `.env` files
+  - Same if you see a page asking you to sign in. Sign-in should happen automatically, but the if `.env` file is not configured correctly, then auth won't work
 - If some icons are not correctly loading after `npm run dev`, you need to get the `public/fonts` files from andiliu
 
 ## Developing practices
