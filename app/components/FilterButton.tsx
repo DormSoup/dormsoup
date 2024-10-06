@@ -11,7 +11,7 @@ const FilterButton = () => {
 
   return (
     <div
-      className="fixed bottom-10 right-10 z-30 flex h-[3rem] w-[3rem] items-center justify-center rounded-full border-2 border-slate-400 bg-logo-yellow text-white shadow-xl transition-all duration-150 hover:-translate-y-0.5 hover:cursor-pointer lg:hidden"
+      className="fixed bottom-24 right-10 z-30 flex h-[3rem] w-[3rem] items-center justify-center rounded-full  bg-logo-yellow text-white shadow-xl transition-all duration-150 hover:-translate-y-0.5 hover:cursor-pointer lg:hidden"
       onClick={() => dispatch(setFilterPanelModal())}
     >
       <FontAwesomeIcon className="scale-150" icon={faFilter} />

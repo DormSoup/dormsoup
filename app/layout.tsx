@@ -10,6 +10,7 @@ import Modal from "./components/Modal";
 import NavBar from "./components/NavBar";
 import "./globals.css";
 import { NextAuthProvider } from "./providers";
+import CreateEvent from "./components/CreateEvent";
 
 config.autoAddCss = false;
 
@@ -42,6 +43,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <NextAuthProvider>
           <NavBar />
           <FilterButton />
+          <CreateEvent/>
           <Modal />
           <div className="mx-auto px-4 pb-[5rem] pt-[5rem]">{children}</div>
           <BottomBar />
