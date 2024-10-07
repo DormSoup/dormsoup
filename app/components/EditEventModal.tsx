@@ -121,9 +121,15 @@ const EditEventModal = ({ event }: { event: SerializableEventWithTags }) => {
           onChange={(e: any) => setLocation(e.target.value)}
         />
         {/* <div>Tags</div>
-        <div>Talk, Queer (icon)</div> 
+        <div>Talk, Queer (icon)</div>
         // Not editable for now
         */}
+        <div>Delete</div>
+        <button
+          className="rounded-md bg-logo-red px-4 py-1 text-white transition-all duration-150 hover:-translate-y-0.5 hover:opacity-80 hover:shadow-lg"
+          >
+          Delete Tag
+        </button>
       </div>
       <div className="flex justify-between">
         <button
