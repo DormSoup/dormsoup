@@ -58,11 +58,16 @@ const EditEventModal = ({ event }: { event: SerializableEventWithTags }) => {
   
     if (!response.ok) {
         console.error("Failed to delete event:", response);
+        alert(`Failed to delete the event: "${event.title}".`);
         return;
     }
 
     const result = await response.json();
+    dispatch(clearModal());
     console.log(result);
+    alert(`Event: "${event.title}" was deleted successfully!`);
+
+    window.location.reload();
 };
 
   useEffect(() => {
