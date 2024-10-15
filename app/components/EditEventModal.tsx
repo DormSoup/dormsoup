@@ -1,10 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { render } from "react-dom";
 import { useSelector } from "react-redux";
 
-import { SerializableEvent, SerializableEventWithTags } from "../EventType";
+import { SerializableEventWithTags } from "../EventType";
 import { clearModal } from "../redux/modalSlice";
 import { setDisplayPastEvents } from "../redux/searchSlice";
 import { RootState, useAppDispatch } from "../redux/store";
@@ -28,6 +27,7 @@ const EditEventModal = ({ event }: { event: SerializableEventWithTags }) => {
   );
 
   const past = useSelector((state: RootState) => state.search.displayPastEvents);
+
   const applyHandler = () => {
     (async () => {
       const response = await fetch("/api/edit-event", {
@@ -50,6 +50,20 @@ const EditEventModal = ({ event }: { event: SerializableEventWithTags }) => {
       dispatch(clearModal());
     })();
   };
+
+  const deleteEventHandler = async () => {
+    const response = await fetch(`/api/delete-event?id=${event.id}`, {
+      method: 'DELETE',
+    });
+  
+    if (!response.ok) {
+        console.error("Failed to delete event:", response);
+        return;
+    }
+
+    const result = await response.json();
+    console.log(result);
+};
 
   useEffect(() => {
     if (titleInput && titleInput.current) {
@@ -127,8 +141,9 @@ const EditEventModal = ({ event }: { event: SerializableEventWithTags }) => {
         <div>Delete</div>
         <button
           className="rounded-md bg-logo-red px-4 py-1 text-white transition-all duration-150 hover:-translate-y-0.5 hover:opacity-80 hover:shadow-lg"
-          >
-          Delete Tag
+          onClick={deleteEventHandler}
+        >
+          Delete Event
         </button>
       </div>
       <div className="flex justify-between">
