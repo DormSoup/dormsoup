@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
-
 import { SerializableEventWithTags } from "../EventType";
 import { clearModal } from "../redux/modalSlice";
 import { setDisplayPastEvents } from "../redux/searchSlice";
@@ -52,22 +51,23 @@ const EditEventModal = ({ event }: { event: SerializableEventWithTags }) => {
   };
 
   const deleteEventHandler = async () => {
-    const response = await fetch(`/api/delete-event?id=${event.id}`, {
-      method: 'DELETE',
-    });
-  
-    if (!response.ok) {
-        console.error("Failed to delete event:", response);
-        alert(`Failed to delete the event: "${event.title}".`);
-        return;
+    if (confirm(`Are you sure you want to delete ${event.title}?`)) {
+      const response = await fetch(`/api/delete-event?id=${event.id}`, {
+        method: 'DELETE',
+      });
+    
+      if (!response.ok) {
+          console.error("Failed to delete event:", response);
+          alert(`Failed to delete the event: "${event.title}".`);
+          return;
+      }
+
+      dispatch(clearModal());
+      alert(`Event: "${event.title}" was deleted successfully!`);
+      //dispatch(setEventDeletedModal(event));
+      window.location.reload();
     }
 
-    const result = await response.json();
-    dispatch(clearModal());
-    console.log(result);
-    alert(`Event: "${event.title}" was deleted successfully!`);
-
-    window.location.reload();
 };
 
   useEffect(() => {
