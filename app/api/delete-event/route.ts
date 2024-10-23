@@ -1,12 +1,7 @@
-import { getAppServerSession, isAdmin } from "@/app/auth"; // ensuring that only trusted users can access
-import { NextResponse } from "next/server"; // structuring response to users
-import { prisma } from "../db"; // bridge between me and db
+import { getAppServerSession, isAdmin } from "@/app/auth";
+import { NextResponse } from "next/server";
+import { prisma } from "../db";
 
-/*
-    1. authenticate user: allowDelete
-    2. delete the event from db: deleteEvent
-    3. reflect change to user interface: DELETE
-*/
 
 async function allowDelete(eventId: number, userEmail: string): Promise<boolean> {
     if (isAdmin(userEmail)) return true;
@@ -25,8 +20,8 @@ async function deleteEvent(eventId: number): Promise<void> {
         });
         console.log(`Successfully deleted event ${eventId}.`)
     } catch (error) {
-        console.error(`Error deleting the event ${eventId}: `, error); // tells the user what the error is
-        throw new Error(`Failed to delete event ${eventId}.`); // throws an error to stop the execution
+        console.error(`Error deleting the event ${eventId}: `, error);
+        throw new Error(`Failed to delete event ${eventId}.`);
     }
 }
 
@@ -44,7 +39,11 @@ export async function DELETE(request: Request) {
     if (!(await allowDelete(id, session.user.email))) {
         return NextResponse.json("access denied", { status: 403 });
     }
-
-    await deleteEvent(id);
-    return NextResponse.json({ success: true });
+    try {
+        await deleteEvent(id);
+        return NextResponse.json({ success: true });
+        } catch (error) {
+        console.error(`Error in DELETE route: ${error}`);
+        return NextResponse.json("Internal server error", { status: 500 });
+        }
 }

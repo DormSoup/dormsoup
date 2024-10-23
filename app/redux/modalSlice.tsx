@@ -34,12 +34,6 @@ export const modalSlice = createSlice({
         event: action.payload
       };
     },
-    // setEventDeletedModal: (state, action: PayloadAction<SerializableEvent>) => {
-    //   state.modal = {
-    //     type: "event-delete",
-    //     event: action.payload
-    //   };
-    // },
     setFilterPanelModal: (state) => {
       state.modal = { type: "filter-panel" };
     },
