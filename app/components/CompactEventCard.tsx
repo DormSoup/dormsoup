@@ -4,9 +4,14 @@ import { faClock, faHeart, faUser } from "@fortawesome/free-regular-svg-icons";
 import { faLocation, faLocationDot, faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
+import Image from "next/image";
+import { useEffect, useRef, useState } from "react";
+import Confetti from "react-confetti";
+
 import { SerializableEventWithTags } from "../EventType";
 import { setEditEventModal, setEventDetailModal } from "../redux/modalSlice";
 import { useAppDispatch } from "../redux/store";
+import { compareIgnoreCase } from "../util";
 
 import EventDate from "./EventDate";
 import TagsBar, { Tag, sortTags } from "./EventTagsBar";
@@ -20,11 +25,35 @@ type Props = {
 
 export default function CompactEventCard({ event, bySentDate }: Props) {
   const dispatch = useAppDispatch();
+  const isSIPB =
+    compareIgnoreCase(event.organizer, "SIPB") ||
+    compareIgnoreCase(event.organizer, "Student Information Processing Board");
+  const cardRef = useRef<HTMLDivElement>(null); // Ref for the card div
+  const confettiRef = useRef<HTMLCanvasElement>(null);
+  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+  useEffect(() => {
+    if (cardRef.current) {
+      const updateDimensions = () => {
+        setDimensions({
+          width: cardRef.current!.offsetWidth,
+          height: cardRef.current!.offsetHeight
+        });
+      };
+
+      updateDimensions(); // Initial update
+      window.addEventListener("resize", updateDimensions); // Update on resize
+
+      return () => window.removeEventListener("resize", updateDimensions); // Cleanup listener
+    }
+  }, []);
+
   return (
     <div
-      className="relative flex cursor-pointer select-none items-center rounded-md border-2 border-gray-300 bg-white shadow-lg transition-all duration-150 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:border-gray-600 hover:shadow-2xl"
+      ref={cardRef}
+      className="relative flex cursor-pointer select-none items-center overflow-hidden rounded-md border-2 border-gray-300 bg-white shadow-lg transition-all duration-150 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:border-gray-600 hover:shadow-2xl"
       onClick={() => dispatch(setEventDetailModal(event))}
     >
+      {isSIPB && <Confetti ref={confettiRef} width={dimensions.width} height={dimensions.height} />}
       <Likes event={event} />
       <div className="w-0 flex-1 px-2">
         <div className="line-clamp-1 w-full overflow-hidden pt-0.5 text-lg font-extrabold">
@@ -69,7 +98,16 @@ export default function CompactEventCard({ event, bySentDate }: Props) {
           </span>
         </div>
       </div>
-      <div className="flex-none self-start">
+      <div className="flex self-start">
+        {isSIPB && (
+          <Image
+            src="/fuzzball.png"
+            alt="SIPB Logo"
+            width={24}
+            height={24}
+            className="mt-5 object-contain"
+          />
+        )}
         <TagsBar tags={event.tags.slice(0)} />
       </div>
     </div>
