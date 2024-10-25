@@ -13,10 +13,6 @@ export type EventDetailState = {
         type: "filter-panel";
       }
     | {
-        type: "event-delete";
-        event: SerializableEvent;
-      }
-    | {
         type: "edit-event";
         event: SerializableEventWithTags;
       };
