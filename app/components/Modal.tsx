@@ -25,13 +25,12 @@ export default function Modal() {
     modal === undefined ? null : modal.type === "event-detail" ? (
       <EventDetail event={modal.event} />
     ) : modal.type === "edit-event" ? (
-      <EditEventModal event={modal.event} />
-    ) : (
+      <EditEventModal event={modal.event} />)
+    : (
       <div className="px-4 pb-4">
         <FilterPanel />
       </div>
     );
-
   const title =
     modal?.type === "event-detail"
       ? modal.event.title

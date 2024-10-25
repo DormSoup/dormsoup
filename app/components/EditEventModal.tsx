@@ -1,10 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { render } from "react-dom";
 import { useSelector } from "react-redux";
-
-import { SerializableEvent, SerializableEventWithTags } from "../EventType";
+import { SerializableEventWithTags } from "../EventType";
 import { clearModal } from "../redux/modalSlice";
 import { setDisplayPastEvents } from "../redux/searchSlice";
 import { RootState, useAppDispatch } from "../redux/store";
@@ -28,6 +26,7 @@ const EditEventModal = ({ event }: { event: SerializableEventWithTags }) => {
   );
 
   const past = useSelector((state: RootState) => state.search.displayPastEvents);
+
   const applyHandler = () => {
     (async () => {
       const response = await fetch("/api/edit-event", {
@@ -50,6 +49,26 @@ const EditEventModal = ({ event }: { event: SerializableEventWithTags }) => {
       dispatch(clearModal());
     })();
   };
+
+  const deleteEventHandler = async () => {
+    if (confirm(`Are you sure you want to delete ${event.title}?`)) {
+      const response = await fetch(`/api/delete-event?id=${event.id}`, {
+        method: 'DELETE',
+      });
+    
+      if (!response.ok) {
+          console.error("Failed to delete event:", response);
+          alert(`Failed to delete the event: "${event.title}".`);
+          return;
+      }
+
+      dispatch(clearModal());
+      alert(`Event: "${event.title}" was deleted successfully!`);
+      //dispatch(setEventDeletedModal(event));
+      window.location.reload();
+    }
+
+};
 
   useEffect(() => {
     if (titleInput && titleInput.current) {
@@ -121,9 +140,16 @@ const EditEventModal = ({ event }: { event: SerializableEventWithTags }) => {
           onChange={(e: any) => setLocation(e.target.value)}
         />
         {/* <div>Tags</div>
-        <div>Talk, Queer (icon)</div> 
+        <div>Talk, Queer (icon)</div>
         // Not editable for now
         */}
+        <div>Delete</div>
+        <button
+          className="rounded-md bg-logo-red px-4 py-1 text-white transition-all duration-150 hover:-translate-y-0.5 hover:opacity-80 hover:shadow-lg"
+          onClick={deleteEventHandler}
+        >
+          Delete Event
+        </button>
       </div>
       <div className="flex justify-between">
         <button
