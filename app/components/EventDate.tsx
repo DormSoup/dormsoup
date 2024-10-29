@@ -1,24 +1,34 @@
-const DATE_OPTIONS: Intl.DateTimeFormatOptions = {
+const DATE_ONLY_OPTIONS: Intl.DateTimeFormatOptions = {
   weekday: "short",
   month: "short",
   day: "numeric",
-  hour: "numeric", // "7"
-  minute: "2-digit", // "00"
-  hour12: true, // "PM"
   timeZone: "UTC"
 };
 
-// TODO: make two date_options, one for EventDate, another for EventDateTime
+const DATE_TIME_OPTIONS: Intl.DateTimeFormatOptions = {
+  weekday: "short",
+  month: "short",
+  day: "numeric",
+  hour: "numeric",
+  minute: "2-digit",
+  hour12: true,
+  timeZone: "UTC"
+};
 
 export default function EventDate({ date, includeDate }: { date: string; includeDate: boolean }) {
-  const formatted = new Date(date)
-    .toLocaleString("en-US", DATE_OPTIONS)
-    .replaceAll(/,\s+12:00\s+AM/giu, "");
-  // if we do not include date, split the string and return the last two words
-  // so that for all-day events we get the dates and for non-all-day events we get the time
+  const dateObj = new Date(date);
+  const isAllDay = dateObj.getUTCHours() === 0 && dateObj.getUTCMinutes() === 0;
+  
   if (!includeDate) {
-    const split = formatted.split(", ");
-    return <>{split[split.length - 1]}</>;
+    if (isAllDay) {
+      // For all-day events, show just the date portion
+      return <>{dateObj.toLocaleDateString("en-US", DATE_ONLY_OPTIONS)}</>;
+    }
+    // For events with time, show just the time portion
+    return <>{dateObj.toLocaleTimeString("en-US", { hour: 'numeric', minute: '2-digit', hour12: true })}</>;
   }
-  return <>{formatted}</>;
+
+  // Show full date (and time if not all-day)
+  const options = isAllDay ? DATE_ONLY_OPTIONS : DATE_TIME_OPTIONS;
+  return <>{dateObj.toLocaleString("en-US", options)}</>;
 }
