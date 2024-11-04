@@ -132,7 +132,7 @@ const BottomBar = ({
       location: event.location,
       organizer: `${eventDetail?.fromEmail?.sender.name}|${eventDetail?.fromEmail?.sender.email}`,
       timeZone: "America/New_York",
-      listStyle: "dropdown"
+      listStyle: "modal"
     };
     if (!date.toISOString().includes("00:00:00.000Z")) {
       config.startTime = timeString(date);
