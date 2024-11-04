@@ -13,10 +13,10 @@ export default function GrayOutIfUnknown({ content, inline }: Props) {
   return content.trim().toLowerCase() === LLM_UNKNOWN_VALUE ? (
     <span className={" text-gray-500" + inlineClass}> {DISPLAY_UNKNOWN_VALUE} </span>
   ) : getLocationLink(content) ? (
-    <a href={getLocationLink(content)} target="_blank" className="hover:underline">
-      <span className={"truncate" + inlineClass}>{content}</span>
+    <a href={getLocationLink(content)} target="_blank" className="underline hover:text-logo-red">
+      <span className={"truncate font-medium" + inlineClass}>{content}</span>
     </a>
   ) : (
-    <span className={"truncate" + inlineClass}>{content}</span>
+    <span className={"truncate font-medium" + inlineClass}>{content}</span>
   );
 }

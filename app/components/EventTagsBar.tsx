@@ -102,7 +102,7 @@ export const Tag = ({ tag, shape, onClick: handler, initialValue }: TagProp) => 
     <div
       className={`${classOuter} ${
         inverted !== justInverted ? styles.tagActivated : styles.tagInactivated
-      } cursor-pointer select-none hover:-translate-y-0.5`}
+      } cursor-pointer select-none font-semibold hover:-translate-y-0.5`}
       onClick={onClick}
       onMouseLeave={() => setJustInverted(false)}
       style={{ ["--theme-color" as any]: color }}

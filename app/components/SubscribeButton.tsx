@@ -17,7 +17,7 @@ const SubscribeButton = () => {
     <div className="flex flex-col">
       <button
         className={
-          "rounded-md border-2 border-black px-4 text-white shadow-md hover:opacity-70 hover:shadow-xl " +
+          "rounded-md border-2 border-black px-4 font-medium text-white shadow-md hover:opacity-70 hover:shadow-xl " +
           (!subscribed ? " bg-logo-yellow" : " bg-gray-400")
         }
         onClick={() => {

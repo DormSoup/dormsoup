@@ -5,17 +5,17 @@ import { IBM_Plex_Sans } from "next/font/google";
 import Script from "next/script";
 
 import BottomBar from "./components/BottomBar";
+import CreateEvent from "./components/CreateEvent";
 import FilterButton from "./components/FilterButton";
 import Modal from "./components/Modal";
 import NavBar from "./components/NavBar";
 import "./globals.css";
 import { NextAuthProvider } from "./providers";
-import CreateEvent from "./components/CreateEvent";
 
 config.autoAddCss = false;
 
 const plexSans = IBM_Plex_Sans({
-  weight: "400",
+  weight: ["400", "500", "600", "700"],
   subsets: ["latin"],
   variable: "--plex-sans-font",
   display: "swap"
@@ -43,7 +43,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <NextAuthProvider>
           <NavBar />
           <FilterButton />
-          <CreateEvent/>
+          <CreateEvent />
           <Modal />
           <div className="mx-auto px-4 pb-[5rem] pt-[5rem]">{children}</div>
           <BottomBar />

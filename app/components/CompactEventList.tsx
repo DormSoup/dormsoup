@@ -64,7 +64,10 @@ export default function CompactEventList() {
           <span className="ml-2 h-full align-text-top">Show events by sent dates</span>
         </div>
       </div>
-      <div className="mt-4 text-center text-lg"> Click on events and tags to find more!</div>
+      <div className="mt-4 text-center text-lg font-medium">
+        {" "}
+        Click on events and tags to find more!
+      </div>
       {uniqueDates.length === 0 ? (
         noEvents ? (
           <div className="text-3xl text-slate-400"> No events found with current filters. </div>

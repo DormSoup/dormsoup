@@ -56,7 +56,7 @@ export default function CompactEventCard({ event, bySentDate }: Props) {
       {isSIPB && <Confetti ref={confettiRef} width={dimensions.width} height={dimensions.height} />}
       <Likes event={event} />
       <div className="w-0 flex-1 px-2">
-        <div className="line-clamp-1 w-full overflow-hidden pt-0.5 text-lg font-extrabold">
+        <div className="line-clamp-1 w-full overflow-hidden pt-0.5 text-lg font-semibold">
           {event.editable && (
             <span
               className="mr-2 inline-block transition-all duration-150 hover:-translate-y-0.5 hover:text-logo-red hover:shadow-lg"
@@ -76,7 +76,7 @@ export default function CompactEventCard({ event, bySentDate }: Props) {
               <FontAwesomeIcon icon={faClock} />
             </span>
             <span className="inline-block w-1" />
-            <span>
+            <span className="font-medium">
               <EventDate
                 date={
                   bySentDate
@@ -92,6 +92,7 @@ export default function CompactEventCard({ event, bySentDate }: Props) {
           <span className="inline-block w-1" />
           <span>
             <FontAwesomeIcon icon={faLocationDot} />
+            &nbsp;
           </span>
           <span className="truncate">
             <GrayOutIfUnknown inline={true} content={normalizeLocation(event.location)} />
