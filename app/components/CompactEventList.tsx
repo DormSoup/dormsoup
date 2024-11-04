@@ -53,7 +53,7 @@ export default function CompactEventList() {
             onChange={() => dispatch(setDisplayPastEvents(!displayPastEvents))}
             text="Show Past Events"
           />
-          <span className="ml-2 h-full align-text-top">Show past events</span>
+          <span className="ml-2 h-full align-text-top font-semibold">Show past events</span>
         </div>
         <div className="flex flex-row items-center">
           <Switch
@@ -61,7 +61,9 @@ export default function CompactEventList() {
             onChange={() => dispatch(setBySentDate(!bySentDate))}
             text="Show Sent Dates"
           />
-          <span className="ml-2 h-full align-text-top">Show events by sent dates</span>
+          <span className="ml-2 h-full align-text-top font-semibold">
+            Show events by sent dates
+          </span>
         </div>
       </div>
       <div className="mt-4 text-center text-lg font-medium">

@@ -25,8 +25,8 @@ export default function Modal() {
     modal === undefined ? null : modal.type === "event-detail" ? (
       <EventDetail event={modal.event} />
     ) : modal.type === "edit-event" ? (
-      <EditEventModal event={modal.event} />)
-    : (
+      <EditEventModal event={modal.event} />
+    ) : (
       <div className="px-4 pb-4">
         <FilterPanel />
       </div>
@@ -65,7 +65,7 @@ export default function Modal() {
         >
           <div className="flex-none p-2">
             <div className="flex flex-row">
-              <div className="grow text-lg font-extrabold">{title}</div>
+              <div className="grow text-xl font-extrabold">{title}</div>
               <a
                 onClick={() => dispatch(clearModal())}
                 className="block h-6 w-6 flex-none rounded-full text-center hover:cursor-pointer hover:bg-logo-red hover:text-white"

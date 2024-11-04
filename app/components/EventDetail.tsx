@@ -36,7 +36,7 @@ export default function EventDetail({ event }: { event: SerializableEvent }) {
   return (
     <>
       <div className="flex flex-none flex-row gap-2 px-2">
-        <div>
+        <div className="font-medium">
           <FontAwesomeIcon icon={faClock} />
           {"  "}
           <EventDate date={event.date} includeDate={true} />

@@ -15,7 +15,7 @@ export default function Switch({ text, checked, onChange }: SwitchProps) {
         checked ? "bg-logo-red" : "bg-gray-300"
       } relative box-content inline-flex h-6 w-11 items-center rounded-full`}
     >
-      <span className="sr-only">{text}</span>
+      <span className="sr-only font-bold">{text}</span>
       <span
         className={`${
           checked ? "translate-x-6" : "translate-x-1"
