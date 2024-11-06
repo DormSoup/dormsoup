@@ -35,9 +35,8 @@ export default function CompactEventList() {
 
   return (
     <div className="w-full max-w-3xl">
-      <div className="flex justify-between">
+      <div className="flex flex-col-reverse items-center justify-between gap-2 md:flex-row">
         <GcalButton />
-        <div className="w-4"></div>
         <SIPBLogo />
       </div>
       <div className="mb-4 mt-4 flex flex-row">

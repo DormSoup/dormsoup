@@ -4,7 +4,7 @@ import Link from "next/link";
 export default function SIPBLogo() {
   return (
     <a
-      className="flex flex-row items-center justify-center rounded-md bg-gray-100 px-4 py-1 text-lg font-semibold"
+      className="flex w-full flex-row items-center justify-center rounded-md bg-gray-100 px-4 py-1 text-lg font-semibold md:w-auto"
       target="_blank"
       href="https://sipb.mit.edu/"
     >
