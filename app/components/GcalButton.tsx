@@ -5,7 +5,7 @@ export default function GcalButton() {
     <a
       className="flex w-full flex-row items-center justify-center rounded-md bg-white px-4 py-1 text-lg font-semibold transition-opacity hover:opacity-75 md:w-auto"
       target="_blank"
-      href="https://calendar.google.com/calendar/u/0?cid=Y18zNjE2MDRhYThlZGRjNGJlMTA0NmI0ZmJmODNhYmZkYjExMzE5NWNhZmIxYTI3NWM4YWZmN2ZlMDgwZmIyNDEzQGdyb3VwLmNhbGVuZGFyLmdvb2dsZS5jb20"
+      href="/gcal"
     >
       Subscribe to Google Calendar
       <Image
