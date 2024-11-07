@@ -42,7 +42,7 @@ TODO(andiliu) please make a separate production and development database
 
 **Important note**: Even though it says `localhost`, the database is on the server, not on your computer. Be careful with any destructive actions.
 
-[https://i.sstatic.net/QcwEn.png](https://i.sstatic.net/QcwEn.png)
+![port forwarding diagram](https://i.sstatic.net/QcwEn.png)
 
 You can read <https://stackoverflow.com/questions/5280827/can-someone-explain-ssh-tunnel-in-a-simple-way> for an explanation about port forwarding, or you could find other results on the web or maybe even on `man ssh`.
 
