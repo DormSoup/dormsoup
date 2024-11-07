@@ -8,6 +8,7 @@ import { RootState, useAppDispatch } from "../redux/store";
 
 import CompactEventCard from "./CompactEventCard";
 import { Tag } from "./EventTagsBar";
+import GcalButton from "./GcalButton";
 import Loading from "./Loading";
 import SIPBLogo from "./SIPBLogo";
 import SubscribeButton from "./SubscribeButton";
@@ -34,10 +35,11 @@ export default function CompactEventList() {
 
   return (
     <div className="w-full max-w-3xl">
-      <div className="mb-4 flex justify-center md:mb-0 md:justify-end">
+      <div className="flex flex-col-reverse items-center justify-between gap-2 md:flex-row">
+        <GcalButton />
         <SIPBLogo />
       </div>
-      <div className="mb-4 flex flex-row">
+      <div className="mb-4 mt-4 flex flex-row">
         <div className="hidden text-xl md:block">Common filters:</div>
         <div className="block text-xl md:hidden">Filters:</div>
         <div className="flex scale-90 flex-row space-x-2">
