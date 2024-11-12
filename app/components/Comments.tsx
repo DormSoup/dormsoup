@@ -10,7 +10,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { SerializableEvent } from "../EventType";
 
 // import React hooks (manages the local state of our components, such as # of likes)
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 // Redux hooks for state management
 // ex) useDispatch can be used to update the state when an event is liked
@@ -142,10 +142,10 @@ export default function Comments({ event }: { event: SerializableEvent;}) {
     return (
         <div className="flex flex-col h-full">
             {/* Comment Section */}
-            <div className="flex-1 overflow-y-auto px-4 py-2">
+            <div className="flex-1 overflow-x-hidden px-4 py-2">
                 {comments.map((comment, index) => (
-                <div key={index} className="my-2">
-                    <span className="font-bold">{comment.userName}</span>: {comment.text}
+                <div key={index} className="my-2 break-words mr-2">
+                    <span className="text-sm">{comment.userName}</span> <br/>{comment.text}
                 </div>
                 ))}
         
