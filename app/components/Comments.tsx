@@ -4,13 +4,13 @@
 import { MouseEventHandler } from "react";
 
 // import icons from FontAwesome
-import { faCalendar, faHeart, faPaperPlane } from "@fortawesome/free-regular-svg-icons";
+import { faCalendar, faHeart } from "@fortawesome/free-regular-svg-icons";
 import { faHeart as faHeartSolid } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { SerializableEvent } from "../EventType";
 
 // import React hooks (manages the local state of our components, such as # of likes)
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 // Redux hooks for state management
 // ex) useDispatch can be used to update the state when an event is liked
@@ -29,32 +29,69 @@ import { Session } from "../api/auth/session/route";
 // Importing GetEventDetailResponse for event detail typing
 import { GetEventDetailResponse } from "../api/event-detail/route";
 
-export default function Comments({ event, eventDetail }: { event: SerializableEvent; eventDetail: GetEventDetailResponse | undefined;}) {
-    // setting up state for the session
+export default function Comments({ event }: { event: SerializableEvent;}) {
+    // setting up state for the session and eventDetail
     const [session, setSession] = useState<Session | undefined>(undefined);
+    const [eventDetail, setEventDetail] = useState<GetEventDetailResponse | undefined>(undefined);
+
     // hook to dispatch Redux actions
     const dispatch = useAppDispatch();
 
+    // Use ref to get a reference to the textarea element
+    const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+
+    // fetch session data
     useEffect(() => {
         getAppClientSession().then(setSession);
     }, []);
 
+    // Fetch eventDetail data
+    useEffect(() => {
+        if (event) {
+        fetch(`/api/event-detail?id=${event.id}`)
+            .then((response) => response.json())
+            .then((data: GetEventDetailResponse) => setEventDetail(data))
+            .catch((error) => console.error("Failed to fetch event detail:", error));
+        }
+    }, [event]);
+
     // state variables for comments, input value, likes, and liked status
     const [comments, setComments] = useState<{ userName: string; text: string }[]>([]);
     const [inputValue, setInputValue] = useState("");
-    const [likes, setLikes] = useState(0);
+    const [likes, setLikes] = useState(event.likes);;
     const [liked, setLiked] = useState(false);
+
+    // Function to handle text input changes and adjust textarea height
+    const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+        setInputValue(e.target.value);
+        // Adjust the height of the textarea
+        if (textareaRef.current !== null) {
+            textareaRef.current.style.height = "auto"; // Reset the height
+            textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`; // Set height to scrollHeight
+        }
+    };
+
+    // Function to handle keydown event
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+        if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault(); // Prevent the default behavior of Enter key (i.e., adding a new line)
+        handlePost(); // Call the handlePost function
+        }
+    };
 
     // function to handle posting a comment
     const handlePost = () => {
         if (inputValue.trim() === "") return; // prevent empty comments
         setComments([...comments, { userName: session?.user?.name || "Anonymous", text: inputValue }]); // find out where to get the username
         setInputValue(""); // resetting input value
+        if (textareaRef.current != null) {
+            textareaRef.current.style.height = "auto"; // Reset the height to its initial state
+        }
     };
 
     // function to handle "add to calendar"
     const onAddToCalendarClicked: MouseEventHandler<HTMLDivElement> = (clickEvent) => {
-        if (event === undefined) return;
+        if (!event) return;
         const dateString = (date: Date) => date.toISOString().split("T")[0];
         const timeString = (date: Date) =>
             date
@@ -84,6 +121,15 @@ export default function Comments({ event, eventDetail }: { event: SerializableEv
     // function to handle like button click
     const onLikeButtonClicked: MouseEventHandler<HTMLDivElement> = (clickEvent) => {
         if (event === undefined) return;
+
+        // Toggle liked status and update likes count
+        if (liked) {
+            setLikes(likes - 1);
+        } else {
+            setLikes(likes + 1);
+        }
+        setLiked(!liked); // Toggle the liked state
+
         dispatch(likeEvent(event.id));
         clickEvent.stopPropagation(); // prevents triggering any parent click event handlers
     };
@@ -94,17 +140,17 @@ export default function Comments({ event, eventDetail }: { event: SerializableEv
     );
 
     return (
-        <div>
-            {/* Comment section UI */}
-            <div className="comments-section">
+        <div className="flex flex-col h-full">
+            {/* Comment Section */}
+            <div className="flex-1 overflow-y-auto px-4 py-2">
                 {comments.map((comment, index) => (
-                    <div key={index}>
-                        <span className="font-bold">{comment.userName}</span>: {comment.text}
-                    </div>
+                <div key={index} className="my-2">
+                    <span className="font-bold">{comment.userName}</span>: {comment.text}
+                </div>
                 ))}
-
+        
                 {/* Likes and Calendar Buttons */}
-                <div className="flex items-center mt-4 border border-t-black">
+                <div className="flex items-center mt-4">
                     <div onClick={onLikeButtonClicked} className="cursor-pointer mr-4">
                         <FontAwesomeIcon icon={realEvent?.liked ? faHeartSolid : faHeart} />
                     </div>
@@ -112,19 +158,28 @@ export default function Comments({ event, eventDetail }: { event: SerializableEv
                         <FontAwesomeIcon icon={faCalendar} />
                     </div>
                 </div>
-
-                <input
-                    type="text"
-                    value={inputValue}
-                    onChange={(e) => setInputValue(e.target.value)}
-                    placeholder="Add a comment..."
-                    className="border rounded p-2"
-                />
-                <button onClick={handlePost} className="ml-2 p-2 bg-blue-500 text-black rounded flex items-center">
-                        <FontAwesomeIcon icon={faPaperPlane} className="mr-2" />
-                </button>
             </div>
 
+            {/* Number of Likes */}
+            <div className="ml-4 text-sm">{likes} {likes === 1 ? "like" : "likes"}</div>
+        
+            {/* Comment Input Section */}
+            <div className="p-4">
+                <div className="flex flex-row items-center">
+                <textarea
+                    ref={textareaRef}
+                    value={inputValue}
+                    onChange={handleInputChange}
+                    onKeyDown={handleKeyDown}
+                    placeholder="Add a comment..."
+                    className="flex-1 border rounded-lg p-2 resize-none overflow-hidden"
+                    rows={1}
+                />
+                <button onClick={handlePost} className="ml-2 p-2 text-slate-400 hover:text-black rounded">
+                    Post
+                </button>
+                </div>
+            </div>
         </div>
     );
 }
