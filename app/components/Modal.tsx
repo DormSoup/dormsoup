@@ -13,7 +13,7 @@ import { RootState, useAppDispatch } from "../redux/store";
 import EditEventModal from "./EditEventModal";
 import EventDetail from "./EventDetail";
 import { FilterPanel } from "./EventTagsBar";
-import Likes from "./Likes";
+import Comments from "./Comments";
 
 export default function Modal() {
   const modal = useSelector((state: RootState) => state.modal.modal);
@@ -23,7 +23,14 @@ export default function Modal() {
 
   const children =
     modal === undefined ? null : modal.type === "event-detail" ? (
-      <EventDetail event={modal.event} />
+      <div className="flex flex-col md:flex-row">
+        <div className="flex-1">
+          <EventDetail event={modal.event} />
+        </div>
+        <div className="flex-none md:ml-4 mt-4 md:mt-0 md:w-[40%]">
+          <Comments event={modal.event} />
+        </div>
+      </div>
     ) : modal.type === "edit-event" ? (
       <EditEventModal event={modal.event} />
     ) : (
@@ -58,8 +65,8 @@ export default function Modal() {
       >
         <div
           className={
-            "relative m-auto flex max-h-shorter-screen max-w-2xl flex-col rounded-md bg-white shadow-lg " +
-            (fullWidth ? "w-full" : "")
+            "relative m-auto flex max-h-shorter-screen flex-col rounded-md bg-white shadow-lg transition-all " +
+            "max-w-[calc(100%-32px)] sm:max-w-[calc(100%-48px)] md:max-w-[calc(100%-64px)] lg:max-w-[calc(100%-80px)] xl:max-w-[calc(100%-96px)] min-w-[300px]"
           }
           onClick={(event) => event.stopPropagation()}
         >
