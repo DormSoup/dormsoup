@@ -143,43 +143,49 @@ export default function Comments({ event }: { event: SerializableEvent;}) {
         <div className="flex flex-col h-full">
             {/* Comment Section */}
             <div className="flex-1 overflow-x-hidden px-4 py-2">
-                {comments.map((comment, index) => (
+            {comments.length === 0 ? (
+                <div className="text-slate-400">No comments</div>
+            ) : (
+                comments.map((comment, index) => (
                 <div key={index} className="my-2 break-words mr-2">
-                    <span className="text-sm">{comment.userName}</span> <br/>{comment.text}
+                    <span className="text-sm">{comment.userName}</span> <br />
+                    {comment.text}
                 </div>
-                ))}
-        
-                {/* Likes and Calendar Buttons */}
-                <div className="flex items-center mt-4">
-                    <div onClick={onLikeButtonClicked} className="cursor-pointer mr-4">
-                        <FontAwesomeIcon icon={realEvent?.liked ? faHeartSolid : faHeart} />
-                    </div>
-                    <div onClick={onAddToCalendarClicked} className="cursor-pointer">
-                        <FontAwesomeIcon icon={faCalendar} />
-                    </div>
-                </div>
+                ))
+            )}
             </div>
-
-            {/* Number of Likes */}
-            <div className="ml-4 text-sm">{likes} {likes === 1 ? "like" : "likes"}</div>
+        
+            {/* Likes and Calendar Buttons */}
+            <div className="flex items-center px-4 py-2 border-t border-gray-300">
+            <div onClick={onLikeButtonClicked} className="cursor-pointer mr-4">
+                <FontAwesomeIcon icon={realEvent?.liked ? faHeartSolid : faHeart} />
+            </div>
+            <div onClick={onAddToCalendarClicked} className="cursor-pointer">
+                <FontAwesomeIcon icon={faCalendar} />
+            </div>
+            <div className="ml-4 text-sm">
+                {likes} {likes === 1 ? "like" : "likes"}
+            </div>
+            </div>
         
             {/* Comment Input Section */}
-            <div className="p-4">
-                <div className="flex flex-row items-center">
+            <div className="p-4 border-t border-gray-300">
+            <div className="flex flex-row items-center">
                 <textarea
-                    ref={textareaRef}
-                    value={inputValue}
-                    onChange={handleInputChange}
-                    onKeyDown={handleKeyDown}
-                    placeholder="Add a comment..."
-                    className="flex-1 border rounded-lg p-2 resize-none overflow-hidden"
-                    rows={1}
+                ref={textareaRef}
+                value={inputValue}
+                onChange={handleInputChange}
+                onKeyDown={handleKeyDown}
+                placeholder="Add a comment..."
+                className="flex-1 border rounded-lg p-2 resize-none overflow-hidden"
+                rows={1}
                 />
                 <button onClick={handlePost} className="ml-2 p-2 text-slate-400 hover:text-black rounded">
-                    Post
+                Post
                 </button>
-                </div>
+            </div>
             </div>
         </div>
     );
+        
 }
