@@ -141,8 +141,9 @@ export default function Comments({ event }: { event: SerializableEvent;}) {
 
     return (
         <div className="flex flex-col h-full">
+
             {/* Comment Section */}
-            <div className="flex-1 overflow-x-hidden px-4 py-2">
+            <div className="flex-1 px-4 py-2">
             {comments.length === 0 ? (
                 <div className="text-slate-400">No comments</div>
             ) : (
@@ -157,19 +158,20 @@ export default function Comments({ event }: { event: SerializableEvent;}) {
         
             {/* Likes and Calendar Buttons */}
             <div className="flex items-center px-4 py-2 border-t border-gray-300">
-            <div onClick={onLikeButtonClicked} className="cursor-pointer mr-4">
-                <FontAwesomeIcon icon={realEvent?.liked ? faHeartSolid : faHeart} />
+                <div onClick={onLikeButtonClicked} className="cursor-pointer mr-4">
+                    <FontAwesomeIcon icon={realEvent?.liked ? faHeartSolid : faHeart} />
+                </div>
+                <div onClick={onAddToCalendarClicked} className="cursor-pointer">
+                    <FontAwesomeIcon icon={faCalendar} />
+                </div>
             </div>
-            <div onClick={onAddToCalendarClicked} className="cursor-pointer">
-                <FontAwesomeIcon icon={faCalendar} />
-            </div>
-            <div className="ml-4 text-sm">
-                {likes} {likes === 1 ? "like" : "likes"}
-            </div>
+
+            <div className="ml-4 text-sm mb-4">
+                    {likes} {likes === 1 ? "like" : "likes"}
             </div>
         
             {/* Comment Input Section */}
-            <div className="p-4 border-t border-gray-300">
+            <div className="mb-4 ml-4">
             <div className="flex flex-row items-center">
                 <textarea
                 ref={textareaRef}
@@ -180,7 +182,7 @@ export default function Comments({ event }: { event: SerializableEvent;}) {
                 className="flex-1 border rounded-lg p-2 resize-none overflow-hidden"
                 rows={1}
                 />
-                <button onClick={handlePost} className="ml-2 p-2 text-slate-400 hover:text-black rounded">
+                <button onClick={handlePost} className="mx-2 p-2 text-slate-400 hover:text-black rounded">
                 Post
                 </button>
             </div>
