@@ -33,10 +33,8 @@ export default function Comments({ event }: { event: SerializableEvent;}) {
     // setting up state for the session and eventDetail
     const [session, setSession] = useState<Session | undefined>(undefined);
     const [eventDetail, setEventDetail] = useState<GetEventDetailResponse | undefined>(undefined);
-
     // hook to dispatch Redux actions
     const dispatch = useAppDispatch();
-
     // Use ref to get a reference to the textarea element
     const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
@@ -56,10 +54,11 @@ export default function Comments({ event }: { event: SerializableEvent;}) {
     }, [event]);
 
     // state variables for comments, input value, likes, and liked status
-    const [comments, setComments] = useState<{ userName: string; text: string }[]>([]);
+    const [comments, setComments] = useState<{ userName: string; text: string; replies: { userName: string; text: string }[] }[]>([]);
     const [inputValue, setInputValue] = useState("");
     const [likes, setLikes] = useState(event.likes);
     const [liked, setLiked] = useState(event.liked);
+    const [replyTo, setReplyTo] = useState<string | null>(null);
 
     // Function to handle text input changes and adjust textarea height
     const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -79,14 +78,32 @@ export default function Comments({ event }: { event: SerializableEvent;}) {
         }
     };
 
-    // function to handle posting a comment
     const handlePost = () => {
         if (inputValue.trim() === "") return; // prevent empty comments
-        setComments([...comments, { userName: session?.user?.name || "Anonymous", text: inputValue }]); // find out where to get the username
-        setInputValue(""); // resetting input value
-        if (textareaRef.current != null) {
-            textareaRef.current.style.height = "auto"; // Reset the height to its initial state
+        if (replyTo) {
+            // Handle posting a reply
+            const newComments = [...comments];
+            const commentIndex = newComments.findIndex(comment => comment.userName === replyTo);
+            if (commentIndex !== -1) {
+                newComments[commentIndex].replies.push({ userName: session?.user?.name || "Anonymous", text: inputValue });
+                setComments(newComments);
+            }
+            setReplyTo(null); // Clear the reply state
+        } else {
+            // Handle posting a regular comment
+            setComments([...comments, { userName: session?.user?.name || "Anonymous", text: inputValue, replies: [] }]);
         }
+
+        setInputValue("");
+        if (textareaRef.current != null) {
+            textareaRef.current.style.height = "auto";
+        }
+    };
+
+    const handleReplyClick = (userName: string) => {
+        setReplyTo(userName);
+        setInputValue(`@${userName} `);
+        textareaRef.current?.focus(); // Focus on the input box
     };
 
     // function to handle "add to calendar"
@@ -151,10 +168,22 @@ export default function Comments({ event }: { event: SerializableEvent;}) {
                 <div key={index} className="my-2 break-words mr-2">
                     <span className="text-sm">{comment.userName}</span> <br />
                     {comment.text}
+                    <button onClick={() => handleReplyClick(comment.userName)} className="mt-1 text-sm text-slate-400 hover:text-black">
+                        Reply
+                    </button>
+
+                    {/* Reply Section */}
+                    <div className="ml-4 mt-2">
+                        {comment.replies.map((reply, replyIndex) => (
+                            <div key={replyIndex} className="my-1 text-sm">
+                                <span className="font-bold">{reply.userName}</span>: {reply.text}
+                            </div>
+                        ))}
+                    </div>
                 </div>
-                ))
-            )}
-            </div>
+            ))
+        )}
+        </div>
         
             {/* Likes and Calendar Buttons */}
             <div className="flex items-center px-4 py-2 border-t border-gray-300">
@@ -172,20 +201,20 @@ export default function Comments({ event }: { event: SerializableEvent;}) {
         
             {/* Comment Input Section */}
             <div className="mb-4 ml-4">
-            <div className="flex flex-row items-center">
-                <textarea
-                ref={textareaRef}
-                value={inputValue}
-                onChange={handleInputChange}
-                onKeyDown={handleKeyDown}
-                placeholder="Add a comment..."
-                className="flex-1 border rounded-lg p-2 resize-none overflow-hidden"
-                rows={1}
-                />
-                <button onClick={handlePost} className="mx-2 p-2 text-slate-400 hover:text-black rounded">
-                Post
-                </button>
-            </div>
+                <div className="flex flex-row items-center">
+                    <textarea
+                    ref={textareaRef}
+                    value={inputValue}
+                    onChange={handleInputChange}
+                    onKeyDown={handleKeyDown}
+                    placeholder="Add a comment..."
+                    className="flex-1 border rounded-lg p-2 resize-none overflow-hidden"
+                    rows={1}
+                    />
+                    <button onClick={handlePost} className="mx-2 p-2 text-slate-400 hover:text-black rounded">
+                        Post
+                    </button>
+                </div>
             </div>
         </div>
     );
