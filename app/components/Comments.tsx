@@ -58,8 +58,8 @@ export default function Comments({ event }: { event: SerializableEvent;}) {
     // state variables for comments, input value, likes, and liked status
     const [comments, setComments] = useState<{ userName: string; text: string }[]>([]);
     const [inputValue, setInputValue] = useState("");
-    const [likes, setLikes] = useState(event.likes);;
-    const [liked, setLiked] = useState(false);
+    const [likes, setLikes] = useState(event.likes);
+    const [liked, setLiked] = useState(event.liked);
 
     // Function to handle text input changes and adjust textarea height
     const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
