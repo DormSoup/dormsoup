@@ -54,11 +54,12 @@ export default function Comments({ event }: { event: SerializableEvent;}) {
     }, [event]);
 
     // state variables for comments, input value, likes, and liked status
-    const [comments, setComments] = useState<{ userName: string; text: string; replies: { userName: string; text: string }[] }[]>([]);
+    const [comments, setComments] = useState<{ id: number; userName: string; text: string; replies: { userName: string; text: string }[] }[]>([]);
     const [inputValue, setInputValue] = useState("");
     const [likes, setLikes] = useState(event.likes);
     const [liked, setLiked] = useState(event.liked);
     const [replyTo, setReplyTo] = useState<string | null>(null);
+    const [replyToCommentId, setReplyToCommentId] = useState<number | null>(null);
 
     // Function to handle text input changes and adjust textarea height
     const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -79,29 +80,37 @@ export default function Comments({ event }: { event: SerializableEvent;}) {
     };
 
     const handlePost = () => {
-        if (inputValue.trim() === "") return; // prevent empty comments
-        if (replyTo) {
-            // Handle posting a reply
+        if (inputValue.trim() === "") return;
+    
+        if (replyToCommentId !== null) {
+            // Handle posting a reply to a specific comment
             const newComments = [...comments];
-            const commentIndex = newComments.findIndex(comment => comment.userName === replyTo);
+            const commentIndex = newComments.findIndex(comment => comment.id === replyToCommentId);
             if (commentIndex !== -1) {
                 newComments[commentIndex].replies.push({ userName: session?.user?.name || "Anonymous", text: inputValue });
                 setComments(newComments);
             }
-            setReplyTo(null); // Clear the reply state
+            setReplyToCommentId(null); // Clear the reply state
         } else {
             // Handle posting a regular comment
-            setComments([...comments, { userName: session?.user?.name || "Anonymous", text: inputValue, replies: [] }]);
+            const newComment = {
+                id: Date.now(), // Use a unique ID for each comment
+                userName: session?.user?.name || "Anonymous",
+                text: inputValue,
+                replies: []
+            };
+            setComments([...comments, newComment]);
         }
-
+    
         setInputValue("");
         if (textareaRef.current != null) {
             textareaRef.current.style.height = "auto";
         }
     };
+    
 
-    const handleReplyClick = (userName: string) => {
-        setReplyTo(userName);
+    const handleReplyClick = (commentId: number, userName: string) => {
+        setReplyToCommentId(commentId);
         setInputValue(`@${userName} `);
         textareaRef.current?.focus(); // Focus on the input box
     };
@@ -164,19 +173,21 @@ export default function Comments({ event }: { event: SerializableEvent;}) {
             {comments.length === 0 ? (
                 <div className="text-slate-400">No comments</div>
             ) : (
-                comments.map((comment, index) => (
-                <div key={index} className="my-2 break-words mr-2">
+                comments.map((comment) => (
+                <div key={comment.id} className="my-2 break-words mr-2">
                     <span className="text-sm">{comment.userName}</span> <br />
                     {comment.text}
-                    <button onClick={() => handleReplyClick(comment.userName)} className="mt-1 text-sm text-slate-400 hover:text-black">
-                        Reply
-                    </button>
-
+                    <div>
+                        <button onClick={() => handleReplyClick(comment.id, comment.userName)} className="mt-1 text-sm text-slate-400 hover:text-black">
+                            Reply
+                        </button>
+                    </div>
+                        
                     {/* Reply Section */}
                     <div className="ml-4 mt-2">
                         {comment.replies.map((reply, replyIndex) => (
                             <div key={replyIndex} className="my-1 text-sm">
-                                <span className="font-bold">{reply.userName}</span>: {reply.text}
+                                <span>{reply.userName}</span>: {reply.text}
                             </div>
                         ))}
                     </div>
