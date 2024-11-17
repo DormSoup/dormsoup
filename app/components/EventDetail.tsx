@@ -1,6 +1,6 @@
 "use client";
 
-import { faCalendar, faClock, faHeart } from "@fortawesome/free-regular-svg-icons";
+import { faCalendar, faClock, faHeart, faPenToSquare } from "@fortawesome/free-regular-svg-icons";
 import { faHeart as faHeartSolid } from "@fortawesome/free-solid-svg-icons";
 import { faLocationDot } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -21,6 +21,7 @@ import EventDate from "./EventDate";
 import GrayOutIfUnknown from "./GrayOutUnknown";
 import { LikesHorizontal } from "./Likes";
 import Loading from "./Loading";
+import { setEditEventModal } from "../redux/modalSlice";
 
 export default function EventDetail({ event }: { event: SerializableEvent }) {
   const dispatch = useAppDispatch();
@@ -152,7 +153,7 @@ const BottomBar = ({
   return (
     <div className="flex h-10 flex-none select-none flex-row border-t-2 border-gray-300 text-center align-middle">
       <div
-        className="w-1/2 rounded-bl-md border-r-[1px] border-gray-300 py-2 transition-all duration-200 hover:cursor-pointer hover:bg-gray-300 hover:text-logo-red"
+        className="w-1/3 rounded-bl-md border-r-[1px] border-gray-300 py-2 hover:cursor-pointer hover:bg-gray-300 hover:text-logo-red"
         onClick={onLikeButtonClicked}
       >
         {realEvent?.liked ? (
@@ -166,11 +167,19 @@ const BottomBar = ({
         )}
       </div>
       <div
-        className="w-1/2 rounded-br-md border-l-[1px] border-gray-300 py-2 hover:cursor-pointer hover:bg-gray-300 hover:text-logo-red"
+        className="w-1/3 border-l-[1px] border-r-[1px] border-gray-300 py-2 hover:cursor-pointer hover:bg-gray-300 hover:text-logo-red"
         onClick={onAddToCalendarClicked}
       >
         <FontAwesomeIcon icon={faCalendar} /> Add to Calendar
       </div>
+      {event?.editable && (
+        <div
+          className="w-1/3 rounded-br-md border-l-[1px] border-gray-300 py-2 hover:cursor-pointer hover:bg-gray-300 hover:text-logo-red"
+          onClick={() => dispatch(setEditEventModal(event))}
+        >
+          <FontAwesomeIcon icon={faPenToSquare} />
+        </div>
+      )}
     </div>
   );
 };

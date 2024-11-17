@@ -59,7 +59,7 @@ export default function CompactEventCard({ event, bySentDate }: Props) {
         <div className="line-clamp-1 w-full overflow-hidden pt-0.5 text-lg font-semibold">
           {event.editable && (
             <span
-              className="mr-2 inline-block transition-all duration-150 hover:-translate-y-0.5 hover:text-logo-red hover:shadow-lg"
+              className="mr-2 inline-block text-logo-yellow hover:opacity-80 transition-all duration-150"
               onClick={(clickEvent) => {
                 dispatch(setEditEventModal(event));
                 clickEvent.stopPropagation();
