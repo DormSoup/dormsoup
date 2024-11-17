@@ -38,9 +38,7 @@ First start the ssh connection to forward the local 5432 port to the DormSoup da
 ssh DormSoup -L 5432:localhost:5432
 ```
 
-TODO(andiliu) please make a separate production and development database
-
-**Important note**: Even though it says `localhost`, the database is on the server, not on your computer. Be careful with any destructive actions.
+**Important note**: Even though it says `localhost`, the database is on the server, not on your computer. Be careful with any destructive actions. (Check the [daemon repo](https://github.com/DormSoup/dormsoup-daemon) for instructions of setting up a local development database.)
 
 ![port forwarding diagram](https://i.sstatic.net/QcwEn.png)
 
