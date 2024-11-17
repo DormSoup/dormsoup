@@ -150,10 +150,11 @@ const BottomBar = ({
     if (event === undefined) return;
     dispatch(likeEvent(event.id));
   };
+  
   return (
     <div className="flex h-10 flex-none select-none flex-row border-t-2 border-gray-300 text-center align-middle">
       <div
-        className="w-1/3 rounded-bl-md border-r-[1px] border-gray-300 py-2 hover:cursor-pointer hover:bg-gray-300 hover:text-logo-red"
+        className={`${event?.editable ? 'w-1/3' : 'w-1/2'} rounded-bl-md border-r-[1px] border-gray-300 py-2 hover:cursor-pointer hover:bg-gray-300 hover:text-logo-red`}
         onClick={onLikeButtonClicked}
       >
         {realEvent?.liked ? (
@@ -167,7 +168,7 @@ const BottomBar = ({
         )}
       </div>
       <div
-        className="w-1/3 border-l-[1px] border-r-[1px] border-gray-300 py-2 hover:cursor-pointer hover:bg-gray-300 hover:text-logo-red"
+        className={`${event?.editable ? 'w-1/3' : 'w-1/2'} ${event?.editable ? 'border-x-[1px]' : 'border-l-[1px] rounded-br-md'} border-gray-300 py-2 hover:cursor-pointer hover:bg-gray-300 hover:text-logo-red`}
         onClick={onAddToCalendarClicked}
       >
         <FontAwesomeIcon icon={faCalendar} /> Add to Calendar
