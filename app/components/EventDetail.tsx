@@ -12,8 +12,9 @@ import Image from "next/image";
 import React, { MouseEventHandler, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
-import { SerializableEvent } from "../EventType";
+import { SerializableEvent, SerializableEventWithTags } from "../EventType";
 import { GetEventDetailResponse } from "../api/event-detail/route";
+import { setEditEventModal } from "../redux/modalSlice";
 import { likeEvent } from "../redux/searchSlice";
 import { RootState, useAppDispatch } from "../redux/store";
 
@@ -21,7 +22,6 @@ import EventDate from "./EventDate";
 import GrayOutIfUnknown from "./GrayOutUnknown";
 import { LikesHorizontal } from "./Likes";
 import Loading from "./Loading";
-import { setEditEventModal } from "../redux/modalSlice";
 
 export default function EventDetail({ event }: { event: SerializableEvent }) {
   const dispatch = useAppDispatch();
@@ -150,11 +150,13 @@ const BottomBar = ({
     if (event === undefined) return;
     dispatch(likeEvent(event.id));
   };
-  
+
   return (
     <div className="flex h-10 flex-none select-none flex-row border-t-2 border-gray-300 text-center align-middle">
       <div
-        className={`${event?.editable ? 'w-1/3' : 'w-1/2'} rounded-bl-md border-r-[1px] border-gray-300 py-2 hover:cursor-pointer hover:bg-gray-300 hover:text-logo-red`}
+        className={`${
+          event?.editable ? "w-1/3" : "w-1/2"
+        } rounded-bl-md border-r-[1px] border-gray-300 py-2 hover:cursor-pointer hover:bg-gray-300 hover:text-logo-red`}
         onClick={onLikeButtonClicked}
       >
         {realEvent?.liked ? (
@@ -168,7 +170,9 @@ const BottomBar = ({
         )}
       </div>
       <div
-        className={`${event?.editable ? 'w-1/3' : 'w-1/2'} ${event?.editable ? 'border-x-[1px]' : 'border-l-[1px] rounded-br-md'} border-gray-300 py-2 hover:cursor-pointer hover:bg-gray-300 hover:text-logo-red`}
+        className={`${event?.editable ? "w-1/3" : "w-1/2"} ${
+          event?.editable ? "border-x-[1px]" : "rounded-br-md border-l-[1px]"
+        } border-gray-300 py-2 hover:cursor-pointer hover:bg-gray-300 hover:text-logo-red`}
         onClick={onAddToCalendarClicked}
       >
         <FontAwesomeIcon icon={faCalendar} /> Add to Calendar
@@ -176,7 +180,7 @@ const BottomBar = ({
       {event?.editable && (
         <div
           className="w-1/3 rounded-br-md border-l-[1px] border-gray-300 py-2 hover:cursor-pointer hover:bg-gray-300 hover:text-logo-red"
-          onClick={() => dispatch(setEditEventModal(event))}
+          onClick={() => dispatch(setEditEventModal(event as SerializableEventWithTags))}
         >
           <FontAwesomeIcon icon={faPenToSquare} /> Edit
         </div>
