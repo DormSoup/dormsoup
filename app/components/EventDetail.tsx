@@ -17,6 +17,7 @@ import { GetEventDetailResponse } from "../api/event-detail/route";
 import { setEditEventModal } from "../redux/modalSlice";
 import { likeEvent } from "../redux/searchSlice";
 import { RootState, useAppDispatch } from "../redux/store";
+import { removeArtifacts } from "../util";
 
 import EventDate from "./EventDate";
 import GrayOutIfUnknown from "./GrayOutUnknown";
@@ -133,7 +134,8 @@ const BottomBar = ({
       location: event.location,
       organizer: `${eventDetail?.fromEmail?.sender.name}|${eventDetail?.fromEmail?.sender.email}`,
       timeZone: "America/New_York",
-      listStyle: "modal"
+      listStyle: "modal",
+      description: removeArtifacts(eventDetail?.fromEmail?.body ?? "")
     };
     if (!date.toISOString().includes("00:00:00.000Z")) {
       config.startTime = timeString(date);
