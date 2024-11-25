@@ -29,6 +29,20 @@ import { Session } from "../api/auth/session/route";
 // Importing GetEventDetailResponse for event detail typing
 import { GetEventDetailResponse } from "../api/event-detail/route";
 
+type Reply = {
+    id: number;
+    userName: string;
+    text: string;
+    replies: Reply[]; // Recursive type
+};
+
+type Comment = {
+    id: number;
+    userName: string;
+    text: string;
+    replies: Reply[]; // Same as Reply[]
+};
+
 export default function Comments({ event }: { event: SerializableEvent; }) {
     // setting up state for the session and eventDetail
     const [session, setSession] = useState<Session | undefined>(undefined);
@@ -54,9 +68,7 @@ export default function Comments({ event }: { event: SerializableEvent; }) {
     }, [event]);
 
     // state variables for comments, input value, likes, and liked status
-    const [comments, setComments] = useState<
-        { id: number; userName: string; text: string; replies: { id: number; userName: string; text: string }[] }[]
-    >([]);
+    const [comments, setComments] = useState<Comment[]>([]);
     const [inputValue, setInputValue] = useState("");
     const [likes, setLikes] = useState(event.likes);
     const [liked, setLiked] = useState(event.liked);
@@ -81,38 +93,96 @@ export default function Comments({ event }: { event: SerializableEvent; }) {
         }
     };
 
+    // for finding the reply's reply
+    const findCommentOrReplyById = (
+        commentsList: typeof comments,
+        id: number
+    ): { comment: any; parent: any } | null => {
+        for (let comment of commentsList) {
+            if (comment.id === id) {
+                return { comment, parent: null }; // Top-level comment
+            }
+            for (let reply of comment.replies) {
+                if (reply.id === id) {
+                    return { comment: reply, parent: comment }; // Nested reply
+                }
+            }
+        }
+        return null;
+    };
+
+
     const handleReplyClick = (commentId: number, userName: string) => {
-        console.log("replying to comment id:", commentId);
+        const result = findCommentOrReplyById(comments, commentId);
+        if (result) {
+            const { comment, parent } = result;
+            console.log("Replying to comment or reply:", comment);
+            if (parent) {
+                console.log("Parent comment:", parent);
+            }
+        } else {
+            console.log(`Comment or reply with id ${commentId} not found.`);
+        }
         setReplyToCommentId(commentId);
         setReplyToUserName(userName);
         setInputValue(`@${userName} `);
         textareaRef.current?.focus(); // Focus on the input box
     };
 
+    const generateUniqueId = () => {
+        return Date.now() + Math.random();
+    };
+
     const handlePost = () => {
         if (inputValue.trim() === "") return;
 
+        const extractKerb = (email: string | undefined) => {
+            if (!email) return "Anonymous";
+            return email.split("@")[0];
+        };
+
+        const newReply: Reply = {
+            id: generateUniqueId(),
+            userName: extractKerb(session?.user?.email),
+            text: inputValue,
+            replies: [],
+        };
+
         if (replyToCommentId !== null) {
-            // Handle posting a reply to a specific comment
-            const newComments = [...comments];
-            const parentCommentIndex = newComments.findIndex(comment => comment.id === replyToCommentId);
-            if (parentCommentIndex !== -1) {
-                newComments[parentCommentIndex].replies.push({
-                    id: Date.now(), // Generate a unique ID for the reply
-                    userName: session?.user?.name || "Anonymous",
-                    text: inputValue
-                });
-                setComments(newComments);
+            console.log("Replying to comment or reply ID:", replyToCommentId); // Check the ID
+            const updatedComments = [...comments];
+
+            const addReplyToCommentOrReply = (
+                commentsList: typeof comments,
+                id: number,
+                reply: typeof newReply
+            ): boolean => {
+                for (let comment of commentsList) {
+                    if (comment.id === id) {
+                        comment.replies.push(reply);
+                        return true; // Added reply to top-level comment
+                    }
+                    if (addReplyToCommentOrReply(comment.replies, id, reply)) {
+                        return true; // Added reply to nested reply
+                    }
+                }
+                return false;
+            };
+
+            const success = addReplyToCommentOrReply(updatedComments, replyToCommentId, newReply);
+            if (!success) {
+                console.error("Failed to add reply", replyToCommentId);
             }
-            setReplyToCommentId(null); // Clear the reply state
+
+            setComments(updatedComments);
+            setReplyToCommentId(null);
             setReplyToUserName(null);
         } else {
-            // Handle posting a regular comment
-            const newComment = {
-                id: Date.now(), // Use a unique ID for each comment
-                userName: session?.user?.name || "Anonymous",
+            const newComment: Comment = {
+                id: generateUniqueId(),
+                userName: extractKerb(session?.user?.email),
                 text: inputValue,
-                replies: []
+                replies: [], // Ensure replies is initialized
             };
             setComments([...comments, newComment]);
         }
@@ -122,6 +192,29 @@ export default function Comments({ event }: { event: SerializableEvent; }) {
             textareaRef.current.style.height = "auto";
         }
     };
+
+    // handle rendering both current replies and their nested replies
+    const renderReplies = (replies: Reply[]) => {
+        return replies.map((reply) => (
+            <div key={reply.id} className="ml-6 mt-2 space-y-1">
+                <div>
+                    <span className="text-sm text-white bg-logo-red border border-logo-red rounded-full px-3 py-1 mr-2">
+                        {reply.userName}
+                    </span>
+                    {reply.text}
+                    <button
+                        onClick={() => handleReplyClick(reply.id, reply.userName)}
+                        className="ml-2 mt-1 text-sm text-slate-400 hover:text-black flex flex-col"
+                    >
+                        Reply
+                    </button>
+                </div>
+                {/* Recursive call for nested replies */}
+                {renderReplies(reply.replies)}
+            </div>
+        ));
+    };
+    
 
     // function to handle "add to calendar"
     const onAddToCalendarClicked: MouseEventHandler<HTMLDivElement> = (clickEvent) => {
@@ -198,23 +291,7 @@ export default function Comments({ event }: { event: SerializableEvent; }) {
 
                             {/* Reply Section */}
                             <div className="ml-6 mt-2 space-y-2">
-                                {comment.replies.map((reply) => (
-                                    <div key={reply.id} className="space-y-1">
-                                        <span className="text-sm text-white bg-logo-red border border-logo-red rounded-full px-3 py-1 mr-2">
-                                            {reply.userName}
-                                        </span>
-                                        {reply.text}
-                                        <div>
-                                            <button
-                                                onClick={() => handleReplyClick(reply.id, reply.userName)}
-                                                className="ml-2 mt-1 text-sm text-slate-400 hover:text-black"
-                                            >
-                                                Reply
-                                            </button>
-                                        </div>
-                                        
-                                    </div>
-                                ))}
+                                {renderReplies(comment.replies)}
                             </div>
                         </div>
                     ))

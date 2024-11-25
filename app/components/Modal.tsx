@@ -20,16 +20,20 @@ export default function Modal() {
   const dispatch = useAppDispatch();
   const show = modal !== undefined;
   const fullWidth = show && modal.type === "event-detail";
+  const [showComments, setShowComments] = useState(false);
 
   const children =
     modal === undefined ? null : modal.type === "event-detail" ? (
       <div className="flex flex-col md:flex-row">
         <div className="flex-1">
-          <EventDetail event={modal.event} />
+          <EventDetail event={modal.event} setShowComments={setShowComments}/>
         </div>
-        <div className="flex-none md:ml-4 mt-4 md:mt-0 md:w-[40%]">
+        {
+        showComments &&
+          (<div className="flex-none md:ml-4 mt-4 md:mt-0 md:w-[40%]">
           <Comments event={modal.event} />
-        </div>
+          </div>)
+        }
       </div>
     ) : modal.type === "edit-event" ? (
       <EditEventModal event={modal.event} />

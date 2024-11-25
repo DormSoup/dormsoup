@@ -1,6 +1,6 @@
 "use client";
 
-import { faCalendar, faClock, faHeart } from "@fortawesome/free-regular-svg-icons";
+import { faCalendar, faClock, faHeart, faPenToSquare, faComment } from "@fortawesome/free-regular-svg-icons";
 import { faHeart as faHeartSolid, faLocationDot } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
@@ -10,8 +10,9 @@ import { URLSearchParams } from "next/dist/compiled/@edge-runtime/primitives/url
 import { MouseEventHandler, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
-import { SerializableEvent } from "../EventType";
+import { SerializableEvent, SerializableEventWithTags } from "../EventType";
 import { GetEventDetailResponse } from "../api/event-detail/route";
+import { setEditEventModal } from "../redux/modalSlice";
 import { likeEvent } from "../redux/searchSlice";
 import { RootState, useAppDispatch } from "../redux/store";
 
@@ -19,9 +20,16 @@ import EventDate from "./EventDate";
 import GrayOutIfUnknown from "./GrayOutUnknown";
 import Loading from "./Loading";
 
-export default function EventDetail({ event }: { event: SerializableEvent }) {
+export default function EventDetail({
+  event,
+  setShowComments, // Receive setShowComments as a prop
+}: {
+  event: SerializableEvent;
+  setShowComments: React.Dispatch<React.SetStateAction<boolean>>; // Type the prop
+}) {
   const dispatch = useAppDispatch();
   const [eventDetail, setEventDetail] = useState<GetEventDetailResponse | undefined>(undefined);
+
   useEffect(() => {
     setEventDetail(undefined);
     if (event === undefined) return;
@@ -60,7 +68,7 @@ export default function EventDetail({ event }: { event: SerializableEvent }) {
                   <td>{eventDetail.fromEmail?.subject}</td>
                 </tr>
                 <tr>
-                  <td>Recieved Date: </td>
+                  <td>Received Date: </td>
                   <td>
                     {eventDetail.fromEmail?.receivedAt ? (
                       <EventDate
@@ -96,11 +104,110 @@ export default function EventDetail({ event }: { event: SerializableEvent }) {
             checkOrigin={false}
             scrolling={true}
           ></IFrameResizer>
+          <BottomBar
+            event={event}
+            eventDetail={eventDetail}
+            onCommentButtonClicked={() => setShowComments((prev) => !prev)} // Pass the toggle function
+          />
         </>
       )}
     </>
   );
 }
+
+
+const BottomBar = ({
+  event,
+  eventDetail,
+  onCommentButtonClicked,
+}: {
+  event: SerializableEvent | undefined;
+  eventDetail: GetEventDetailResponse | undefined;
+  onCommentButtonClicked: () => void;
+}) => {
+  const dispatch = useAppDispatch();
+  const onAddToCalendarClicked: MouseEventHandler<HTMLDivElement> = (clickEvent) => {
+    if (event === undefined) return;
+    const dateString = (date: Date) => date.toISOString().split("T")[0];
+    const timeString = (date: Date) =>
+      date
+        .toISOString()
+        .split("T")[1]
+        .replace(/:\d{2}\.\d{3}Z$/i, "");
+    const date = new Date(event.date);
+    const endDate = new Date(date);
+    endDate.setMinutes(date.getMinutes() + event.duration);
+    const config: Parameters<typeof atcb_action>[0] = {
+      name: event.title,
+      startDate: dateString(date),
+      options: ["Microsoft365", "Google", "Apple"],
+      location: event.location,
+      organizer: `${eventDetail?.fromEmail?.sender.name}|${eventDetail?.fromEmail?.sender.email}`,
+      timeZone: "America/New_York",
+      listStyle: "modal"
+    };
+    if (!date.toISOString().includes("00:00:00.000Z")) {
+      config.startTime = timeString(date);
+      config.endTime = timeString(endDate);
+    }
+    atcb_action(config, clickEvent.target as any as HTMLElement);
+  };
+
+  const realEvent = useSelector((state: RootState) =>
+    state.search.events.find((e) => e.id === event?.id)
+  );
+
+  const onLikeButtonClicked: MouseEventHandler<HTMLDivElement> = (clickEvent) => {
+    if (event === undefined) return;
+    dispatch(likeEvent(event.id));
+  };
+
+  return (
+    <div className="flex h-10 flex-none select-none flex-row border-t-2 border-gray-300 text-center align-middle">
+      <div
+        className={`${
+          event?.editable ? "w-1/3" : "w-1/2"
+        } rounded-bl-md border-r-[1px] border-gray-300 py-2 hover:cursor-pointer hover:bg-gray-300 hover:text-logo-red`}
+        onClick={onLikeButtonClicked}
+      >
+        {realEvent?.liked ? (
+          <span className="text-red-500">
+            <FontAwesomeIcon icon={faHeartSolid} /> Unlike
+          </span>
+        ) : (
+          <span>
+            <FontAwesomeIcon icon={faHeart} className="" /> Like
+          </span>
+        )}
+      </div>
+
+      <div
+        className={`${event?.editable ? "w-1/3" : "w-1/2"} ${
+          event?.editable ? "border-x-[1px]" : "rounded-br-md border-l-[1px]"
+        } border-gray-300 py-2 hover:cursor-pointer hover:bg-gray-300 hover:text-logo-red`}
+        onClick={onAddToCalendarClicked}
+      >
+        <FontAwesomeIcon icon={faCalendar} /> Add to Calendar
+      </div>
+
+      {event?.editable && (
+        <div
+          className="w-1/3 rounded-br-md border-l-[1px] border-gray-300 py-2 hover:cursor-pointer hover:bg-gray-300 hover:text-logo-red"
+          onClick={() => dispatch(setEditEventModal(event as SerializableEventWithTags))}
+        >
+          <FontAwesomeIcon icon={faPenToSquare} /> Edit
+        </div>
+      )}
+
+      <div
+        className="w-1/3 rounded-br-md border-l-[1px] border-gray-300 py-2 hover:cursor-pointer hover:bg-gray-300 hover:text-logo-red"
+        onClick={onCommentButtonClicked}
+      >
+        <FontAwesomeIcon icon={faComment} /> Comment
+      </div>
+    </div>
+  );
+};
 
 /**
  * Inserts the iframe resizer script into the HTML body,
