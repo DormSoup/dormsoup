@@ -1,6 +1,7 @@
 // for client side rendering
 "use client";
 
+//import { isAdmin } from "@/app/auth";
 import { MouseEventHandler } from "react";
 
 // import icons from FontAwesome
@@ -196,24 +197,60 @@ export default function Comments({ event }: { event: SerializableEvent; }) {
     // handle rendering both current replies and their nested replies
     const renderReplies = (replies: Reply[]) => {
         return replies.map((reply) => (
-            <div key={reply.id} className="ml-6 mt-2 space-y-1">
-                <div>
-                    <span className="text-sm text-white bg-logo-red border border-logo-red rounded-full px-3 py-1 mr-2">
-                        {reply.userName}
-                    </span>
-                    {reply.text}
-                    <button
-                        onClick={() => handleReplyClick(reply.id, reply.userName)}
-                        className="ml-2 mt-1 text-sm text-slate-400 hover:text-black flex flex-col"
-                    >
-                        Reply
-                    </button>
+            <div key={reply.id} className="ml-6 mt-4">
+                <div className="flex flex-col space-y-1">
+                    <div className="flex items-center space-x-2">
+                        <span className="text-sm text-white bg-logo-red border border-logo-red rounded-full px-3 py-1">
+                            {reply.userName}
+                        </span>
+                        <span>{reply.text}</span>
+                    </div>
+                    <div className="flex space-x-2 text-sm text-slate-400">
+                        <button
+                            onClick={() => handleReplyClick(reply.id, reply.userName)}
+                            className="hover:text-black"
+                        >
+                            Reply
+                        </button>
+                        <button
+                            onClick={() => handleDeleteComment(reply.id, reply.userName)}
+                            className="hover:text-black"
+                        >
+                            Delete
+                        </button>
+                    </div>
                 </div>
-                {/* Recursive call for nested replies */}
-                {renderReplies(reply.replies)}
+                {/* Recursive rendering for nested replies */}
+                {reply.replies.length > 0 && (
+                    <div className="ml-6 mt-2">
+                        {renderReplies(reply.replies)}
+                    </div>
+                )}
             </div>
         ));
     };
+    
+    
+    const handleDeleteComment = (commentId: number, userName: string) => {
+        //const isUserAdmin = isAdmin(userEmail);
+        const isAuthor = session?.user?.email?.split("@")[0] === userName;
+    
+        if (!isAuthor) {
+            alert("You are not authorized to delete this comment.");
+            return;
+        }
+    
+        const deleteCommentOrReplyById = (commentsList: Comment[], id: number): Comment[] => {
+            return commentsList.filter((comment) => {
+                if (comment.id === id) return false; // Remove the comment with the matching id
+                comment.replies = deleteCommentOrReplyById(comment.replies, id); // Recursively check nested replies
+                return true;
+            });
+        };
+    
+        setComments((prevComments) => deleteCommentOrReplyById(prevComments, commentId));
+    };
+    
     
 
     // function to handle "add to calendar"
@@ -286,6 +323,13 @@ export default function Comments({ event }: { event: SerializableEvent; }) {
                                     className="ml-2 mt-1 text-sm text-slate-400 hover:text-black"
                                 >
                                     Reply
+                                </button>
+                                {/* Delete Button */}
+                                <button
+                                    onClick={() => handleDeleteComment(comment.id, comment.userName)}
+                                    className="ml-2 mt-1 text-sm text-slate-400 hover:text-black"
+                                >
+                                    Delete
                                 </button>
                             </div>
 
