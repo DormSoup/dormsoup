@@ -194,32 +194,41 @@ export default function Comments({ event }: { event: SerializableEvent; }) {
         }
     };
 
-    // handle rendering both current replies and their nested replies
     const renderReplies = (replies: Reply[]) => {
         return replies.map((reply) => (
             <div key={reply.id} className="ml-6 mt-4">
-                <div className="flex flex-col space-y-1">
-                    <div className="flex items-center space-x-2">
-                        <span className="text-sm text-white bg-logo-red border border-logo-red rounded-full px-3 py-1">
-                            {reply.userName}
-                        </span>
-                        <span>{reply.text}</span>
-                    </div>
-                    <div className="flex space-x-2 text-sm text-slate-400">
-                        <button
-                            onClick={() => handleReplyClick(reply.id, reply.userName)}
-                            className="hover:text-black"
-                        >
-                            Reply
-                        </button>
-                        <button
-                            onClick={() => handleDeleteComment(reply.id, reply.userName)}
-                            className="hover:text-black"
-                        >
-                            Delete
-                        </button>
+                <div className="flex items-start space-x-4">
+                    {/* Username */}
+                    <span
+                        className="text-sm text-white bg-logo-red border border-logo-red rounded-full px-3 py-1"
+                        style={{ flexShrink: 0 }}
+                    >
+                        {reply.userName}
+                    </span>
+    
+                    {/* Comment and Buttons */}
+                    <div className="flex-1">
+                        {/* Comment Text */}
+                        <p className="break-words">{reply.text}</p>
+    
+                        {/* Buttons */}
+                        <div className="flex space-x-4 mt-1 text-sm text-slate-400">
+                            <button
+                                onClick={() => handleReplyClick(reply.id, reply.userName)}
+                                className="hover:text-black"
+                            >
+                                Reply
+                            </button>
+                            <button
+                                onClick={() => handleDeleteComment(reply.id, reply.userName)}
+                                className="hover:text-black"
+                            >
+                                Delete
+                            </button>
+                        </div>
                     </div>
                 </div>
+    
                 {/* Recursive rendering for nested replies */}
                 {reply.replies.length > 0 && (
                     <div className="ml-6 mt-2">
@@ -229,6 +238,8 @@ export default function Comments({ event }: { event: SerializableEvent; }) {
             </div>
         ));
     };
+    
+
     
     
     const handleDeleteComment = (commentId: number, userName: string) => {
@@ -312,25 +323,37 @@ export default function Comments({ event }: { event: SerializableEvent; }) {
                     <div className="text-slate-400">No comments</div>
                 ) : (
                     comments.map((comment) => (
-                        <div key={comment.id} className="my-2 break-words mr-2">
-                            <span className="text-sm text-white bg-logo-yellow border border-logo-yellow rounded-full px-3 py-1 mr-2">
-                                {comment.userName}
-                            </span>
-                            {comment.text}
-                            <div>
-                                <button
-                                    onClick={() => handleReplyClick(comment.id, comment.userName)}
-                                    className="ml-2 mt-1 text-sm text-slate-400 hover:text-black"
+                        <div key={comment.id} className="my-2">
+                            <div className="flex items-start space-x-4">
+                                {/* Username */}
+                                <span
+                                    className="text-sm text-white bg-logo-yellow border border-logo-yellow rounded-full px-3 py-1"
+                                    style={{ flexShrink: 0 }}
                                 >
-                                    Reply
-                                </button>
-                                {/* Delete Button */}
-                                <button
-                                    onClick={() => handleDeleteComment(comment.id, comment.userName)}
-                                    className="ml-2 mt-1 text-sm text-slate-400 hover:text-black"
-                                >
-                                    Delete
-                                </button>
+                                    {comment.userName}
+                                </span>
+
+                                {/* Comment and Buttons */}
+                                <div className="flex-1">
+                                    {/* Comment Text */}
+                                    <p className="break-words">{comment.text}</p>
+
+                                    {/* Buttons */}
+                                    <div className="flex space-x-4 mt-1 text-sm text-slate-400">
+                                        <button
+                                            onClick={() => handleReplyClick(comment.id, comment.userName)}
+                                            className="hover:text-black"
+                                        >
+                                            Reply
+                                        </button>
+                                        <button
+                                            onClick={() => handleDeleteComment(comment.id, comment.userName)}
+                                            className="hover:text-black"
+                                        >
+                                            Delete
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
 
                             {/* Reply Section */}
@@ -341,6 +364,8 @@ export default function Comments({ event }: { event: SerializableEvent; }) {
                     ))
                 )}
             </div>
+
+
 
             {/* Likes and Calendar Buttons */}
             <div className="flex items-center px-4 py-2 border-t border-gray-300">
