@@ -4,7 +4,7 @@ import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Transition } from "@headlessui/react";
 
-import { MouseEventHandler, useEffect, useState } from "react";
+import { useState } from "react";
 import { useSelector } from "react-redux";
 
 import { clearModal } from "../redux/modalSlice";
@@ -69,8 +69,8 @@ export default function Modal() {
       >
         <div
           className={
-            "relative m-auto flex max-h-shorter-screen flex-col rounded-md bg-white shadow-lg transition-all " +
-            "max-w-[calc(100%-32px)] sm:max-w-[calc(100%-48px)] md:max-w-[calc(100%-64px)] lg:max-w-[calc(100%-80px)] xl:max-w-[calc(100%-96px)] min-w-[300px]"
+            "relative m-auto flex max-h-shorter-screen max-w-2xl flex-col rounded-md bg-white shadow-lg " +
+            (fullWidth ? "w-full" : "")
           }
           onClick={(event) => event.stopPropagation()}
         >

@@ -1,7 +1,6 @@
 // for client side rendering
 "use client";
 
-//import { isAdmin } from "@/app/auth";
 import { MouseEventHandler } from "react";
 
 // import icons from FontAwesome
@@ -57,6 +56,26 @@ export default function Comments({ event }: { event: SerializableEvent; }) {
     useEffect(() => {
         getAppClientSession().then(setSession);
     }, []);
+
+      // Fetch comments for the event
+    const fetchComments = async () => {
+        try {
+            const response = await fetch(`/api/comments?eventId=${event.id}`);
+            if (!response.ok) throw new Error('Failed to fetch comments');
+            const data = await response.json();
+            setComments(data);
+            } catch (error) {
+            console.error("Failed to fetch comments:", error);
+        }
+    };
+        
+
+        // Fetch comments for the event
+    useEffect(() => {
+        if (event) {
+            fetchComments(); // The function is invoked here.
+        }
+    }, [event]);
 
     // Fetch eventDetail data
     useEffect(() => {
@@ -134,67 +153,51 @@ export default function Comments({ event }: { event: SerializableEvent; }) {
         return Date.now() + Math.random();
     };
 
-    const handlePost = () => {
-        if (inputValue.trim() === "") return;
-
-        const extractKerb = (email: string | undefined) => {
-            if (!email) return "Anonymous";
-            return email.split("@")[0];
-        };
-
-        const newReply: Reply = {
-            id: generateUniqueId(),
-            userName: extractKerb(session?.user?.email),
+    const handlePost = async () => {
+        if (!inputValue.trim()) return;
+        
+        const payload = {
             text: inputValue,
-            replies: [],
+            userName: session?.user?.email.split("@")[0] || "Anonymous",
+            eventId: event.id,
+            parentId: replyToCommentId || null,
         };
-
-        if (replyToCommentId !== null) {
-            console.log("Replying to comment or reply ID:", replyToCommentId); // Check the ID
-            const updatedComments = [...comments];
-
-            const addReplyToCommentOrReply = (
-                commentsList: typeof comments,
-                id: number,
-                reply: typeof newReply
-            ): boolean => {
-                for (let comment of commentsList) {
-                    if (comment.id === id) {
-                        comment.replies.push(reply);
-                        return true; // Added reply to top-level comment
-                    }
-                    if (addReplyToCommentOrReply(comment.replies, id, reply)) {
-                        return true; // Added reply to nested reply
-                    }
-                }
-                return false;
-            };
-
-            const success = addReplyToCommentOrReply(updatedComments, replyToCommentId, newReply);
-            if (!success) {
-                console.error("Failed to add reply", replyToCommentId);
+        
+        try {
+            const response = await fetch('/api/comments', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+            });
+        
+            if (!response.ok) throw new Error('Failed to post comment');
+        
+            const savedComment = await response.json();
+        
+            // Update local comments state
+            if (replyToCommentId) {
+            setComments((prev) =>
+                prev.map((comment) =>
+                comment.id === replyToCommentId
+                    ? { ...comment, replies: [...comment.replies, savedComment] }
+                    : comment
+                )
+            );
+            } else {
+            setComments((prev) => [...prev, savedComment]);
             }
-
-            setComments(updatedComments);
+        
+            setInputValue('');
             setReplyToCommentId(null);
-            setReplyToUserName(null);
-        } else {
-            const newComment: Comment = {
-                id: generateUniqueId(),
-                userName: extractKerb(session?.user?.email),
-                text: inputValue,
-                replies: [], // Ensure replies is initialized
-            };
-            setComments([...comments, newComment]);
-        }
-
-        setInputValue("");
-        if (textareaRef.current != null) {
-            textareaRef.current.style.height = "auto";
+        } catch (error) {
+            console.error("Failed to post comment:", error);
         }
     };
+        
 
-    const renderReplies = (replies: Reply[]) => {
+    const renderReplies = (replies: Reply[] | undefined) => {
+        if (!replies || replies.length === 0) return null; // Fallback for undefined or empty replies
+
         return replies.map((reply) => (
             <div key={reply.id} className="ml-6 mt-4">
                 <div className="flex items-start space-x-4">
@@ -230,7 +233,7 @@ export default function Comments({ event }: { event: SerializableEvent; }) {
                 </div>
     
                 {/* Recursive rendering for nested replies */}
-                {reply.replies.length > 0 && (
+                {reply.replies && reply.replies.length > 0 && (
                     <div className="ml-6 mt-2">
                         {renderReplies(reply.replies)}
                     </div>
@@ -250,14 +253,20 @@ export default function Comments({ event }: { event: SerializableEvent; }) {
             alert("You are not authorized to delete this comment.");
             return;
         }
+        setComments((prevComments) => deleteCommentOrReplyById(prevComments, commentId));
     
         const deleteCommentOrReplyById = (commentsList: Comment[], id: number): Comment[] => {
-            return commentsList.filter((comment) => {
-                if (comment.id === id) return false; // Remove the comment with the matching id
-                comment.replies = deleteCommentOrReplyById(comment.replies, id); // Recursively check nested replies
-                return true;
-            });
+            return commentsList
+                .map((comment) => {
+                    if (comment.id === id) return null; // Mark for deletion
+                    const updatedReplies = comment.replies
+                        ? deleteCommentOrReplyById(comment.replies, id)
+                        : []; // Default to empty array if undefined
+                    return { ...comment, replies: updatedReplies };
+                })
+                .filter((comment) => comment !== null); // Remove marked items
         };
+        
     
         setComments((prevComments) => deleteCommentOrReplyById(prevComments, commentId));
     };

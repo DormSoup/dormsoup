@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { atcb_action } from "add-to-calendar-button";
 import IFrameResizer from "iframe-resizer-react";
-import { URLSearchParams } from "next/dist/compiled/@edge-runtime/primitives/url";
+//import { URLSearchParams } from "url";
 import { MouseEventHandler, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
