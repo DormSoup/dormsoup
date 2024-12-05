@@ -104,6 +104,6 @@ model Comment {
   eventId   Int
   parentId  Int? // For replies, null for top-level comments
   event     Event     @relation(fields: [eventId], references: [id])
-  parent    Comment?  @relation("ReplyToParent", fields: [parentId], references: [id])
+  parent    Comment?  @relation("ReplyToParent", fields: [parentId], references: [id], onDelete: Cascade)
   replies   Comment[] @relation("ReplyToParent")
 }
