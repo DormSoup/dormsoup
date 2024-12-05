@@ -4,7 +4,7 @@ import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Transition } from "@headlessui/react";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useSelector } from "react-redux";
 
 import { clearModal } from "../redux/modalSlice";
@@ -24,24 +24,13 @@ export default function Modal() {
 
   const children =
     modal === undefined ? null : modal.type === "event-detail" ? (
-      <div className="flex flex-col md:flex-row">
-        <div className="flex-1">
-          <EventDetail event={modal.event} setShowComments={setShowComments}/>
-        </div>
-        {
-        showComments &&
-          (<div className="flex-none md:ml-4 mt-4 md:mt-0 md:w-[40%]">
-          <Comments event={modal.event} />
-          </div>)
-        }
-      </div>
+      <EventDetail event={modal.event} setShowComments={setShowComments} />
     ) : modal.type === "edit-event" ? (
       <EditEventModal event={modal.event} />
     ) : (
-      <div className="px-4 pb-4">
-        <FilterPanel />
-      </div>
+      <FilterPanel />
     );
+
   const title =
     modal?.type === "event-detail"
       ? modal.event.title
@@ -50,44 +39,74 @@ export default function Modal() {
       : null;
 
   return (
-    <Transition
-      show={show}
-      className="fixed z-50"
-      enter="transition-all duration-300"
-      enterFrom="opacity-0"
-      enterTo="opacity-100"
-      leave="transition-all duration-300"
-      leaveFrom="opacity-100"
-      leaveTo="opacity-0"
-    >
-      <div
-        className={
-          "fixed bottom-0 left-0 right-0 top-0 z-50 flex flex-col items-center bg-slate-950/50 transition duration-150 ease-in-out " +
-          (!show ? "pointer-events-none" : "pointer-events-auto")
-        }
-        onClick={() => dispatch(clearModal())}
+    <>
+      {/* Main Modals Container */}
+      <Transition
+        show={show}
+        className="fixed z-50"
+        enter="transition-all duration-300"
+        enterFrom="opacity-0"
+        enterTo="opacity-100"
+        leave="transition-all duration-300"
+        leaveFrom="opacity-100"
+        leaveTo="opacity-0"
       >
         <div
           className={
-            "relative m-auto flex max-h-shorter-screen max-w-2xl flex-col rounded-md bg-white shadow-lg " +
-            (fullWidth ? "w-full" : "")
+            "fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 transition duration-150 ease-in-out " +
+            (!show ? "pointer-events-none" : "pointer-events-auto")
           }
-          onClick={(event) => event.stopPropagation()}
+          onClick={() => dispatch(clearModal())}
         >
-          <div className="flex-none p-2">
-            <div className="flex flex-row">
-              <div className="grow text-xl font-extrabold">{title}</div>
-              <a
-                onClick={() => dispatch(clearModal())}
-                className="block h-6 w-6 flex-none rounded-full text-center hover:cursor-pointer hover:bg-logo-red hover:text-white"
-              >
-                <FontAwesomeIcon icon={faXmark} />
-              </a>
+          {/* Both Modals in a Row */}
+          <div
+            className="relative flex max-h-[80vh] max-w-5xl flex-row items-start space-x-4"
+            onClick={(event) => event.stopPropagation()}
+          >
+            {/* Event Modal */}
+            <div className="relative flex w-[60%] flex-col rounded-md bg-white shadow-lg">
+              <div className="flex-none p-2">
+                <div className="flex flex-row">
+                  <div className="grow text-xl font-extrabold">{title}</div>
+                  <a
+                    onClick={() => dispatch(clearModal())}
+                    className="block h-6 w-6 flex-none rounded-full text-center hover:cursor-pointer hover:bg-logo-red hover:text-white"
+                  >
+                    <FontAwesomeIcon icon={faXmark} />
+                  </a>
+                </div>
+              </div>
+              {children}
             </div>
+
+            {/* Comments Modal */}
+            {showComments && (
+              <div
+                className="relative flex w-[40%] flex-col rounded-md bg-white shadow-lg"
+                style={{ height: "80vh" }} // Set fixed height to match Event Modal
+              >
+                {/* Header */}
+                <div className="flex items-center justify-between border-b-2 border-gray-300 p-4">
+                  <h2 className="text-xl font-bold">Comments</h2>
+                  <button
+                    onClick={() => setShowComments(false)}
+                    className="block h-6 w-6 flex-none rounded-full text-center hover:cursor-pointer hover:bg-gray-300"
+                  >
+                    <FontAwesomeIcon icon={faXmark} />
+                  </button>
+                </div>
+
+                {/* Scrollable Comments Section */}
+                <div className="flex-1 overflow-y-auto p-4">
+                  {modal?.type === "event-detail" && modal.event && (
+                    <Comments event={modal.event} />
+                  )}
+                </div>
+              </div>
+            )}
           </div>
-          {children}
         </div>
-      </div>
-    </Transition>
+      </Transition>
+    </>
   );
 }

@@ -1,6 +1,7 @@
 // for client side rendering
 "use client";
 
+//import { isAdmin } from "@/app/auth";
 import { MouseEventHandler } from "react";
 
 // import icons from FontAwesome
@@ -56,26 +57,6 @@ export default function Comments({ event }: { event: SerializableEvent; }) {
     useEffect(() => {
         getAppClientSession().then(setSession);
     }, []);
-
-      // Fetch comments for the event
-    const fetchComments = async () => {
-        try {
-            const response = await fetch(`/api/comments?eventId=${event.id}`);
-            if (!response.ok) throw new Error('Failed to fetch comments');
-            const data = await response.json();
-            setComments(data);
-            } catch (error) {
-            console.error("Failed to fetch comments:", error);
-        }
-    };
-        
-
-        // Fetch comments for the event
-    useEffect(() => {
-        if (event) {
-            fetchComments(); // The function is invoked here.
-        }
-    }, [event]);
 
     // Fetch eventDetail data
     useEffect(() => {
@@ -153,51 +134,67 @@ export default function Comments({ event }: { event: SerializableEvent; }) {
         return Date.now() + Math.random();
     };
 
-    const handlePost = async () => {
-        if (!inputValue.trim()) return;
-        
-        const payload = {
-            text: inputValue,
-            userName: session?.user?.email.split("@")[0] || "Anonymous",
-            eventId: event.id,
-            parentId: replyToCommentId || null,
+    const handlePost = () => {
+        if (inputValue.trim() === "") return;
+
+        const extractKerb = (email: string | undefined) => {
+            if (!email) return "Anonymous";
+            return email.split("@")[0];
         };
-        
-        try {
-            const response = await fetch('/api/comments', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload),
-            });
-        
-            if (!response.ok) throw new Error('Failed to post comment');
-        
-            const savedComment = await response.json();
-        
-            // Update local comments state
-            if (replyToCommentId) {
-            setComments((prev) =>
-                prev.map((comment) =>
-                comment.id === replyToCommentId
-                    ? { ...comment, replies: [...comment.replies, savedComment] }
-                    : comment
-                )
-            );
-            } else {
-            setComments((prev) => [...prev, savedComment]);
+
+        const newReply: Reply = {
+            id: generateUniqueId(),
+            userName: extractKerb(session?.user?.email),
+            text: inputValue,
+            replies: [],
+        };
+
+        if (replyToCommentId !== null) {
+            console.log("Replying to comment or reply ID:", replyToCommentId); // Check the ID
+            const updatedComments = [...comments];
+
+            const addReplyToCommentOrReply = (
+                commentsList: typeof comments,
+                id: number,
+                reply: typeof newReply
+            ): boolean => {
+                for (let comment of commentsList) {
+                    if (comment.id === id) {
+                        comment.replies.push(reply);
+                        return true; // Added reply to top-level comment
+                    }
+                    if (addReplyToCommentOrReply(comment.replies, id, reply)) {
+                        return true; // Added reply to nested reply
+                    }
+                }
+                return false;
+            };
+
+            const success = addReplyToCommentOrReply(updatedComments, replyToCommentId, newReply);
+            if (!success) {
+                console.error("Failed to add reply", replyToCommentId);
             }
-        
-            setInputValue('');
+
+            setComments(updatedComments);
             setReplyToCommentId(null);
-        } catch (error) {
-            console.error("Failed to post comment:", error);
+            setReplyToUserName(null);
+        } else {
+            const newComment: Comment = {
+                id: generateUniqueId(),
+                userName: extractKerb(session?.user?.email),
+                text: inputValue,
+                replies: [], // Ensure replies is initialized
+            };
+            setComments([...comments, newComment]);
+        }
+
+        setInputValue("");
+        if (textareaRef.current != null) {
+            textareaRef.current.style.height = "auto";
         }
     };
-        
 
-    const renderReplies = (replies: Reply[] | undefined) => {
-        if (!replies || replies.length === 0) return null; // Fallback for undefined or empty replies
-
+    const renderReplies = (replies: Reply[]) => {
         return replies.map((reply) => (
             <div key={reply.id} className="ml-6 mt-4">
                 <div className="flex items-start space-x-4">
@@ -233,7 +230,7 @@ export default function Comments({ event }: { event: SerializableEvent; }) {
                 </div>
     
                 {/* Recursive rendering for nested replies */}
-                {reply.replies && reply.replies.length > 0 && (
+                {reply.replies.length > 0 && (
                     <div className="ml-6 mt-2">
                         {renderReplies(reply.replies)}
                     </div>
@@ -253,20 +250,14 @@ export default function Comments({ event }: { event: SerializableEvent; }) {
             alert("You are not authorized to delete this comment.");
             return;
         }
-        setComments((prevComments) => deleteCommentOrReplyById(prevComments, commentId));
     
         const deleteCommentOrReplyById = (commentsList: Comment[], id: number): Comment[] => {
-            return commentsList
-                .map((comment) => {
-                    if (comment.id === id) return null; // Mark for deletion
-                    const updatedReplies = comment.replies
-                        ? deleteCommentOrReplyById(comment.replies, id)
-                        : []; // Default to empty array if undefined
-                    return { ...comment, replies: updatedReplies };
-                })
-                .filter((comment) => comment !== null); // Remove marked items
+            return commentsList.filter((comment) => {
+                if (comment.id === id) return false; // Remove the comment with the matching id
+                comment.replies = deleteCommentOrReplyById(comment.replies, id); // Recursively check nested replies
+                return true;
+            });
         };
-        
     
         setComments((prevComments) => deleteCommentOrReplyById(prevComments, commentId));
     };
@@ -327,7 +318,7 @@ export default function Comments({ event }: { event: SerializableEvent; }) {
         <div className="flex flex-col h-full">
 
             {/* Comment Section */}
-            <div className="flex-1 px-4 py-4 space-y-4">
+            <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
                 {comments.length === 0 ? (
                     <div className="text-slate-400">No comments</div>
                 ) : (
@@ -375,36 +366,41 @@ export default function Comments({ event }: { event: SerializableEvent; }) {
             </div>
 
 
-
-            {/* Likes and Calendar Buttons */}
-            <div className="flex items-center px-4 py-2 border-t border-gray-300">
-                <div onClick={onLikeButtonClicked} className="cursor-pointer mr-4">
-                    <FontAwesomeIcon icon={realEvent?.liked ? faHeartSolid : faHeart} />
+            {/* Fixed Footer */}
+            <div className="border-t border-gray-300 bg-white">
+                {/* Likes and Calendar Buttons */}
+                {/* <div className="flex items-center px-4 py-2">
+                    <div onClick={onLikeButtonClicked} className="cursor-pointer mr-4">
+                        <FontAwesomeIcon icon={realEvent?.liked ? faHeartSolid : faHeart} />
+                    </div>
+                    <div onClick={onAddToCalendarClicked} className="cursor-pointer">
+                        <FontAwesomeIcon icon={faCalendar} />
+                    </div>
                 </div>
-                <div onClick={onAddToCalendarClicked} className="cursor-pointer">
-                    <FontAwesomeIcon icon={faCalendar} />
-                </div>
-            </div>
 
-            <div className="ml-4 text-sm mb-4">
-                {likes} {likes === 1 ? "like" : "likes"}
-            </div>
+                <div className="ml-4 text-sm">
+                    {likes} {likes === 1 ? "like" : "likes"}
+                </div> */}
 
-            {/* Comment Input Section */}
-            <div className="mb-4 ml-4">
-                <div className="flex flex-row items-center">
-                    <textarea
-                        ref={textareaRef}
-                        value={inputValue}
-                        onChange={handleInputChange}
-                        onKeyDown={handleKeyDown}
-                        placeholder="Add a comment..."
-                        className="flex-1 border rounded-lg p-2 resize-none overflow-hidden"
-                        rows={1}
-                    />
-                    <button onClick={handlePost} className="mx-2 p-2 text-slate-400 hover:text-black rounded">
-                        Post
-                    </button>
+                {/* Comment Input Section */}
+                <div className="px-4 py-2">
+                    <div className="flex flex-row items-center">
+                        <textarea
+                            ref={textareaRef}
+                            value={inputValue}
+                            onChange={handleInputChange}
+                            onKeyDown={handleKeyDown}
+                            placeholder="Add a comment..."
+                            className="flex-1 border rounded-lg p-2 resize-none overflow-hidden"
+                            rows={1}
+                        />
+                        <button
+                            onClick={handlePost}
+                            className="ml-2 px-4 py-2 text-white bg-logo-red rounded-lg"
+                        >
+                            Post
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
