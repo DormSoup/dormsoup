@@ -58,13 +58,23 @@ export default function Modal() {
           }
           onClick={() => dispatch(clearModal())}
         >
-          {/* Both Modals in a Row */}
+          {/* Both Modals */}
           <div
-            className="relative flex max-h-[80vh] max-w-5xl flex-row items-start space-x-4"
+            className={
+              `relative flex max-h-[80vh] max-w-7xl flex-col items-center m-4 ` +
+              (showComments
+                ? "md:flex-row md:space-x-4"
+                : "md:items-center md:justify-center")
+            }
             onClick={(event) => event.stopPropagation()}
           >
             {/* Event Modal */}
-            <div className="relative flex w-[60%] flex-col rounded-md bg-white shadow-lg">
+            <div
+              className={
+                `relative flex w-[70%] flex-col rounded-md bg-white shadow-lg mb-4 ` +
+                (!showComments && "md:mx-auto")
+              }
+            >
               <div className="flex-none p-2">
                 <div className="flex flex-row">
                   <div className="grow text-xl font-extrabold">{title}</div>
@@ -82,7 +92,7 @@ export default function Modal() {
             {/* Comments Modal */}
             {showComments && (
               <div
-                className="relative flex w-[40%] flex-col rounded-md bg-white shadow-lg"
+                className="relative flex w-[70%] md:w-[30] flex-col rounded-md bg-white shadow-lg"
                 style={{ height: "80vh" }} // Set fixed height to match Event Modal
               >
                 {/* Header */}

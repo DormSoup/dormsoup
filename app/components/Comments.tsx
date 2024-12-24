@@ -5,29 +5,16 @@
 import { MouseEventHandler } from "react";
 
 // import icons from FontAwesome
-import { faCalendar, faHeart } from "@fortawesome/free-regular-svg-icons";
-import { faHeart as faHeartSolid } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { SerializableEvent } from "../EventType";
 
-// import React hooks (manages the local state of our components, such as # of likes)
 import { useEffect, useRef, useState } from "react";
 
-// Redux hooks for state management
-// ex) useDispatch can be used to update the state when an event is liked
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState, useAppDispatch } from "../redux/store";
 
-// import redux actions
-import { likeEvent } from "../redux/searchSlice";
 
-// importing a function, atcb_action: handles the action when calendar button is clicked
-import { atcb_action } from "add-to-calendar-button";
-// getAppClientSession is a function for fetching session data
 import { getAppClientSession } from "../authClient";
-// for getting the username
 import { Session } from "../api/auth/session/route";
-// Importing GetEventDetailResponse for event detail typing
 import { GetEventDetailResponse } from "../api/event-detail/route";
 
 type Reply = {
@@ -52,6 +39,13 @@ export default function Comments({ event }: { event: SerializableEvent; }) {
     const dispatch = useAppDispatch();
     // Use ref to get a reference to the textarea element
     const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+    // state variables for comments, input value, likes, and liked status
+    const [comments, setComments] = useState<Comment[]>([]);
+    const [inputValue, setInputValue] = useState("");
+    // const [likes, setLikes] = useState(event.likes);
+    // const [liked, setLiked] = useState(event.liked);
+    const [replyToCommentId, setReplyToCommentId] = useState<number | null>(null);
+    const [replyToUserName, setReplyToUserName] = useState<string | null>(null);
 
     // fetch session data
     useEffect(() => {
@@ -68,15 +62,26 @@ export default function Comments({ event }: { event: SerializableEvent; }) {
         }
     }, [event]);
 
-    // state variables for comments, input value, likes, and liked status
-    const [comments, setComments] = useState<Comment[]>([]);
-    const [inputValue, setInputValue] = useState("");
-    const [likes, setLikes] = useState(event.likes);
-    const [liked, setLiked] = useState(event.liked);
-    const [replyToCommentId, setReplyToCommentId] = useState<number | null>(null);
-    const [replyToUserName, setReplyToUserName] = useState<string | null>(null);
+    // Fetch comments for the event
+    useEffect(() => {
+        // fetches the comments associated with the event and updates the state
+        const fetchComments = async () => {
+            try {
+                setComments([]); // resetting the state before fetching
+                const response = await fetch(`/api/comments?eventId=${event.id}`);
+                if (!response.ok) {
+                    throw new Error("Failed to fetch comments");
+                }
+                const data = await response.json();
+                setComments(data); // Set fetched comments to state
+            } catch (error) {
+                console.error("Error fetching comments:", error);
+            }
+        };
+        fetchComments();
+    }, [event.id]); // Re-run when event ID changes
 
-    // Function to handle text input changes and adjust textarea height
+    // Function to adjust textarea height
     const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         setInputValue(e.target.value);
         // Adjust the height of the textarea
@@ -86,33 +91,7 @@ export default function Comments({ event }: { event: SerializableEvent; }) {
         }
     };
 
-    // Function to handle keydown event
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-        if (e.key === "Enter" && !e.shiftKey) {
-            e.preventDefault(); // Prevent the default behavior of Enter key (i.e., adding a new line)
-            handlePost(); // Call the handlePost function
-        }
-    };
-
-    // for finding the reply's reply
-    const findCommentOrReplyById = (
-        commentsList: typeof comments,
-        id: number
-    ): { comment: any; parent: any } | null => {
-        for (let comment of commentsList) {
-            if (comment.id === id) {
-                return { comment, parent: null }; // Top-level comment
-            }
-            for (let reply of comment.replies) {
-                if (reply.id === id) {
-                    return { comment: reply, parent: comment }; // Nested reply
-                }
-            }
-        }
-        return null;
-    };
-
-
+    // when responding, fills text input with the username of the person you are replying to.
     const handleReplyClick = (commentId: number, userName: string) => {
         const result = findCommentOrReplyById(comments, commentId);
         if (result) {
@@ -130,72 +109,103 @@ export default function Comments({ event }: { event: SerializableEvent; }) {
         textareaRef.current?.focus(); // Focus on the input box
     };
 
+    // Function to post a comment upon pressing enter key on keyboard
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+        if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
+            handlePost(); // Call the handlePost function
+        }
+    };
+
+    // Function for finding the reply's reply
+    const findCommentOrReplyById = (
+        commentsList: typeof comments,
+        id: number
+    ): { comment: any; parent: any } | null => {
+        for (let comment of commentsList) {
+            if (comment.id === id) {
+                return { comment, parent: null }; // Top-level comment
+            }
+            for (let reply of comment.replies) {
+                if (reply.id === id) {
+                    return { comment: reply, parent: comment }; // Nested reply
+                }
+            }
+        }
+        return null;
+    };
+
     const generateUniqueId = () => {
         return Date.now() + Math.random();
     };
 
-    const handlePost = () => {
+    // adds a new comment or reply and updates the state// adds a new comment or reply and updates the state
+    const handlePost = async () => {
         if (inputValue.trim() === "") return;
 
-        const extractKerb = (email: string | undefined) => {
-            if (!email) return "Anonymous";
-            return email.split("@")[0];
+        const newComment = {
+            text: inputValue.trim(),
+            userName: session?.user?.email?.split("@")[0] || "Anonymous",
+            eventId: event.id,
+            parentId: replyToCommentId || null, // Reply to a comment if replyToCommentId is set
         };
 
-        const newReply: Reply = {
-            id: generateUniqueId(),
-            userName: extractKerb(session?.user?.email),
-            text: inputValue,
-            replies: [],
-        };
+        try {
+            const response = await fetch("/api/comments", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(newComment),
+            });
 
-        if (replyToCommentId !== null) {
-            console.log("Replying to comment or reply ID:", replyToCommentId); // Check the ID
-            const updatedComments = [...comments];
-
-            const addReplyToCommentOrReply = (
-                commentsList: typeof comments,
-                id: number,
-                reply: typeof newReply
-            ): boolean => {
-                for (let comment of commentsList) {
-                    if (comment.id === id) {
-                        comment.replies.push(reply);
-                        return true; // Added reply to top-level comment
-                    }
-                    if (addReplyToCommentOrReply(comment.replies, id, reply)) {
-                        return true; // Added reply to nested reply
-                    }
-                }
-                return false;
-            };
-
-            const success = addReplyToCommentOrReply(updatedComments, replyToCommentId, newReply);
-            if (!success) {
-                console.error("Failed to add reply", replyToCommentId);
+            if (!response.ok) {
+                throw new Error("Failed to post comment");
             }
 
-            setComments(updatedComments);
-            setReplyToCommentId(null);
-            setReplyToUserName(null);
-        } else {
-            const newComment: Comment = {
-                id: generateUniqueId(),
-                userName: extractKerb(session?.user?.email),
-                text: inputValue,
-                replies: [], // Ensure replies is initialized
-            };
-            setComments([...comments, newComment]);
-        }
+            const createdComment = await response.json();
 
-        setInputValue("");
-        if (textareaRef.current != null) {
-            textareaRef.current.style.height = "auto";
+            if (replyToCommentId !== null) {
+                // Add the new reply to the correct comment
+                const updatedComments = [...comments];
+                const addReplyToCommentOrReply = (commentsList: Comment[], id: number, reply: Comment): boolean => {
+                    for (let comment of commentsList) {
+                        if (comment.id === id) {
+                            if (!comment.replies) {
+                                comment.replies = [];
+                            }
+                            comment.replies.push(reply);
+                            return true;
+                        }
+                        if (addReplyToCommentOrReply(comment.replies, id, reply)) {
+                            return true;
+                        }
+                    }
+                    return false;
+                };
+
+                const success = addReplyToCommentOrReply(updatedComments, replyToCommentId, createdComment);
+                if (!success) {
+                    console.error("Failed to add reply", addReplyToCommentOrReply);
+                }
+
+                setComments(updatedComments);
+                setReplyToCommentId(null);
+                setReplyToUserName(null);
+            } else {
+                setComments([...comments, createdComment]);
+            }
+
+            setInputValue("");
+            if (textareaRef.current != null) {
+                textareaRef.current.style.height = "auto";
+            }
+        } catch (error) {
+            console.error("Error posting comment:", error);
         }
     };
 
-    const renderReplies = (replies: Reply[]) => {
-        return replies.map((reply) => (
+    // renders the replies of a comment, along with buttons for replying and deleting
+    const renderReplies = (replies: Reply[] | undefined) => {
+        return (replies ?? []).map((reply) => (
             <div key={reply.id} className="ml-6 mt-4">
                 <div className="flex items-start space-x-4">
                     {/* Username */}
@@ -229,21 +239,28 @@ export default function Comments({ event }: { event: SerializableEvent; }) {
                     </div>
                 </div>
     
-                {/* Recursive rendering for nested replies */}
-                {reply.replies.length > 0 && (
+                {/* Recursive rendering for nested replies
+                {reply.replies?.length > 0 && ( // Safe access for replies.length
                     <div className="ml-6 mt-2">
                         {renderReplies(reply.replies)}
                     </div>
-                )}
+                )} */}
             </div>
         ));
     };
     
 
+    const deleteCommentOrReplyById = (commentsList: Comment[] | undefined, id: number): Comment[] => {
+        if (!commentsList) return [];
+
+        return commentsList.filter((comment) => {
+            if (comment.id === id) return false; // Remove the comment with the matching id
+            comment.replies = deleteCommentOrReplyById(comment.replies, id); // Recursively check nested replies
+            return true;
+        });
+    };
     
-    
-    const handleDeleteComment = (commentId: number, userName: string) => {
-        //const isUserAdmin = isAdmin(userEmail);
+    const handleDeleteComment = async (commentId: number, userName: string) => {
         const isAuthor = session?.user?.email?.split("@")[0] === userName;
     
         if (!isAuthor) {
@@ -251,68 +268,74 @@ export default function Comments({ event }: { event: SerializableEvent; }) {
             return;
         }
     
-        const deleteCommentOrReplyById = (commentsList: Comment[], id: number): Comment[] => {
-            return commentsList.filter((comment) => {
-                if (comment.id === id) return false; // Remove the comment with the matching id
-                comment.replies = deleteCommentOrReplyById(comment.replies, id); // Recursively check nested replies
-                return true;
+        try {
+            const response = await fetch("/api/comments", {
+                method: "DELETE",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ commentId, userEmail: session?.user?.email }),
             });
-        };
     
-        setComments((prevComments) => deleteCommentOrReplyById(prevComments, commentId));
-    };
+            if (!response.ok) {
+                throw new Error("Failed to delete comment");
+            }
     
+            // Update local state to remove the deleted comment
+            setComments((prevComments) => deleteCommentOrReplyById(prevComments, commentId));
+        } catch (error) {
+            console.error("Error deleting comment:", error);
+        }
+    };    
     
 
     // function to handle "add to calendar"
-    const onAddToCalendarClicked: MouseEventHandler<HTMLDivElement> = (clickEvent) => {
-        if (!event) return;
-        const dateString = (date: Date) => date.toISOString().split("T")[0];
-        const timeString = (date: Date) =>
-            date
-                .toISOString()
-                .split("T")[1]
-                .replace(/:\d{2}\.\d{3}Z$/i, "");
-        const date = new Date(event.date);
-        const endDate = new Date(date);
-        endDate.setMinutes(date.getMinutes() + event.duration);
+    // const onAddToCalendarClicked: MouseEventHandler<HTMLDivElement> = (clickEvent) => {
+    //     if (!event) return;
+    //     const dateString = (date: Date) => date.toISOString().split("T")[0];
+    //     const timeString = (date: Date) =>
+    //         date
+    //             .toISOString()
+    //             .split("T")[1]
+    //             .replace(/:\d{2}\.\d{3}Z$/i, "");
+    //     const date = new Date(event.date);
+    //     const endDate = new Date(date);
+    //     endDate.setMinutes(date.getMinutes() + event.duration);
 
-        const config: Parameters<typeof atcb_action>[0] = {
-            name: event.title,
-            startDate: dateString(date),
-            options: ["Microsoft365", "Google", "Apple"],
-            location: event.location,
-            organizer: `${eventDetail?.fromEmail?.sender.name}|${eventDetail?.fromEmail?.sender.email}`,
-            timeZone: "America/New_York",
-            listStyle: "modal"
-        };
-        if (!date.toISOString().includes("00:00:00.000Z")) {
-            config.startTime = timeString(date);
-            config.endTime = timeString(endDate);
-        }
-        atcb_action(config, clickEvent.target as any as HTMLElement);
-    };
+    //     const config: Parameters<typeof atcb_action>[0] = {
+    //         name: event.title,
+    //         startDate: dateString(date),
+    //         options: ["Microsoft365", "Google", "Apple"],
+    //         location: event.location,
+    //         organizer: `${eventDetail?.fromEmail?.sender.name}|${eventDetail?.fromEmail?.sender.email}`,
+    //         timeZone: "America/New_York",
+    //         listStyle: "modal"
+    //     };
+    //     if (!date.toISOString().includes("00:00:00.000Z")) {
+    //         config.startTime = timeString(date);
+    //         config.endTime = timeString(endDate);
+    //     }
+    //     atcb_action(config, clickEvent.target as any as HTMLElement);
+    // };
 
     // function to handle like button click
-    const onLikeButtonClicked: MouseEventHandler<HTMLDivElement> = (clickEvent) => {
-        if (event === undefined) return;
+    // const onLikeButtonClicked: MouseEventHandler<HTMLDivElement> = (clickEvent) => {
+    //     if (event === undefined) return;
 
-        // Toggle liked status and update likes count
-        if (liked) {
-            setLikes(likes - 1);
-        } else {
-            setLikes(likes + 1);
-        }
-        setLiked(!liked); // Toggle the liked state
+    //     // Toggle liked status and update likes count
+    //     if (liked) {
+    //         setLikes(likes - 1);
+    //     } else {
+    //         setLikes(likes + 1);
+    //     }
+    //     setLiked(!liked); // Toggle the liked state
 
-        dispatch(likeEvent(event.id));
-        clickEvent.stopPropagation(); // prevents triggering any parent click event handlers
-    };
+    //     dispatch(likeEvent(event.id));
+    //     clickEvent.stopPropagation(); // prevents triggering any parent click event handlers
+    // };
 
     // function that checks if the event exists
-    const realEvent = useSelector((state: RootState) =>
-        state.search.events.find((e) => e.id === event?.id)
-    );
+    // const realEvent = useSelector((state: RootState) =>
+    //     state.search.events.find((e) => e.id === event?.id)
+    // );
 
     return (
         <div className="flex flex-col h-full">
@@ -356,7 +379,7 @@ export default function Comments({ event }: { event: SerializableEvent; }) {
                                 </div>
                             </div>
 
-                            {/* Reply Section */}
+                            {/* Reply to parent comment */}
                             <div className="ml-6 mt-2 space-y-2">
                                 {renderReplies(comment.replies)}
                             </div>
