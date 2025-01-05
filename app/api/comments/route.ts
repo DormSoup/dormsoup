@@ -16,9 +16,15 @@ export async function GET(req: NextRequest) {
             where: { eventId: Number(eventId), parent: null },
             include: {
                 replies: {
-                    include: { replies: true }, // Nested replies
+                    include: {
+                        replies: {
+                            include: { replies: true }, // Nested replies
+                        },
+                    },
+                    orderBy: { createdAt: "asc" }, // Sort nested replies
                 },
             },
+            orderBy: { createdAt: "asc" }, // Sort top-level comments
         });
         return NextResponse.json(comments, { status: 200 });
     } catch (error) {

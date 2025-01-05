@@ -12,7 +12,6 @@ import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState, useAppDispatch } from "../redux/store";
 
-
 import { getAppClientSession } from "../authClient";
 import { Session } from "../api/auth/session/route";
 import { GetEventDetailResponse } from "../api/event-detail/route";
@@ -148,6 +147,7 @@ export default function Comments({ event }: { event: SerializableEvent; }) {
             userName: session?.user?.email?.split("@")[0] || "Anonymous",
             eventId: event.id,
             parentId: replyToCommentId || null, // Reply to a comment if replyToCommentId is set
+            replies: [],
         };
 
         try {
@@ -162,20 +162,20 @@ export default function Comments({ event }: { event: SerializableEvent; }) {
             }
 
             const createdComment = await response.json();
-
+            
             if (replyToCommentId !== null) {
                 // Add the new reply to the correct comment
                 const updatedComments = [...comments];
                 const addReplyToCommentOrReply = (commentsList: Comment[], id: number, reply: Comment): boolean => {
                     for (let comment of commentsList) {
                         if (comment.id === id) {
-                            if (!comment.replies) {
+                            if (!Array.isArray(comment.replies)) {
                                 comment.replies = [];
                             }
                             comment.replies.push(reply);
                             return true;
                         }
-                        if (addReplyToCommentOrReply(comment.replies, id, reply)) {
+                        if (Array.isArray(comment.replies) && addReplyToCommentOrReply(comment.replies, id, reply)) {
                             return true;
                         }
                     }
@@ -188,6 +188,8 @@ export default function Comments({ event }: { event: SerializableEvent; }) {
                 }
 
                 setComments(updatedComments);
+                console.log("Updated comments state:", updatedComments);
+
                 setReplyToCommentId(null);
                 setReplyToUserName(null);
             } else {
@@ -206,7 +208,8 @@ export default function Comments({ event }: { event: SerializableEvent; }) {
     // renders the replies of a comment, along with buttons for replying and deleting
     const renderReplies = (replies: Reply[] | undefined) => {
         return (replies ?? []).map((reply) => (
-            <div key={reply.id} className="ml-6 mt-4">
+            // add ml-3 here if you want hierarchy within the reply's replies
+            <div key={reply.id} className="mt-3">
                 <div className="flex items-start space-x-4">
                     {/* Username */}
                     <span
@@ -221,7 +224,7 @@ export default function Comments({ event }: { event: SerializableEvent; }) {
                         {/* Comment Text */}
                         <p className="break-words">{reply.text}</p>
     
-                        {/* Buttons */}
+                        {/* Buttons for replies */}
                         <div className="flex space-x-4 mt-1 text-sm text-slate-400">
                             <button
                                 onClick={() => handleReplyClick(reply.id, reply.userName)}
@@ -229,22 +232,22 @@ export default function Comments({ event }: { event: SerializableEvent; }) {
                             >
                                 Reply
                             </button>
-                            <button
+                            {/* <button
                                 onClick={() => handleDeleteComment(reply.id, reply.userName)}
                                 className="hover:text-black"
                             >
                                 Delete
-                            </button>
+                            </button> */}
                         </div>
                     </div>
                 </div>
     
-                {/* Recursive rendering for nested replies
-                {reply.replies?.length > 0 && ( // Safe access for replies.length
-                    <div className="ml-6 mt-2">
+                {/* reply's reply */}
+                {reply.replies?.length > 0 && (
+                    <div className="mt-2">
                         {renderReplies(reply.replies)}
                     </div>
-                )} */}
+                )}
             </div>
         ));
     };
@@ -284,58 +287,7 @@ export default function Comments({ event }: { event: SerializableEvent; }) {
         } catch (error) {
             console.error("Error deleting comment:", error);
         }
-    };    
-    
-
-    // function to handle "add to calendar"
-    // const onAddToCalendarClicked: MouseEventHandler<HTMLDivElement> = (clickEvent) => {
-    //     if (!event) return;
-    //     const dateString = (date: Date) => date.toISOString().split("T")[0];
-    //     const timeString = (date: Date) =>
-    //         date
-    //             .toISOString()
-    //             .split("T")[1]
-    //             .replace(/:\d{2}\.\d{3}Z$/i, "");
-    //     const date = new Date(event.date);
-    //     const endDate = new Date(date);
-    //     endDate.setMinutes(date.getMinutes() + event.duration);
-
-    //     const config: Parameters<typeof atcb_action>[0] = {
-    //         name: event.title,
-    //         startDate: dateString(date),
-    //         options: ["Microsoft365", "Google", "Apple"],
-    //         location: event.location,
-    //         organizer: `${eventDetail?.fromEmail?.sender.name}|${eventDetail?.fromEmail?.sender.email}`,
-    //         timeZone: "America/New_York",
-    //         listStyle: "modal"
-    //     };
-    //     if (!date.toISOString().includes("00:00:00.000Z")) {
-    //         config.startTime = timeString(date);
-    //         config.endTime = timeString(endDate);
-    //     }
-    //     atcb_action(config, clickEvent.target as any as HTMLElement);
-    // };
-
-    // function to handle like button click
-    // const onLikeButtonClicked: MouseEventHandler<HTMLDivElement> = (clickEvent) => {
-    //     if (event === undefined) return;
-
-    //     // Toggle liked status and update likes count
-    //     if (liked) {
-    //         setLikes(likes - 1);
-    //     } else {
-    //         setLikes(likes + 1);
-    //     }
-    //     setLiked(!liked); // Toggle the liked state
-
-    //     dispatch(likeEvent(event.id));
-    //     clickEvent.stopPropagation(); // prevents triggering any parent click event handlers
-    // };
-
-    // function that checks if the event exists
-    // const realEvent = useSelector((state: RootState) =>
-    //     state.search.events.find((e) => e.id === event?.id)
-    // );
+    };
 
     return (
         <div className="flex flex-col h-full">
@@ -346,7 +298,7 @@ export default function Comments({ event }: { event: SerializableEvent; }) {
                     <div className="text-slate-400">No comments</div>
                 ) : (
                     comments.map((comment) => (
-                        <div key={comment.id} className="my-2">
+                        <div key={comment.id}>
                             <div className="flex items-start space-x-4">
                                 {/* Username */}
                                 <span
@@ -361,7 +313,7 @@ export default function Comments({ event }: { event: SerializableEvent; }) {
                                     {/* Comment Text */}
                                     <p className="break-words">{comment.text}</p>
 
-                                    {/* Buttons */}
+                                    {/* Buttons for root comment */}
                                     <div className="flex space-x-4 mt-1 text-sm text-slate-400">
                                         <button
                                             onClick={() => handleReplyClick(comment.id, comment.userName)}
@@ -369,18 +321,18 @@ export default function Comments({ event }: { event: SerializableEvent; }) {
                                         >
                                             Reply
                                         </button>
-                                        <button
+                                        {/* <button
                                             onClick={() => handleDeleteComment(comment.id, comment.userName)}
                                             className="hover:text-black"
                                         >
                                             Delete
-                                        </button>
+                                        </button> */}
                                     </div>
                                 </div>
                             </div>
 
                             {/* Reply to parent comment */}
-                            <div className="ml-6 mt-2 space-y-2">
+                            <div className="ml-3 mt-2 space-y-2">
                                 {renderReplies(comment.replies)}
                             </div>
                         </div>
@@ -391,19 +343,6 @@ export default function Comments({ event }: { event: SerializableEvent; }) {
 
             {/* Fixed Footer */}
             <div className="border-t border-gray-300 bg-white">
-                {/* Likes and Calendar Buttons */}
-                {/* <div className="flex items-center px-4 py-2">
-                    <div onClick={onLikeButtonClicked} className="cursor-pointer mr-4">
-                        <FontAwesomeIcon icon={realEvent?.liked ? faHeartSolid : faHeart} />
-                    </div>
-                    <div onClick={onAddToCalendarClicked} className="cursor-pointer">
-                        <FontAwesomeIcon icon={faCalendar} />
-                    </div>
-                </div>
-
-                <div className="ml-4 text-sm">
-                    {likes} {likes === 1 ? "like" : "likes"}
-                </div> */}
 
                 {/* Comment Input Section */}
                 <div className="px-4 py-2">

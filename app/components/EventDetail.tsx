@@ -192,7 +192,7 @@ const BottomBar = ({
 
       {event?.editable && (
         <div
-          className="w-1/3 rounded-br-md border-l-[1px] border-gray-300 py-2 hover:cursor-pointer hover:bg-gray-300 hover:text-logo-red"
+          className="w-1/3 border-l-[1px] border-r-[1px] border-gray-300 py-2 hover:cursor-pointer hover:bg-gray-300 hover:text-logo-red"
           onClick={() => dispatch(setEditEventModal(event as SerializableEventWithTags))}
         >
           <FontAwesomeIcon icon={faPenToSquare} /> Edit

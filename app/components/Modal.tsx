@@ -92,15 +92,14 @@ export default function Modal() {
             {/* Comments Modal */}
             {showComments && (
               <div
-                className="relative flex w-[70%] md:w-[30] flex-col rounded-md bg-white shadow-lg"
-                style={{ height: "80vh" }} // Set fixed height to match Event Modal
+              className="relative flex w-[70%] md:w-[40%] flex-col rounded-md bg-white shadow-lg h-[40vh] md:h-[80vh]"
               >
                 {/* Header */}
-                <div className="flex items-center justify-between border-b-2 border-gray-300 p-4">
+                <div className="flex items-center justify-between border-b-2 border-gray-300 p-2">
                   <h2 className="text-xl font-bold">Comments</h2>
                   <button
                     onClick={() => setShowComments(false)}
-                    className="block h-6 w-6 flex-none rounded-full text-center hover:cursor-pointer hover:bg-gray-300"
+                    className="block h-6 w-6 flex-none rounded-full text-center hover:cursor-pointer hover:bg-logo-red hover:text-white"
                   >
                     <FontAwesomeIcon icon={faXmark} />
                   </button>
