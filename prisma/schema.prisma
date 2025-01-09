@@ -6,7 +6,6 @@ generator client {
   binaryTargets = ["native", "darwin-arm64"]
 }
 
-
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
@@ -15,6 +14,12 @@ datasource db {
 enum DataSource {
   DORMSPAM
   MANUAL_INPUT
+}
+
+enum RequestStatus {
+  PENDING
+  ACCEPTED
+  IGNORED
 }
 
 model Event {
@@ -93,4 +98,37 @@ model EmailSender {
   likes  Event[]
 
   subscribed Boolean @default(false)
+
+  // Friend relations
+  sentRequests     FriendRequest[] @relation("SentRequests")
+  receivedRequests FriendRequest[] @relation("ReceivedRequests")
+  friendships1     Friendship[]    @relation("UserFriends1")
+  friendships2     Friendship[]    @relation("UserFriends2")
+}
+
+model FriendRequest {
+  id        Int      @id @default(autoincrement())
+  fromUser  EmailSender @relation("SentRequests", fields: [fromEmail], references: [email])
+  fromEmail String
+  toUser    EmailSender @relation("ReceivedRequests", fields: [toEmail], references: [email])
+  toEmail   String
+  status    RequestStatus
+  createdAt DateTime @default(now())
+
+  @@unique([fromEmail, toEmail])
+  @@index([fromEmail])
+  @@index([toEmail])
+}
+
+model Friendship {
+  id        Int      @id @default(autoincrement())
+  user1     EmailSender @relation("UserFriends1", fields: [user1Email], references: [email])
+  user1Email String
+  user2     EmailSender @relation("UserFriends2", fields: [user2Email], references: [email])
+  user2Email String
+  createdAt DateTime @default(now())
+
+  @@unique([user1Email, user2Email])
+  @@index([user1Email])
+  @@index([user2Email])
 }

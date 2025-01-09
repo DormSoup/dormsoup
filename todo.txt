@@ -1,0 +1,27 @@
+
+ilyag: Friendship features MVP:
+    * "Add Friend" button on profile
+
+        * "Request pending" if it's already been requested
+
+        * "Is your friend" if already friended
+
+    * Friend Requests page:
+        * List requests
+        * Confirm/ignore options
+    * Friend List (visible only to user)
+
+        * Remove Friend button
+
+
+===
+
+action items: profile page
+	include [add friend] button
+	-
+friend requests list
+approve/reject buttons
+list of friends
+remove friend button
+	-
+

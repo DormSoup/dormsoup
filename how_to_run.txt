@@ -1,0 +1,3 @@
+ssh DormSoup -L 5432:localhost:5432
+npm run
+npm run dev

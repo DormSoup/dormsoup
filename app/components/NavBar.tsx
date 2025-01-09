@@ -39,14 +39,38 @@ export default function NavBar() {
           </div>
         </Link>
         <div className="relative mx-4 grow max-sm:focus-within:fixed max-sm:focus-within:mx-auto max-sm:focus-within:w-[calc(100%-2rem)]">
-          <input
-            className="w-full rounded-xl border-2 border-gray-300 bg-gray-50 pl-6 pr-4"
-            placeholder="Search here"
-            onChange={onSearch}
-          ></input>
-          <span className="absolute left-2 top-[0.125rem] -scale-x-100 font-fa-regular">
-            {"\u{f2e5}"}
-          </span>
+          <div className="flex items-center gap-4">
+            <div className="relative">
+              <FontAwesomeIcon
+                icon={faMagnifyingGlass}
+                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+              />
+              <input
+                type="text"
+                placeholder="Search events..."
+                className="pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                onChange={onSearch}
+              />
+            </div>
+            {session && (
+              <Link
+                href="/friends"
+                className="text-gray-600 hover:text-gray-800 transition-colors"
+              >
+                Friends
+              </Link>
+            )}
+            <button
+              onClick={onSignInClicked}
+              className="px-4 py-2 rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition-colors"
+            >
+              {session === undefined
+                ? "Loading..."
+                : session === null
+                ? "Sign in"
+                : "Sign out"}
+            </button>
+          </div>
         </div>
         <div>
           <a href="/about" className="mr-0 md:mr-4">
@@ -56,18 +80,6 @@ export default function NavBar() {
             Contact&nbsp;Us
           </a> */}
         </div>
-        <button className="text-md hidden flex-none rounded-lg md:block" onClick={onSignInClicked}>
-          {session === null ? (
-            "Sign in"
-          ) : session === undefined ? (
-            "Loading..."
-          ) : (
-            <div className="flex flex-col items-end">
-              <span className="text-sm">{session?.user?.name}</span>
-              <span className="text-xs">{session?.user?.email}</span>
-            </div>
-          )}
-        </button>
       </div>
     </>
   );
