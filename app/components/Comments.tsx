@@ -352,7 +352,7 @@ export default function Comments({ event }: { event: SerializableEvent; }) {
                             onChange={handleInputChange}
                             onKeyDown={handleKeyDown}
                             placeholder="Add a comment..."
-                            className="flex-1 border-2 border-gray-300 rounded-lg p-2 text-xs placeholder:text-center resize-none overflow-hidden focus:outline-none"
+                            className="flex-1 border-2 border-gray-300 rounded-lg p-2 text-xs placeholder:pl-2 resize-none overflow-hidden focus:outline-none"
                             rows={1}
                         />
                         <button

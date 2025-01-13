@@ -4,7 +4,7 @@ import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Transition } from "@headlessui/react";
 
-import { useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useSelector } from "react-redux";
 
 import { clearModal } from "../redux/modalSlice";
@@ -21,6 +21,13 @@ export default function Modal() {
   const show = modal !== undefined;
   const fullWidth = show && modal.type === "event-detail";
   const [showComments, setShowComments] = useState(false);
+
+  useEffect(() => {
+    // Close the comments modal if the modal type changes to "edit-event"
+    if (modal?.type === "edit-event") {
+      setShowComments(false);
+    }
+  }, [modal?.type]);
 
   const children =
     modal === undefined ? null : modal.type === "event-detail" ? (
@@ -68,26 +75,31 @@ export default function Modal() {
             }
             onClick={(event) => event.stopPropagation()}
           >
-            {/* Event Modal */}
-            <div
-              className={
-                `relative flex max-h-[80vh] w-[90%] flex-col rounded-md bg-white shadow-lg` +
-                (!showComments && "md:mx-auto")
-              }
-            >
-              <div className="flex-none p-2">
-                <div className="flex flex-row">
-                  <div className="grow text-xl font-extrabold">{title}</div>
-                  <a
-                    onClick={() => dispatch(clearModal())}
-                    className="block h-6 w-6 flex-none rounded-full text-center hover:cursor-pointer hover:bg-logo-red hover:text-white"
-                  >
-                    <FontAwesomeIcon icon={faXmark} />
-                  </a>
-                </div>
+
+          {/* Event Modal */}
+          <div
+            className={
+              `relative flex flex-col rounded-md bg-white shadow-lg ` +
+              (modal?.type === "edit-event"
+                ? "max-h-[70vh]"
+                : "max-h-[80vh] w-[90%]" +
+                  (!showComments ? " md:mx-auto" : ""))
+            }
+          >
+            <div className="flex-none p-2">
+              <div className="flex flex-row">
+                <div className="grow text-xl font-extrabold">{title}</div>
+                <a
+                  onClick={() => dispatch(clearModal())}
+                  className="block h-6 w-6 flex-none rounded-full text-center hover:cursor-pointer hover:bg-logo-red hover:text-white"
+                >
+                  <FontAwesomeIcon icon={faXmark} />
+                </a>
               </div>
-              {children}
             </div>
+            {children}
+          </div>
+
 
             {/* Comments Modal */}
             {showComments && (
