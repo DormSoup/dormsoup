@@ -167,7 +167,7 @@ const BottomBar = ({
       <div
         className={`${
           event?.editable ? "w-1/3" : "w-1/2"
-        } rounded-bl-md border-r-[1px] border-gray-300 py-2 hover:cursor-pointer hover:bg-gray-300 hover:text-logo-red`}
+        } flex items-center justify-center rounded-bl-md border-r-[1px] border-gray-300 hover:cursor-pointer hover:bg-gray-300 hover:text-logo-red text-xs`}
         onClick={onLikeButtonClicked}
       >
         {realEvent?.liked ? (
@@ -184,7 +184,7 @@ const BottomBar = ({
       <div
         className={`${event?.editable ? "w-1/3" : "w-1/2"} ${
           event?.editable ? "border-x-[1px]" : "rounded-br-md border-l-[1px]"
-        } border-gray-300 py-2 hover:cursor-pointer hover:bg-gray-300 hover:text-logo-red`}
+        } flex items-center justify-center border-gray-300 hover:cursor-pointer hover:bg-gray-300 hover:text-logo-red text-xs`}
         onClick={onAddToCalendarClicked}
       >
         <FontAwesomeIcon icon={faCalendar} /> Add to Calendar
@@ -192,7 +192,7 @@ const BottomBar = ({
 
       {event?.editable && (
         <div
-          className="w-1/3 border-l-[1px] border-r-[1px] border-gray-300 py-2 hover:cursor-pointer hover:bg-gray-300 hover:text-logo-red"
+          className="w-1/3 border-l-[1px] border-r-[1px] flex items-center justify-center border-gray-300 hover:cursor-pointer hover:bg-gray-300 hover:text-logo-red text-xs"
           onClick={() => dispatch(setEditEventModal(event as SerializableEventWithTags))}
         >
           <FontAwesomeIcon icon={faPenToSquare} /> Edit
@@ -200,7 +200,7 @@ const BottomBar = ({
       )}
 
       <div
-        className="w-1/3 rounded-br-md border-l-[1px] border-gray-300 py-2 hover:cursor-pointer hover:bg-gray-300 hover:text-logo-red"
+        className="w-1/3 rounded-br-md border-l-[1px] flex items-center justify-center border-gray-300 hover:cursor-pointer hover:bg-gray-300 hover:text-logo-red text-xs"
         onClick={onCommentButtonClicked}
       >
         <FontAwesomeIcon icon={faComment} /> Comment
