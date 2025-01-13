@@ -213,7 +213,7 @@ export default function Comments({ event }: { event: SerializableEvent; }) {
                 <div className="flex items-start space-x-4">
                     {/* Username */}
                     <span
-                        className="text-sm text-white bg-logo-red border border-logo-red rounded-full px-3 py-1"
+                        className="text-xs text-white bg-logo-red border border-logo-red rounded-full px-3 py-1"
                         style={{ flexShrink: 0 }}
                     >
                         {reply.userName}
@@ -222,10 +222,10 @@ export default function Comments({ event }: { event: SerializableEvent; }) {
                     {/* Comment and Buttons */}
                     <div className="flex-1">
                         {/* Comment Text */}
-                        <p className="break-words">{reply.text}</p>
+                        <p className="break-words text-xs">{reply.text}</p>
     
                         {/* Buttons for replies */}
-                        <div className="flex space-x-4 mt-1 text-sm text-slate-400">
+                        <div className="flex space-x-4 mt-1 text-xs text-slate-400">
                             <button
                                 onClick={() => handleReplyClick(reply.id, reply.userName)}
                                 className="hover:text-black"
@@ -302,7 +302,7 @@ export default function Comments({ event }: { event: SerializableEvent; }) {
                             <div className="flex items-start space-x-4">
                                 {/* Username */}
                                 <span
-                                    className="text-sm text-white bg-logo-yellow border border-logo-yellow rounded-full px-3 py-1"
+                                    className="text-xs text-white bg-logo-yellow border border-logo-yellow rounded-full px-3 py-1"
                                     style={{ flexShrink: 0 }}
                                 >
                                     {comment.userName}
@@ -311,10 +311,10 @@ export default function Comments({ event }: { event: SerializableEvent; }) {
                                 {/* Comment and Buttons */}
                                 <div className="flex-1">
                                     {/* Comment Text */}
-                                    <p className="break-words">{comment.text}</p>
+                                    <p className="break-words text-xs">{comment.text}</p>
 
                                     {/* Buttons for root comment */}
-                                    <div className="flex space-x-4 mt-1 text-sm text-slate-400">
+                                    <div className="flex space-x-4 mt-1 text-xs text-slate-400">
                                         <button
                                             onClick={() => handleReplyClick(comment.id, comment.userName)}
                                             className="hover:text-black"
@@ -352,12 +352,12 @@ export default function Comments({ event }: { event: SerializableEvent; }) {
                             onChange={handleInputChange}
                             onKeyDown={handleKeyDown}
                             placeholder="Add a comment..."
-                            className="flex-1 border rounded-lg p-2 resize-none overflow-hidden"
+                            className="flex-1 border rounded-lg p-2 text-xs resize-none overflow-hidden"
                             rows={1}
                         />
                         <button
                             onClick={handlePost}
-                            className="ml-2 px-4 py-2 text-white bg-logo-red rounded-lg"
+                            className="ml-2 px-4 py-2 text-xs text-white bg-logo-red rounded-lg"
                         >
                             Post
                         </button>
