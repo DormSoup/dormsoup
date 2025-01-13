@@ -163,7 +163,7 @@ const BottomBar = ({
   };
 
   return (
-    <div className="flex h-10 flex-none select-none flex-row border-t-2 border-gray-300 text-center align-middle">
+    <div className="flex h-12 flex-none select-none flex-row border-t-2 border-gray-300 text-center align-middle">
       <div
         className={`${
           event?.editable ? "w-1/3" : "w-1/2"

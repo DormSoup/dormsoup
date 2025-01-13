@@ -341,10 +341,10 @@ export default function Comments({ event }: { event: SerializableEvent; }) {
             </div>
 
             {/* Fixed Footer */}
-            <div className="border-t border-gray-300 bg-white">
+            <div className="bg-white">
 
                 {/* Comment Input Section */}
-                <div className="px-4 py-2">
+                <div className="py-2">
                     <div className="flex flex-row items-center">
                         <textarea
                             ref={textareaRef}
@@ -352,12 +352,12 @@ export default function Comments({ event }: { event: SerializableEvent; }) {
                             onChange={handleInputChange}
                             onKeyDown={handleKeyDown}
                             placeholder="Add a comment..."
-                            className="flex-1 border rounded-lg p-2 text-xs resize-none overflow-hidden"
+                            className="flex-1 border-2 border-gray-300 rounded-lg p-2 text-xs placeholder:text-center resize-none overflow-hidden focus:outline-none"
                             rows={1}
                         />
                         <button
                             onClick={handlePost}
-                            className="ml-2 px-4 py-2 text-xs text-white bg-logo-red rounded-lg"
+                            className="ml-2 px-4 py-2 text-xs text-white  bg-black hover:bg-gray-300 rounded-lg"
                         >
                             Post
                         </button>

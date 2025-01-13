@@ -108,7 +108,7 @@ export default function Modal() {
                 </div>
 
                 {/* Scrollable Comments Section */}
-                <div className="flex-1 overflow-y-auto p-4">
+                <div className="flex-1 overflow-y-auto pt-2 px-2">
                   {modal?.type === "event-detail" && modal.event && (
                     <Comments event={modal.event} />
                   )}
