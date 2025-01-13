@@ -71,7 +71,7 @@ export default function Modal() {
             {/* Event Modal */}
             <div
               className={
-                `relative flex max-h-[80vh] w-[70%] flex-col rounded-md bg-white shadow-lg` +
+                `relative flex max-h-[80vh] w-[90%] flex-col rounded-md bg-white shadow-lg` +
                 (!showComments && "md:mx-auto")
               }
             >
@@ -92,8 +92,10 @@ export default function Modal() {
             {/* Comments Modal */}
             {showComments && (
               <div
-              className="relative flex w-[70%] md:w-[40%] flex-col rounded-md bg-white shadow-lg h-[40vh] md:h-[80vh]"
-              >
+                  className={`${
+                    showComments ? 'top-0' : ''
+                  } absolute flex flex-col w-[90%] rounded-md bg-white shadow-lg h-[80vh] md:w-[40%] md:relative md:h-[80vh] z-50`}
+                >
                 {/* Header */}
                 <div className="flex items-center justify-between border-b-2 border-gray-300 p-2">
                   <h2 className="text-xl font-bold">Comments</h2>
