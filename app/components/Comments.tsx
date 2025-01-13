@@ -340,7 +340,6 @@ export default function Comments({ event }: { event: SerializableEvent; }) {
                 )}
             </div>
 
-
             {/* Fixed Footer */}
             <div className="border-t border-gray-300 bg-white">
 

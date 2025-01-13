@@ -7,6 +7,7 @@ import { useDispatch } from "react-redux";
 import modalReducer from "./modalSlice";
 import searchReducer from "./searchSlice";
 
+
 export const store = configureStore({
   reducer: {
     modal: modalReducer,

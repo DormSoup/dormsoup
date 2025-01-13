@@ -71,7 +71,7 @@ export default function Modal() {
             {/* Event Modal */}
             <div
               className={
-                `relative flex w-[70%] flex-col rounded-md bg-white shadow-lg mb-4 ` +
+                `relative flex max-h-[80vh] w-[70%] flex-col rounded-md bg-white shadow-lg` +
                 (!showComments && "md:mx-auto")
               }
             >
