@@ -104,29 +104,32 @@ export default function Modal() {
             {/* Comments Modal */}
             {showComments && (
               <div
-                  className={`${
-                    showComments ? 'top-0' : ''
-                  } absolute flex flex-col w-[90%] rounded-md bg-white shadow-lg h-[80vh] md:w-[40%] md:relative md:h-[80vh] z-50`}
+                className={`absolute ${
+                  showComments
+                    ? 'top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'
+                    : ''
+                } flex flex-col w-[90%] z-50 rounded-md bg-white shadow-lg h-[80vh] md:relative md:top-0 md:left-0 md:transform-none md:w-[40%] md:h-[80vh]`}
+              >
+              {/* Header */}
+              <div className="flex items-center justify-between border-b-2 border-gray-300 p-2">
+                <h2 className="text-xl font-bold">Comments</h2>
+                <button
+                  onClick={() => setShowComments(false)}
+                  className="block h-6 w-6 flex-none rounded-full text-center hover:cursor-pointer hover:bg-logo-red hover:text-white"
                 >
-                {/* Header */}
-                <div className="flex items-center justify-between border-b-2 border-gray-300 p-2">
-                  <h2 className="text-xl font-bold">Comments</h2>
-                  <button
-                    onClick={() => setShowComments(false)}
-                    className="block h-6 w-6 flex-none rounded-full text-center hover:cursor-pointer hover:bg-logo-red hover:text-white"
-                  >
-                    <FontAwesomeIcon icon={faXmark} />
-                  </button>
-                </div>
-
-                {/* Scrollable Comments Section */}
-                <div className="flex-1 overflow-y-auto pt-2 px-2">
-                  {modal?.type === "event-detail" && modal.event && (
-                    <Comments event={modal.event} />
-                  )}
-                </div>
+                  <FontAwesomeIcon icon={faXmark} />
+                </button>
               </div>
+
+              {/* Scrollable Comments Section */}
+              <div className="flex-1 overflow-y-auto pt-2 px-2">
+                {modal?.type === "event-detail" && modal.event && (
+                  <Comments event={modal.event} />
+                )}
+              </div>
+            </div>
             )}
+
           </div>
         </div>
       </Transition>
