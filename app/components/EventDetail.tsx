@@ -6,7 +6,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { atcb_action } from "add-to-calendar-button";
 import IFrameResizer from "iframe-resizer-react";
-//import { URLSearchParams } from "url";
 import { MouseEventHandler, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
@@ -22,10 +21,10 @@ import Loading from "./Loading";
 
 export default function EventDetail({
   event,
-  setShowComments, // Receive setShowComments as a prop
+  setShowComments,
 }: {
   event: SerializableEvent;
-  setShowComments: React.Dispatch<React.SetStateAction<boolean>>; // Type the prop
+  setShowComments: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const dispatch = useAppDispatch();
   const [eventDetail, setEventDetail] = useState<GetEventDetailResponse | undefined>(undefined);
