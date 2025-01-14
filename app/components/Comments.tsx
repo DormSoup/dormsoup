@@ -1,17 +1,7 @@
-// for client side rendering
 "use client";
 
-//import { isAdmin } from "@/app/auth";
-import { MouseEventHandler } from "react";
-
-// import icons from FontAwesome
 import { SerializableEvent } from "../EventType";
-
 import { useEffect, useRef, useState } from "react";
-
-import { useDispatch, useSelector } from "react-redux";
-import { RootState, useAppDispatch } from "../redux/store";
-
 import { getAppClientSession } from "../authClient";
 import { Session } from "../api/auth/session/route";
 import { GetEventDetailResponse } from "../api/event-detail/route";
@@ -20,38 +10,29 @@ type Reply = {
     id: number;
     userName: string;
     text: string;
-    replies: Reply[]; // Recursive type
+    replies: Reply[];
 };
 
 type Comment = {
     id: number;
     userName: string;
     text: string;
-    replies: Reply[]; // Same as Reply[]
+    replies: Reply[];
 };
 
 export default function Comments({ event }: { event: SerializableEvent; }) {
-    // setting up state for the session and eventDetail
     const [session, setSession] = useState<Session | undefined>(undefined);
     const [eventDetail, setEventDetail] = useState<GetEventDetailResponse | undefined>(undefined);
-    // hook to dispatch Redux actions
-    const dispatch = useAppDispatch();
-    // Use ref to get a reference to the textarea element
     const textareaRef = useRef<HTMLTextAreaElement | null>(null);
-    // state variables for comments, input value, likes, and liked status
     const [comments, setComments] = useState<Comment[]>([]);
     const [inputValue, setInputValue] = useState("");
-    // const [likes, setLikes] = useState(event.likes);
-    // const [liked, setLiked] = useState(event.liked);
     const [replyToCommentId, setReplyToCommentId] = useState<number | null>(null);
     const [replyToUserName, setReplyToUserName] = useState<string | null>(null);
 
-    // fetch session data
     useEffect(() => {
         getAppClientSession().then(setSession);
     }, []);
 
-    // Fetch eventDetail data
     useEffect(() => {
         if (event) {
             fetch(`/api/event-detail?id=${event.id}`)
@@ -61,36 +42,31 @@ export default function Comments({ event }: { event: SerializableEvent; }) {
         }
     }, [event]);
 
-    // Fetch comments for the event
     useEffect(() => {
-        // fetches the comments associated with the event and updates the state
         const fetchComments = async () => {
             try {
-                setComments([]); // resetting the state before fetching
+                setComments([]);
                 const response = await fetch(`/api/comments?eventId=${event.id}`);
                 if (!response.ok) {
                     throw new Error("Failed to fetch comments");
                 }
                 const data = await response.json();
-                setComments(data); // Set fetched comments to state
+                setComments(data);
             } catch (error) {
                 console.error("Error fetching comments:", error);
             }
         };
         fetchComments();
-    }, [event.id]); // Re-run when event ID changes
+    }, [event.id]);
 
-    // Function to adjust textarea height
     const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         setInputValue(e.target.value);
-        // Adjust the height of the textarea
         if (textareaRef.current !== null) {
-            textareaRef.current.style.height = "auto"; // Reset the height
-            textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`; // Set height to scrollHeight
+            textareaRef.current.style.height = "auto";
+            textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
         }
     };
 
-    // when responding, fills text input with the username of the person you are replying to.
     const handleReplyClick = (commentId: number, userName: string) => {
         const result = findCommentOrReplyById(comments, commentId);
         if (result) {
@@ -105,40 +81,32 @@ export default function Comments({ event }: { event: SerializableEvent; }) {
         setReplyToCommentId(commentId);
         setReplyToUserName(userName);
         setInputValue(`@${userName} `);
-        textareaRef.current?.focus(); // Focus on the input box
     };
 
-    // Function to post a comment upon pressing enter key on keyboard
     const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
         if (e.key === "Enter" && !e.shiftKey) {
             e.preventDefault();
-            handlePost(); // Call the handlePost function
+            handlePost();
         }
     };
 
-    // Function for finding the reply's reply
     const findCommentOrReplyById = (
         commentsList: typeof comments,
         id: number
     ): { comment: any; parent: any } | null => {
         for (let comment of commentsList) {
             if (comment.id === id) {
-                return { comment, parent: null }; // Top-level comment
+                return { comment, parent: null };
             }
             for (let reply of comment.replies) {
                 if (reply.id === id) {
-                    return { comment: reply, parent: comment }; // Nested reply
+                    return { comment: reply, parent: comment };
                 }
             }
         }
         return null;
     };
 
-    const generateUniqueId = () => {
-        return Date.now() + Math.random();
-    };
-
-    // adds a new comment or reply and updates the state// adds a new comment or reply and updates the state
     const handlePost = async () => {
         if (inputValue.trim() === "") return;
 
@@ -146,7 +114,7 @@ export default function Comments({ event }: { event: SerializableEvent; }) {
             text: inputValue.trim(),
             userName: session?.user?.email?.split("@")[0] || "Anonymous",
             eventId: event.id,
-            parentId: replyToCommentId || null, // Reply to a comment if replyToCommentId is set
+            parentId: replyToCommentId || null,
             replies: [],
         };
 
@@ -164,7 +132,6 @@ export default function Comments({ event }: { event: SerializableEvent; }) {
             const createdComment = await response.json();
             
             if (replyToCommentId !== null) {
-                // Add the new reply to the correct comment
                 const updatedComments = [...comments];
                 const addReplyToCommentOrReply = (commentsList: Comment[], id: number, reply: Comment): boolean => {
                     for (let comment of commentsList) {
@@ -205,7 +172,6 @@ export default function Comments({ event }: { event: SerializableEvent; }) {
         }
     };
 
-    // renders the replies of a comment, along with buttons for replying and deleting
     const renderReplies = (replies: Reply[] | undefined) => {
         return (replies ?? []).map((reply) => (
             // add ml-3 here if you want hierarchy within the reply's replies
@@ -257,37 +223,36 @@ export default function Comments({ event }: { event: SerializableEvent; }) {
         if (!commentsList) return [];
 
         return commentsList.filter((comment) => {
-            if (comment.id === id) return false; // Remove the comment with the matching id
-            comment.replies = deleteCommentOrReplyById(comment.replies, id); // Recursively check nested replies
+            if (comment.id === id) return false;
+            comment.replies = deleteCommentOrReplyById(comment.replies, id);
             return true;
         });
     };
     
-    const handleDeleteComment = async (commentId: number, userName: string) => {
-        const isAuthor = session?.user?.email?.split("@")[0] === userName;
+    // const handleDeleteComment = async (commentId: number, userName: string) => {
+    //     const isAuthor = session?.user?.email?.split("@")[0] === userName;
     
-        if (!isAuthor) {
-            alert("You are not authorized to delete this comment.");
-            return;
-        }
+    //     if (!isAuthor) {
+    //         alert("You are not authorized to delete this comment.");
+    //         return;
+    //     }
     
-        try {
-            const response = await fetch("/api/comments", {
-                method: "DELETE",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ commentId, userEmail: session?.user?.email }),
-            });
+    //     try {
+    //         const response = await fetch("/api/comments", {
+    //             method: "DELETE",
+    //             headers: { "Content-Type": "application/json" },
+    //             body: JSON.stringify({ commentId, userEmail: session?.user?.email }),
+    //         });
     
-            if (!response.ok) {
-                throw new Error("Failed to delete comment");
-            }
+    //         if (!response.ok) {
+    //             throw new Error("Failed to delete comment");
+    //         }
     
-            // Update local state to remove the deleted comment
-            setComments((prevComments) => deleteCommentOrReplyById(prevComments, commentId));
-        } catch (error) {
-            console.error("Error deleting comment:", error);
-        }
-    };
+    //         setComments((prevComments) => deleteCommentOrReplyById(prevComments, commentId));
+    //     } catch (error) {
+    //         console.error("Error deleting comment:", error);
+    //     }
+    // };
 
     return (
         <div className="flex flex-col h-full">
