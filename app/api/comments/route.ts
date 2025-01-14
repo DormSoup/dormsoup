@@ -18,13 +18,13 @@ export async function GET(req: NextRequest) {
                 replies: {
                     include: {
                         replies: {
-                            include: { replies: true }, // Nested replies
+                            include: { replies: true },
                         },
                     },
-                    orderBy: { createdAt: "asc" }, // Sort nested replies
+                    orderBy: { createdAt: "asc" },
                 },
             },
-            orderBy: { createdAt: "asc" }, // Sort top-level comments
+            orderBy: { createdAt: "asc" },
         });
         return NextResponse.json(comments, { status: 200 });
     } catch (error) {
