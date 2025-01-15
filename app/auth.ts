@@ -16,5 +16,6 @@ export function isAdmin(user: string): boolean {
   return (
     user === "macy404@mit.edu" || user === "andiliu@mit.edu" || user === "dormsoup-dev@mit.edu" 
     || user === "aabreu@mit.edu" || user === "jazsolan@mit.edu" || user === "danayim@mit.edu"
+    || user === "t11s@mit.edu"
   );
 }

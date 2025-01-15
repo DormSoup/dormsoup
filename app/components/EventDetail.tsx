@@ -18,6 +18,7 @@ import { RootState, useAppDispatch } from "../redux/store";
 import EventDate from "./EventDate";
 import GrayOutIfUnknown from "./GrayOutUnknown";
 import Loading from "./Loading";
+import { removeArtifacts } from "../util";
 
 export default function EventDetail({
   event,
@@ -143,7 +144,8 @@ const BottomBar = ({
       location: event.location,
       organizer: `${eventDetail?.fromEmail?.sender.name}|${eventDetail?.fromEmail?.sender.email}`,
       timeZone: "America/New_York",
-      listStyle: "modal"
+      listStyle: "modal",
+      description: removeArtifacts(eventDetail?.fromEmail?.body ?? "")
     };
     if (!date.toISOString().includes("00:00:00.000Z")) {
       config.startTime = timeString(date);
