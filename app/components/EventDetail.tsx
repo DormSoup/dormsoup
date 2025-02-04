@@ -188,7 +188,7 @@ const BottomBar = ({
         } flex items-center justify-center border-gray-300 hover:cursor-pointer hover:bg-gray-300 hover:text-logo-red text-xs`}
         onClick={onAddToCalendarClicked}
       >
-        <FontAwesomeIcon icon={faCalendar} /> Add to Calendar
+        <FontAwesomeIcon icon={faCalendar} />&nbsp;Add to Calendar
       </div>
 
       {event?.editable && (
@@ -196,7 +196,7 @@ const BottomBar = ({
           className="w-1/3 border-l-[1px] border-r-[1px] flex items-center justify-center border-gray-300 hover:cursor-pointer hover:bg-gray-300 hover:text-logo-red text-xs"
           onClick={() => dispatch(setEditEventModal(event as SerializableEventWithTags))}
         >
-          <FontAwesomeIcon icon={faPenToSquare} /> Edit
+          <FontAwesomeIcon icon={faPenToSquare} />&nbsp;Edit
         </div>
       )}
 
@@ -204,7 +204,7 @@ const BottomBar = ({
         className="w-1/3 rounded-br-md border-l-[1px] flex items-center justify-center border-gray-300 hover:cursor-pointer hover:bg-gray-300 hover:text-logo-red text-xs"
         onClick={onCommentButtonClicked}
       >
-        <FontAwesomeIcon icon={faComment} /> Comment
+        <FontAwesomeIcon icon={faComment} />&nbsp;Comment
       </div>
     </div>
   );
