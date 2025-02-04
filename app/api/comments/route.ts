@@ -28,7 +28,7 @@ export async function GET(req: NextRequest) {
         });
         return NextResponse.json(comments, { status: 200 });
     } catch (error) {
-        console.error("Error fetching comments:", error);
+        // console.error("Error fetching comments:", error);
         return NextResponse.json({ error: "Failed to fetch comments" }, { status: 500 });
     }
 }
@@ -55,7 +55,7 @@ export async function POST(req: NextRequest) {
         });
         return NextResponse.json(newComment, { status: 201 });
     } catch (error) {
-        console.error("Error posting comment:", error);
+        // console.error("Error posting comment:", error);
         return NextResponse.json({ error: "Failed to post comment" }, { status: 500 });
     }
 }
@@ -93,7 +93,7 @@ export async function DELETE(req: NextRequest) {
         });
         return NextResponse.json({ message: "Comment deleted successfully" }, { status: 200 });
     } catch (error) {
-        console.error("Error deleting comment:", error);
+        // console.error("Error deleting comment:", error);
         return NextResponse.json({ error: "Failed to delete comment" }, { status: 500 });
     }
 }
