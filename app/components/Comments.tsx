@@ -179,7 +179,7 @@ export default function Comments({ event }: { event: SerializableEvent; }) {
                 <div className="flex items-start space-x-4">
                     {/* Username */}
                     <span
-                        className="text-xs text-white bg-logo-red border border-logo-red rounded-full px-3 py-1"
+                        className="text-xs md:text-sm text-white bg-logo-red border border-logo-red rounded-full px-3 py-1"
                         style={{ flexShrink: 0 }}
                     >
                         {reply.userName}
@@ -188,10 +188,10 @@ export default function Comments({ event }: { event: SerializableEvent; }) {
                     {/* Comment and Buttons */}
                     <div className="flex-1">
                         {/* Comment Text */}
-                        <p className="break-words text-xs">{reply.text}</p>
+                        <p className="break-words text-xs md:text-sm">{reply.text}</p>
     
                         {/* Buttons for replies */}
-                        <div className="flex space-x-4 mt-1 text-xs text-slate-400">
+                        <div className="flex space-x-4 mt-1 text-xs md:text-sm text-slate-400">
                             <button
                                 onClick={() => handleReplyClick(reply.id, reply.userName)}
                                 className="hover:text-black"
@@ -267,7 +267,7 @@ export default function Comments({ event }: { event: SerializableEvent; }) {
                             <div className="flex items-start space-x-4">
                                 {/* Username */}
                                 <span
-                                    className="text-xs text-white bg-logo-yellow border border-logo-yellow rounded-full px-3 py-1"
+                                    className="text-xs md:text-sm text-white bg-logo-yellow border border-logo-yellow rounded-full px-3 py-1"
                                     style={{ flexShrink: 0 }}
                                 >
                                     {comment.userName}
@@ -276,10 +276,10 @@ export default function Comments({ event }: { event: SerializableEvent; }) {
                                 {/* Comment and Buttons */}
                                 <div className="flex-1">
                                     {/* Comment Text */}
-                                    <p className="break-words text-xs">{comment.text}</p>
+                                    <p className="break-words text-xs md:text-sm">{comment.text}</p>
 
                                     {/* Buttons for root comment */}
-                                    <div className="flex space-x-4 mt-1 text-xs text-slate-400">
+                                    <div className="flex space-x-4 mt-1 text-xs md:text-sm text-slate-400">
                                         <button
                                             onClick={() => handleReplyClick(comment.id, comment.userName)}
                                             className="hover:text-black"
@@ -317,12 +317,12 @@ export default function Comments({ event }: { event: SerializableEvent; }) {
                             onChange={handleInputChange}
                             onKeyDown={handleKeyDown}
                             placeholder="Add a comment..."
-                            className="flex-1 border-2 border-gray-300 rounded-lg p-2 text-xs placeholder:pl-2 resize-none overflow-hidden focus:outline-none"
+                            className="flex-1 border-2 border-gray-300 rounded-lg p-2 text-xs md:text-sm placeholder:pl-2 resize-none overflow-hidden focus:outline-none"
                             rows={1}
                         />
                         <button
                             onClick={handlePost}
-                            className="ml-2 px-4 py-2 text-xs text-white  bg-black hover:bg-gray-300 rounded-lg"
+                            className="ml-2 px-4 py-2 text-xs md:text-sm text-white  bg-black hover:bg-gray-300 rounded-lg"
                         >
                             Post
                         </button>
