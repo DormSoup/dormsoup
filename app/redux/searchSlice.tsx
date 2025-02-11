@@ -1,6 +1,6 @@
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
-import { WritableDraft } from "immer/dist/internal";
+import { WritableDraft } from "immer";
 
 import { SerializableEventWithTags } from "../EventType";
 import { GetEventTextSearchResponse } from "../api/event-text-search/route";

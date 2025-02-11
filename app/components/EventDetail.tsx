@@ -1,15 +1,12 @@
 "use client";
 
-import { faCalendar, faClock, faHeart, faPenToSquare } from "@fortawesome/free-regular-svg-icons";
-import { faHeart as faHeartSolid } from "@fortawesome/free-solid-svg-icons";
-import { faLocationDot } from "@fortawesome/free-solid-svg-icons";
+import { faCalendar, faClock, faHeart, faPenToSquare, faComment } from "@fortawesome/free-regular-svg-icons";
+import { faHeart as faHeartSolid, faLocationDot } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { atcb_action } from "add-to-calendar-button";
 import IFrameResizer from "iframe-resizer-react";
-import { URLSearchParams } from "next/dist/compiled/@edge-runtime/primitives/url";
-import Image from "next/image";
-import React, { MouseEventHandler, useEffect, useState } from "react";
+import { MouseEventHandler, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
 import { SerializableEvent, SerializableEventWithTags } from "../EventType";
@@ -17,16 +14,22 @@ import { GetEventDetailResponse } from "../api/event-detail/route";
 import { setEditEventModal } from "../redux/modalSlice";
 import { likeEvent } from "../redux/searchSlice";
 import { RootState, useAppDispatch } from "../redux/store";
-import { removeArtifacts } from "../util";
 
 import EventDate from "./EventDate";
 import GrayOutIfUnknown from "./GrayOutUnknown";
-import { LikesHorizontal } from "./Likes";
 import Loading from "./Loading";
+import { removeArtifacts } from "../util";
 
-export default function EventDetail({ event }: { event: SerializableEvent }) {
+export default function EventDetail({
+  event,
+  setShowComments,
+}: {
+  event: SerializableEvent;
+  setShowComments: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
   const dispatch = useAppDispatch();
   const [eventDetail, setEventDetail] = useState<GetEventDetailResponse | undefined>(undefined);
+
   useEffect(() => {
     setEventDetail(undefined);
     if (event === undefined) return;
@@ -65,7 +68,7 @@ export default function EventDetail({ event }: { event: SerializableEvent }) {
                   <td>{eventDetail.fromEmail?.subject}</td>
                 </tr>
                 <tr>
-                  <td>Recieved Date: </td>
+                  <td>Received Date: </td>
                   <td>
                     {eventDetail.fromEmail?.receivedAt ? (
                       <EventDate
@@ -101,19 +104,26 @@ export default function EventDetail({ event }: { event: SerializableEvent }) {
             checkOrigin={false}
             scrolling={true}
           ></IFrameResizer>
-          <BottomBar event={event} eventDetail={eventDetail}></BottomBar>
+          <BottomBar
+            event={event}
+            eventDetail={eventDetail}
+            onCommentButtonClicked={() => setShowComments((prev) => !prev)} // Pass the toggle function
+          />
         </>
       )}
     </>
   );
 }
 
+
 const BottomBar = ({
   event,
-  eventDetail
+  eventDetail,
+  onCommentButtonClicked,
 }: {
   event: SerializableEvent | undefined;
   eventDetail: GetEventDetailResponse | undefined;
+  onCommentButtonClicked: () => void;
 }) => {
   const dispatch = useAppDispatch();
   const onAddToCalendarClicked: MouseEventHandler<HTMLDivElement> = (clickEvent) => {
@@ -154,11 +164,11 @@ const BottomBar = ({
   };
 
   return (
-    <div className="flex h-10 flex-none select-none flex-row border-t-2 border-gray-300 text-center align-middle">
+    <div className="flex h-12 flex-none select-none flex-row border-t-2 border-gray-300 text-center align-middle">
       <div
         className={`${
           event?.editable ? "w-1/3" : "w-1/2"
-        } rounded-bl-md border-r-[1px] border-gray-300 py-2 hover:cursor-pointer hover:bg-gray-300 hover:text-logo-red`}
+        } flex items-center justify-center rounded-bl-md border-r-[1px] border-gray-300 hover:cursor-pointer hover:bg-gray-300 hover:text-logo-red text-xs font-medium md:text-base md:font-medium`}
         onClick={onLikeButtonClicked}
       >
         {realEvent?.liked ? (
@@ -171,22 +181,31 @@ const BottomBar = ({
           </span>
         )}
       </div>
+
       <div
         className={`${event?.editable ? "w-1/3" : "w-1/2"} ${
           event?.editable ? "border-x-[1px]" : "rounded-br-md border-l-[1px]"
-        } border-gray-300 py-2 hover:cursor-pointer hover:bg-gray-300 hover:text-logo-red`}
+        } flex items-center justify-center border-gray-300 hover:cursor-pointer hover:bg-gray-300 hover:text-logo-red text-xs font-medium md:text-base md:font-medium`}
         onClick={onAddToCalendarClicked}
       >
-        <FontAwesomeIcon icon={faCalendar} /> Add to Calendar
+        <FontAwesomeIcon icon={faCalendar} />&nbsp;Add to Calendar
       </div>
+
       {event?.editable && (
         <div
-          className="w-1/3 rounded-br-md border-l-[1px] border-gray-300 py-2 hover:cursor-pointer hover:bg-gray-300 hover:text-logo-red"
+          className="w-1/3 border-l-[1px] border-r-[1px] flex items-center justify-center border-gray-300 hover:cursor-pointer hover:bg-gray-300 hover:text-logo-red text-xs font-medium md:text-base md:font-medium"
           onClick={() => dispatch(setEditEventModal(event as SerializableEventWithTags))}
         >
-          <FontAwesomeIcon icon={faPenToSquare} /> Edit
+          <FontAwesomeIcon icon={faPenToSquare} />&nbsp;Edit
         </div>
       )}
+
+      <div
+        className="w-1/3 rounded-br-md border-l-[1px] flex items-center justify-center border-gray-300 hover:cursor-pointer hover:bg-gray-300 hover:text-logo-red text-xs font-medium md:text-base md:font-medium"
+        onClick={onCommentButtonClicked}
+      >
+        <FontAwesomeIcon icon={faComment} />&nbsp;Comment
+      </div>
     </div>
   );
 };

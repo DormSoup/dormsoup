@@ -41,3 +41,11 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Ignore PostgreSQL lock files and logs
+postmaster.pid
+*.log
+logfile
+*.log.*
+/usr/local/var/postgresql@14/*.pid
+/usr/local/var/postgresql@14/logs/
