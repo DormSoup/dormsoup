@@ -5,5 +5,6 @@ import { getAppServerSession } from "../../../auth";
 export type Session = Awaited<ReturnType<typeof getAppServerSession>>;
 
 export async function GET(request: Request) {
-  return NextResponse.json(getAppServerSession(request));
+  const session = await getAppServerSession(request);
+  return NextResponse.json(session);
 }
