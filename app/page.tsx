@@ -1,6 +1,11 @@
 import { headers } from "next/headers";
 import Link from "next/link";
 
+interface PageProps {
+  params: Promise<{ [key: string]: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}
+
 import { getAppServerSession } from "./auth";
 import CompactEventList from "./components/CompactEventList";
 import { FilterPanel } from "./components/EventTagsBar";
@@ -14,8 +19,11 @@ const DormSoupName = () => (
   </>
 );
 
-export default async function Home() {
-  const session = getAppServerSession();
+export default async function Home({
+  searchParams
+}: PageProps) {
+  const params = await searchParams;
+  const session = await getAppServerSession();
 
   return (
     <main className="flex flex-col items-center">

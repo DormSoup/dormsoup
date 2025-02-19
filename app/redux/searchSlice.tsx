@@ -74,7 +74,8 @@ export const setDisplayPastEvents = createAsyncThunk(
         events.map((event) => ({
           ...event,
           date: event.date as any as string,
-          tags: event.tags.map((tag) => tag.name)
+          tags: event.tags.map((tag) => tag.name),
+          gcalId: null // quick hack to get it to build, unknown consequence
         }))
       )
     );
