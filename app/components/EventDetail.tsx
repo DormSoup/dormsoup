@@ -31,6 +31,10 @@ export default function EventDetail({
   const [eventDetail, setEventDetail] = useState<GetEventDetailResponse | undefined>(undefined);
 
   useEffect(() => {
+    setShowComments(true);
+  }, []);
+  
+  useEffect(() => {
     setEventDetail(undefined);
     if (event === undefined) return;
     fetch("/api/event-detail?" + new URLSearchParams({ id: event.id.toString() }))
