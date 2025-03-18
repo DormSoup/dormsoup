@@ -20,7 +20,7 @@ export default function Modal() {
   const dispatch = useAppDispatch();
   const show = modal !== undefined;
   const fullWidth = show && modal.type === "event-detail";
-  const [showComments, setShowComments] = useState(false);
+  const [showComments, setShowComments] = useState(true);
 
   useEffect(() => {
     // Close the comments modal if the modal type changes to "edit-event"

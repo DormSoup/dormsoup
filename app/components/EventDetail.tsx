@@ -29,10 +29,6 @@ export default function EventDetail({
 }) {
   const dispatch = useAppDispatch();
   const [eventDetail, setEventDetail] = useState<GetEventDetailResponse | undefined>(undefined);
-
-  useEffect(() => {
-    setShowComments(true);
-  }, []);
   
   useEffect(() => {
     setEventDetail(undefined);
