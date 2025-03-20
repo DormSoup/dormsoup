@@ -49,9 +49,13 @@ export default function NavBar() {
           </span>
         </div>
         <div>
+          <a href="/calendar" className="mr-0 mr-4">
+            Calendar
+          </a>
           <a href="/about" className="mr-0 md:mr-4">
             About
           </a>
+
           {/* <a href="mailto:dormsoup@mit.edu" className="ml-4 mr-0 md:mr-4">
             Contact&nbsp;Us
           </a> */}
