@@ -29,7 +29,7 @@ export default function EventDetail({
 }) {
   const dispatch = useAppDispatch();
   const [eventDetail, setEventDetail] = useState<GetEventDetailResponse | undefined>(undefined);
-
+  
   useEffect(() => {
     setEventDetail(undefined);
     if (event === undefined) return;
