@@ -51,16 +51,13 @@ export default function About() {
         </p>
         <h2>Will OpenAI be able to see our dormspams?</h2>
         <p>
-          No. While OpenAI does use input from ChatGPT to train their models, and <DormSoupName />{" "}
-          (for the time being) does use GPT-3.5 and GPT-4 to parse dormspams. <DormSoupName />{" "}
-          evokes these models through OpenAI&apos;s API endpoints.{" "}
+          No. <DormSoupName /> is no longer dependent on any OpenAI APIs. It uses{" "}
+          <a href="https://llms.mit.edu/">SIPB LLMs</a> for all of its AI needs. Also, while OpenAI
+          does use input from ChatGPT to train their models, and <DormSoupName /> previously used
+          GPT-3.5 and GPT-4 to parse dormspams.{" "}
           <a href="https://openai.com/enterprise-privacy">
             OpenAI promises not to use or retain data sent through business API endpoints.
           </a>
-        </p>
-        <p>
-          We would also like to mention that we in the process of switching to SIPB-hosted open
-          source LLM, planning to finish around October 2024.
         </p>
         <h1>Contributing and Feedback</h1>
         <p>
