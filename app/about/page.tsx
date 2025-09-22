@@ -54,7 +54,7 @@ export default function About() {
           No. <DormSoupName /> is no longer dependent on any OpenAI APIs. It uses{" "}
           <a href="https://llms.mit.edu/">SIPB LLMs</a> for all of its AI needs. Also, while OpenAI
           does use input from ChatGPT to train their models, and <DormSoupName /> previously used
-          GPT-3.5 and GPT-4 to parse dormspams.{" "}
+          GPT-3.5 and GPT-4 to parse dormspams,{" "}
           <a href="https://openai.com/enterprise-privacy">
             OpenAI promises not to use or retain data sent through business API endpoints.
           </a>
