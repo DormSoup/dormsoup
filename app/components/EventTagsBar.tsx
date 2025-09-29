@@ -43,7 +43,8 @@ const eventTagDisplayConfigs: { [tagName: string]: TagDisplayConfig } = {
   Career: { color: "#0B5563", icon: "\u{f2b5}", type: "content", aliases: ["Entrepreneurship"] },
   Boba: { color: "#ab86b6", icon: "/icons/boba.svg", type: "amenities" },
   "Free Food": { color: "#E03616", icon: "\u{f818}", type: "amenities", aliases: ["Food"] },
-  Liked: { color: "#ff0061", icon: "\u{f004}", type: "other" }
+  Liked: { color: "#ff0061", icon: "\u{f004}", type: "other" },
+  "Community Service": { color: "#00A676", icon: "\u{f4be}", type: "form" }
 };
 
 function getTagPriority(tag: string) {
