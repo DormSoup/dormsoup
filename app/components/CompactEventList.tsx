@@ -1,8 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { useEffect } from "react";
 import { useSelector } from "react-redux";
 
+import { SerializableEventWithTags } from "../EventType";
+import { GetEventResponse } from "../api/event/route";
+import { setEventDetailModal } from "../redux/modalSlice";
 import { setBySentDate, setDisplayPastEvents } from "../redux/searchSlice";
 import { RootState, useAppDispatch } from "../redux/store";
 
@@ -15,11 +19,44 @@ import SubscribeButton from "./SubscribeButton";
 import Switch from "./Switch";
 
 export default function CompactEventList() {
+  // NOTE: The search param logic makes the assumption that this component is always rendered.
+  const searchParams = useSearchParams();
+  const dispatch = useAppDispatch();
+  const setEvent = (id: string) => {
+    fetch(`/api/event?id=${id}`)
+      .then((response) => response.json())
+      .then((event: GetEventResponse) => {
+        if (event) {
+          const serializableEvent: SerializableEventWithTags = {
+            ...event,
+            date: event.date as any as string,
+            tags: event.tags.map((tag) => tag.name),
+            gcalId: null // quick hack to get it to build, unknown consequence
+          };
+          dispatch(setEventDetailModal(serializableEvent));
+        } else throw Error("Failed to fetch event detail");
+      })
+      .catch((error) => console.error("Failed to fetch event detail:", error));
+  };
+
+  useEffect(() => {
+    const rawParam = searchParams.get("eventId");
+    if (rawParam) {
+      try {
+        const param = decodeURIComponent(rawParam);
+        const parsed: string = JSON.parse(param);
+        if (parsed) {
+          setEvent(parsed);
+        }
+      } catch {}
+    }
+  });
+
   const displayPastEvents = useSelector((state: RootState) => state.search.displayPastEvents);
   const dateToEvents = useSelector((state: RootState) => state.search.dateToEvents);
   const noEvents = useSelector((state: RootState) => state.search.noEvents);
   const bySentDate = useSelector((state: RootState) => state.search.bySentDate);
-  const dispatch = useAppDispatch();
+
   useEffect(() => {
     dispatch(setDisplayPastEvents(displayPastEvents));
   }, [displayPastEvents, dispatch]);
