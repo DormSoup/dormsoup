@@ -27,14 +27,16 @@ async function getAllEventsRaw(since: Date, until: Date, order: "asc" | "desc") 
 }
 
 async function getAllEvents(since: Date, until: Date, order: "asc" | "desc") {
-  const events: (Omit<Awaited<ReturnType<typeof getAllEventsRaw>>[0], "fromEmail" | "text"> & {
+  const events: (Omit<Awaited<ReturnType<typeof getAllEventsRaw>>[0], "fromEmail" | "text" | "tags"> & {
     recievedDate: Date | undefined;
     details: string;
+    tags: string[];
     contact_email: string | undefined;
   })[] = (await getAllEventsRaw(since, until, order)).map((event) => {
     event.fromEmail?.receivedAt.setHours(event.fromEmail?.receivedAt.getHours())
     const { fromEmail: _, text: __, ...ret } = {
       ...event,
+      tags: event.tags.map(tag=>tag.name),
       details: event.text,
       contact_email: event.fromEmail?.senderEmail,
       recievedDate: event.fromEmail?.receivedAt,
