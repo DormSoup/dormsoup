@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "../db";
 
+const apiKeys = process.env.API_KEY!.split(',');
 
 async function getAllEventsRaw(since: Date, until: Date, order: "asc" | "desc") {
   return await prisma.event.findMany({
@@ -97,7 +98,7 @@ export async function GET(req: Request) {
   }
 
   try {
-    const isValidToken =  token === process.env.API_KEY;
+    const isValidToken =  apiKeys.includes(token);
 
     if (!isValidToken) {
       return new NextResponse(
